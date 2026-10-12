@@ -49,7 +49,10 @@ export function licenseAllowsTerritory(license: LicenseInfo, country: string | n
   return country !== null && license.territories.includes(country.toUpperCase());
 }
 
-export type SourceCandidate = Pick<ChannelSourceRow, 'id' | 'priority' | 'enabled' | 'health' | 'license_info'>;
+export type SourceCandidate = Pick<ChannelSourceRow, 'id' | 'priority' | 'enabled' | 'health' | 'license_info' | 'consecutive_successes'>;
+
+/** During a total outage, a source is accepted again after this many successful probes (not the full hysteresis). */
+export const OUTAGE_RECOVERY_SUCCESSES = 1;
 
 export type SourceChange = 'failover' | 'failback' | 'restored' | 'all_sources_down' | null;
 
@@ -65,6 +68,8 @@ export interface SourceDecision {
  *   to the primary waits for HEALTH_RULES.healthyAfterSuccesses good checks.
  * - The current source is kept while it is not down.
  * - Otherwise the best non-down source is used (failover), even if its health is still unknown.
+ * - When the channel is off the air (no current source), waiting the full recovery hysteresis would
+ *   prolong the outage: the best source with at least OUTAGE_RECOVERY_SUCCESSES good probe is used.
  */
 export function decideActiveSource(
   sources: readonly SourceCandidate[],
@@ -81,6 +86,9 @@ export function decideActiveSource(
   if (bestHealthy && (!current || bestHealthy.priority < current.priority)) next = bestHealthy;
   else if (current) next = current;
   else next = candidates.find((s) => s.health !== 'down') ?? null;
+  if (!next && !current) {
+    next = candidates.find((s) => s.consecutive_successes >= OUTAGE_RECOVERY_SUCCESSES) ?? null;
+  }
 
   const nextId = next?.id ?? null;
   if (nextId === currentId) return { activeSourceId: nextId, change: null };

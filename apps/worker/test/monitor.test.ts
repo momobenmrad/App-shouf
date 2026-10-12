@@ -115,9 +115,7 @@ describe('runMonitorCycle', () => {
     expect(w.incidents.filter((i) => i.kind === 'all_sources_down')).toHaveLength(1);
     expect(w.alerts.filter((a) => a.includes('hors service'))).toHaveLength(1);
     w.online.add('b.example');
-    for (let i = 0; i < 4; i++) await w.cycle();
-    expect(w.channel.active_source_id).toBeNull(); // still inside the 5-check recovery window
-    await w.cycle();
+    await w.cycle(); // total outage: one good probe is enough to get back on air
     expect(w.channel.active_source_id).toBe('backup');
     expect(w.incidents.find((i) => i.kind === 'all_sources_down')!.resolved).toBe(true);
     expect(w.alerts.at(-1)).toContain('rétablie');

@@ -312,8 +312,10 @@ stateDiagram-v2
 - **Contrôle** (toutes les 30 s par source, worker `source-monitor`) : GET de la playlist (timeout 5 s, mesure de
   latence), vérification `#EXTM3U`, choix de la variante, téléchargement du dernier segment pour mesurer le débit,
   vérification que la playlist avance (live figé = `degraded`). Résultat écrit dans `source_health_checks`.
-- **Hystérésis** : 3 échecs → `down`, 5 succès → `healthy`, pour éviter le *flapping*. Toute la décision est une
-  fonction pure `decideActiveSource(sources, now)` testée unitairement.
+- **Hystérésis** : 3 échecs → `down`, 5 succès → `healthy`, pour éviter le *flapping*. Exception : quand la chaîne
+  est hors service (aucune source active), un seul contrôle réussi suffit à remettre une source à l'antenne, car
+  l'anti-rebond ne doit pas prolonger une panne totale. Toute la décision est une fonction pure
+  `decideActiveSource(sources, currentId, today)` testée unitairement.
 - **Alertes** : webhook générique (Telegram, Discord ou Slack) + e-mail, avec déduplication par incident ouvert.
 - **Licences** : job quotidien. Expiration dans moins de 30 jours → alerte ; expirée → source désactivée ; plus
   aucune source valide → chaîne `inactive`. Le géo-blocage utilise l'intersection pays de l'utilisateur ∩

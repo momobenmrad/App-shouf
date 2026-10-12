@@ -66,7 +66,7 @@ Pour changer de CDN (Bunny), il suffit d'un nouvel adaptateur qui implémente le
 - Les enregistrements ne sont jamais supprimés automatiquement. Une fois le replay prêt, nettoyer : `docker compose exec mediamtx rm -rf /recordings/live/<slug>`. Prévoir ~2,5 Go par heure à 5 Mb/s.
 
 ### Supervision des sources
-- Le worker sonde chaque source activée toutes les 30 s. Panne confirmée après 3 échecs, retour après 5 succès. Les alertes partent sur `ALERT_WEBHOOK_URL`.
+- Le worker sonde chaque source activée toutes les 30 s. Panne confirmée après 3 échecs, retour après 5 succès (un seul succès suffit si la chaîne est entièrement hors service). Les alertes partent sur `ALERT_WEBHOOK_URL`.
 - Une source dont la licence expire est désactivée à 00 h 05 (heure de Tunis) ; une chaîne sans source sous licence valide passe inactive. Les licences qui expirent dans moins de 30 jours s'affichent en orange dans `/admin/channels/<id>`.
 - Le journal `/admin/incidents` garde l'historique ; les contrôles de santé bruts sont purgés après 30 jours.
 

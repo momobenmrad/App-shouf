@@ -13,7 +13,7 @@ const license = { holder: 'TT', agreement_ref: 'A-1', expires_at: '2027-01-31', 
 const TODAY = '2026-10-12';
 
 const src = (id: string, priority: number, health: SourceCandidate['health'], extra: Partial<SourceCandidate> = {}) =>
-  ({ id, priority, health, enabled: true, license_info: license, ...extra }) satisfies SourceCandidate;
+  ({ id, priority, health, enabled: true, license_info: license, consecutive_successes: health === 'healthy' ? 5 : 0, ...extra }) satisfies SourceCandidate;
 
 describe('nextHealth', () => {
   const run = (start: HealthState, checks: boolean[]) => checks.reduce((s, ok) => nextHealth(s, { ok }), start);
@@ -89,5 +89,14 @@ describe('decideActiveSource', () => {
       change: 'all_sources_down',
     });
     expect(decideActiveSource([src('p', 1, 'unknown')], null, TODAY)).toEqual({ activeSourceId: 'p', change: 'restored' });
+  });
+
+  it('recovers from a total outage after a single good probe instead of the full hysteresis', () => {
+    const allDown = [src('p', 1, 'down'), src('b', 2, 'down')];
+    expect(decideActiveSource(allDown, null, TODAY).activeSourceId).toBeNull();
+    const backupRecovering = [src('p', 1, 'down'), src('b', 2, 'down', { consecutive_successes: 1 })];
+    expect(decideActiveSource(backupRecovering, null, TODAY)).toEqual({ activeSourceId: 'b', change: 'restored' });
+    // Not during an ordinary failover: a still-down source is never chosen while another one serves.
+    expect(decideActiveSource([src('p', 1, 'down', { consecutive_successes: 2 }), src('b', 2, 'healthy')], 'b', TODAY).change).toBeNull();
   });
 });

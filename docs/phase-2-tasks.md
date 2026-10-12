@@ -15,7 +15,7 @@
 
 ## Vérifications effectuées ici
 
-- `pnpm typecheck`, `pnpm lint`, `pnpm test` : 99 tests TypeScript.
+- `pnpm typecheck`, `pnpm lint`, `pnpm test` : 100 tests TypeScript.
 - `pnpm test:db` : 53 assertions SQL (RLS, facturation, sessions, chat, clés de stream).
 - Build Next.js de production (34 routes).
 
