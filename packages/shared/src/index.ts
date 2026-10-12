@@ -6,3 +6,4 @@ export * from './ladder';
 export * from './storage-keys';
 export * from './channels';
 export * from './schemas';
+export * from './queues';

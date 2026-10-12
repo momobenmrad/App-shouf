@@ -9,9 +9,10 @@ export type TokenScope = 'vod' | 'live';
 
 const SCOPE_PREFIX: Record<TokenScope, string> = { vod: 't', live: 'c' };
 const encoder = new TextEncoder();
-const keyCache = new Map<string, Promise<CryptoKey>>();
+type HmacKey = Awaited<ReturnType<typeof crypto.subtle.importKey>>;
+const keyCache = new Map<string, Promise<HmacKey>>();
 
-function hmacKey(secret: string): Promise<CryptoKey> {
+function hmacKey(secret: string): Promise<HmacKey> {
   let key = keyCache.get(secret);
   if (!key) {
     key = crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [

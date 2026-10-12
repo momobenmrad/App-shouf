@@ -37,15 +37,15 @@ export type SourceKind = 'external_hls' | 'internal_ingest';
 export type SourceHealth = 'unknown' | 'healthy' | 'degraded' | 'down';
 export type IncidentKind = 'down' | 'degraded' | 'failover' | 'failback' | 'license_expired' | 'all_sources_down';
 
-export interface Rendition {
+export type Rendition = {
   name: string;
   width: number;
   height: number;
   videoBitrateKbps: number;
   audioBitrateKbps: number;
-}
+};
 
-export interface LicenseInfo {
+export type LicenseInfo = {
   holder: string;
   agreement_ref: string;
   /** YYYY-MM-DD, last day the licence is valid. */
@@ -53,9 +53,9 @@ export interface LicenseInfo {
   /** ISO 3166-1 alpha-2 codes. */
   territories: string[];
   notes?: string;
-}
+};
 
-export interface ProfileRow {
+export type ProfileRow = {
   id: string;
   display_name: string | null;
   locale: AppLocale;
@@ -63,9 +63,9 @@ export interface ProfileRow {
   country: string | null;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface MediaAssetRow {
+export type MediaAssetRow = {
   id: string;
   status: AssetStatus;
   original_filename: string;
@@ -83,9 +83,9 @@ export interface MediaAssetRow {
   created_by: string | null;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface TranscodeJobRow {
+export type TranscodeJobRow = {
   id: string;
   asset_id: string;
   queue_job_id: string | null;
@@ -95,18 +95,18 @@ export interface TranscodeJobRow {
   finished_at: string | null;
   log: string | null;
   created_at: string;
-}
+};
 
-export interface SubtitleTrackRow {
+export type SubtitleTrackRow = {
   id: string;
   asset_id: string;
   lang: string;
   label: string;
   path: string;
   is_default: boolean;
-}
+};
 
-export interface TitleRow {
+export type TitleRow = {
   id: string;
   kind: TitleKind;
   slug: string;
@@ -126,28 +126,28 @@ export interface TitleRow {
   search_text: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface GenreRow {
+export type GenreRow = {
   id: string;
   slug: string;
   name: I18nText;
-}
+};
 
-export interface TitleGenreRow {
+export type TitleGenreRow = {
   title_id: string;
   genre_id: string;
-}
+};
 
-export interface SeasonRow {
+export type SeasonRow = {
   id: string;
   title_id: string;
   number: number;
   name: I18nText;
   created_at: string;
-}
+};
 
-export interface EpisodeRow {
+export type EpisodeRow = {
   id: string;
   season_id: string;
   number: number;
@@ -160,9 +160,9 @@ export interface EpisodeRow {
   thumbnail_path: string | null;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PlaybackProgressRow {
+export type PlaybackProgressRow = {
   user_id: string;
   asset_id: string;
   title_id: string;
@@ -171,9 +171,9 @@ export interface PlaybackProgressRow {
   duration_seconds: number | null;
   completed: boolean;
   updated_at: string;
-}
+};
 
-export interface PlanRow {
+export type PlanRow = {
   id: string;
   code: string;
   name: I18nText;
@@ -184,9 +184,9 @@ export interface PlanRow {
   active: boolean;
   sort_order: number;
   created_at: string;
-}
+};
 
-export interface SubscriptionRow {
+export type SubscriptionRow = {
   id: string;
   user_id: string;
   plan_id: string;
@@ -196,9 +196,9 @@ export interface SubscriptionRow {
   provider: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface PaymentRow {
+export type PaymentRow = {
   id: string;
   user_id: string;
   plan_id: string;
@@ -211,9 +211,9 @@ export interface PaymentRow {
   raw: Json | null;
   paid_at: string | null;
   created_at: string;
-}
+};
 
-export interface PlaybackSessionRow {
+export type PlaybackSessionRow = {
   id: string;
   user_id: string;
   asset_id: string | null;
@@ -223,9 +223,9 @@ export interface PlaybackSessionRow {
   started_at: string;
   last_heartbeat_at: string;
   ended_at: string | null;
-}
+};
 
-export interface ChannelRow {
+export type ChannelRow = {
   id: string;
   slug: string;
   name: I18nText;
@@ -240,9 +240,9 @@ export interface ChannelRow {
   sort_order: number;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface ChannelSourceRow {
+export type ChannelSourceRow = {
   id: string;
   channel_id: string;
   label: string;
@@ -257,9 +257,9 @@ export interface ChannelSourceRow {
   last_checked_at: string | null;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface SourceHealthCheckRow {
+export type SourceHealthCheckRow = {
   id: number;
   source_id: string;
   checked_at: string;
@@ -268,9 +268,9 @@ export interface SourceHealthCheckRow {
   latency_ms: number | null;
   bitrate_kbps: number | null;
   error: string | null;
-}
+};
 
-export interface SourceIncidentRow {
+export type SourceIncidentRow = {
   id: string;
   channel_id: string;
   source_id: string | null;
@@ -278,9 +278,9 @@ export interface SourceIncidentRow {
   started_at: string;
   resolved_at: string | null;
   details: Json;
-}
+};
 
-export interface Database {
+export type Database = {
   __InternalSupabase: { PostgrestVersion: '12' };
   public: {
     Tables: {
@@ -463,4 +463,4 @@ export interface Database {
     };
     CompositeTypes: { [_ in never]: never };
   };
-}
+};
