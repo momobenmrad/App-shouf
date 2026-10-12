@@ -1,0 +1,16 @@
+# Cloudflare Worker serving signed VOD HLS from R2: https://vod.chouf.tn
+name = "chouf-edge"
+main = "src/worker.ts"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+routes = [{ pattern = "vod.chouf.tn", custom_domain = true }]
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "chouf-media"
+
+[vars]
+ALLOWED_ORIGINS = "https://chouf.tn,https://www.chouf.tn"
+
+# Secret: wrangler secret put SIGNING_SECRET
