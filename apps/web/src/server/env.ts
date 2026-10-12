@@ -21,6 +21,9 @@ const schema = z.object({
   KONNECT_API_URL: z.url().default('https://api.sandbox.konnect.network/api/v2'),
   KONNECT_API_KEY: z.string().optional(),
   KONNECT_WALLET_ID: z.string().optional(),
+  /** Ingest endpoints shown to admins for live events. */
+  LIVE_INGEST_RTMP_URL: z.string().default('rtmp://localhost:1935'),
+  LIVE_INGEST_SRT_URL: z.string().default('srt://localhost:8890'),
   /** Country used when no CDN geo header is present (local dev only). */
   DEFAULT_COUNTRY: z.string().regex(/^[A-Z]{2}$/).optional(),
   /** Concurrent streams for signed-in users without a subscription (free content). */
