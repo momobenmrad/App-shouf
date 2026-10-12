@@ -6,26 +6,32 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { getDeviceId } from '@/lib/device';
 
+export type PlayerTarget = { kind: 'vod'; titleId: string; episodeId?: string } | { kind: 'channel'; channelId: string } | { kind: 'event'; eventId: string };
+
 interface Session {
   url: string;
   sessionId: string;
-  resumeAt: number;
-  durationSeconds: number | null;
+  resumeAt?: number;
+  durationSeconds?: number | null;
 }
 
 const HEARTBEAT_MS = 15_000;
-const ERROR_KEYS = ['auth_required', 'subscription_required', 'geo_blocked', 'too_many_streams', 'not_ready', 'not_found', 'session_ended'] as const;
+const VIEWERS_POLL_MS = 10_000;
+const ERROR_KEYS = ['auth_required', 'subscription_required', 'geo_blocked', 'too_many_streams', 'not_ready', 'not_found', 'session_ended', 'offline'] as const;
 type ErrorKey = (typeof ERROR_KEYS)[number] | 'generic';
 
-export function Player({ titleId, episodeId, heading, backHref }: { titleId: string; episodeId?: string; heading: string; backHref: string }) {
+export function Player({ target, heading, backHref }: { target: PlayerTarget; heading: string; backHref: string }) {
   const t = useTranslations('player');
   const tNav = useTranslations('nav');
+  const live = target.kind !== 'vod';
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const sessionRef = useRef<Session | null>(null);
   const [error, setError] = useState<ErrorKey | null>(null);
   const [levels, setLevels] = useState<{ index: number; height: number }[]>([]);
   const [level, setLevel] = useState(-1);
+  const [viewers, setViewers] = useState<number | null>(null);
+  const targetKey = JSON.stringify(target);
 
   const sendHeartbeat = useCallback((ended = false, beacon = false) => {
     const video = videoRef.current;
@@ -33,7 +39,7 @@ export function Player({ titleId, episodeId, heading, backHref }: { titleId: str
     if (!video || !session) return;
     const body = JSON.stringify({
       sessionId: session.sessionId,
-      positionSeconds: video.currentTime || 0,
+      positionSeconds: Number.isFinite(video.currentTime) ? Math.max(0, video.currentTime) : 0,
       durationSeconds: Number.isFinite(video.duration) ? video.duration : undefined,
       ended,
     });
@@ -55,13 +61,16 @@ export function Player({ titleId, episodeId, heading, backHref }: { titleId: str
   useEffect(() => {
     let cancelled = false;
     const video = videoRef.current!;
+    const parsed = JSON.parse(targetKey) as PlayerTarget;
 
     async function start() {
-      const res = await fetch('/api/playback/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ titleId, episodeId, deviceId: getDeviceId() }),
-      });
+      const payload =
+        parsed.kind === 'vod'
+          ? { titleId: parsed.titleId, episodeId: parsed.episodeId, deviceId: getDeviceId() }
+          : parsed.kind === 'channel'
+            ? { channelId: parsed.channelId, deviceId: getDeviceId() }
+            : { eventId: parsed.eventId, deviceId: getDeviceId() };
+      const res = await fetch('/api/playback/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const data = (await res.json().catch(() => ({}))) as Partial<Session> & { error?: string };
       if (cancelled) return;
       if (!res.ok || !data.url) {
@@ -69,13 +78,11 @@ export function Player({ titleId, episodeId, heading, backHref }: { titleId: str
         return;
       }
       sessionRef.current = data as Session;
-      const seek = () => {
-        if (data.resumeAt) video.currentTime = data.resumeAt;
-      };
+      const resumeAt = data.resumeAt ?? 0;
 
       if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = data.url; // Safari / iOS: native HLS
-        video.addEventListener('loadedmetadata', seek, { once: true });
+        if (resumeAt) video.addEventListener('loadedmetadata', () => void (video.currentTime = resumeAt), { once: true });
       } else {
         const { default: HlsLib } = await import('hls.js');
         if (cancelled) return;
@@ -83,15 +90,21 @@ export function Player({ titleId, episodeId, heading, backHref }: { titleId: str
           setError('generic');
           return;
         }
-        const hls = new HlsLib({ capLevelToPlayerSize: true, startPosition: data.resumeAt || -1 });
+        const hls = new HlsLib(
+          live
+            ? { capLevelToPlayerSize: true, liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 8, lowLatencyMode: false }
+            : { capLevelToPlayerSize: true, startPosition: resumeAt || -1 },
+        );
         hlsRef.current = hls;
         hls.on(HlsLib.Events.MANIFEST_PARSED, (_e, info) => {
           setLevels(info.levels.map((l, index) => ({ index, height: l.height })).sort((a, b) => b.height - a.height));
         });
+        let retries = 0;
         hls.on(HlsLib.Events.ERROR, (_e, info) => {
           if (!info.fatal) return;
           if (info.type === HlsLib.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
-          else setError('generic');
+          else if (live && info.type === HlsLib.ErrorTypes.NETWORK_ERROR && retries++ < 10) setTimeout(() => hls.loadSource(data.url!), 3000); // source switch or hiccup
+          else setError(live ? 'offline' : 'generic');
         });
         hls.loadSource(data.url);
         hls.attachMedia(video);
@@ -102,7 +115,7 @@ export function Player({ titleId, episodeId, heading, backHref }: { titleId: str
     start().catch(() => !cancelled && setError('generic'));
 
     const timer = setInterval(() => {
-      if (!video.paused) sendHeartbeat();
+      if (!video.paused || live) sendHeartbeat();
     }, HEARTBEAT_MS);
     const onPause = () => sendHeartbeat();
     const onEnded = () => sendHeartbeat(true);
@@ -111,9 +124,22 @@ export function Player({ titleId, episodeId, heading, backHref }: { titleId: str
     video.addEventListener('ended', onEnded);
     window.addEventListener('pagehide', onHide);
 
+    let viewersTimer: ReturnType<typeof setInterval> | undefined;
+    if (parsed.kind !== 'vod') {
+      const q = parsed.kind === 'channel' ? `channel=${parsed.channelId}` : `event=${parsed.eventId}`;
+      const poll = () =>
+        fetch(`/api/live/viewers?${q}`)
+          .then((r) => r.json() as Promise<{ count?: number }>)
+          .then((d) => !cancelled && typeof d.count === 'number' && setViewers(d.count))
+          .catch(() => undefined);
+      void poll();
+      viewersTimer = setInterval(poll, VIEWERS_POLL_MS);
+    }
+
     return () => {
       cancelled = true;
       clearInterval(timer);
+      if (viewersTimer) clearInterval(viewersTimer);
       video.removeEventListener('pause', onPause);
       video.removeEventListener('ended', onEnded);
       window.removeEventListener('pagehide', onHide);
@@ -122,7 +148,7 @@ export function Player({ titleId, episodeId, heading, backHref }: { titleId: str
       hlsRef.current = null;
       sessionRef.current = null;
     };
-  }, [titleId, episodeId, sendHeartbeat]);
+  }, [targetKey, live, sendHeartbeat]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -131,6 +157,12 @@ export function Player({ titleId, episodeId, heading, backHref }: { titleId: str
           ← {t('back')}
         </Link>
         <h1 className="line-clamp-1 flex-1 text-lg font-bold">{heading}</h1>
+        {live && (
+          <span className="flex items-center gap-2 text-xs">
+            <span className="rounded bg-brand px-1.5 py-0.5 font-bold uppercase">{t('live')}</span>
+            {viewers !== null && <span className="text-muted">{t('viewers', { count: viewers })}</span>}
+          </span>
+        )}
         {levels.length > 1 && (
           <label className="flex items-center gap-2 text-sm text-muted">
             {t('quality')}
@@ -168,6 +200,11 @@ export function Player({ titleId, episodeId, heading, backHref }: { titleId: str
               <Link href="/login" className="rounded-md bg-brand px-5 py-2 font-semibold hover:bg-brand-dark">
                 {tNav('login')}
               </Link>
+            )}
+            {error === 'offline' && (
+              <button onClick={() => window.location.reload()} className="rounded-md bg-white/15 px-5 py-2 font-semibold hover:bg-white/25">
+                {t('retry')}
+              </button>
             )}
           </div>
         )}

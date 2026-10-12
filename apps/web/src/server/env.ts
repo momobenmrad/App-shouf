@@ -8,6 +8,8 @@ const schema = z.object({
   APP_URL: z.url(),
   PLAYBACK_SIGNING_SECRET: z.string().min(32),
   VOD_BASE_URL: z.url(),
+  /** Public base URL of the live gateway (https://live.chouf.tn, http://localhost:8788 in dev). */
+  LIVE_BASE_URL: z.url().default('http://localhost:8788'),
   REDIS_URL: z.string().default('redis://localhost:6379'),
   S3_ENDPOINT: z.url(),
   /** Endpoint the browser uses for direct uploads (differs from S3_ENDPOINT in Docker dev). */

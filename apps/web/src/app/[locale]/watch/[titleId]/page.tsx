@@ -27,7 +27,7 @@ export default async function WatchPage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-6xl px-0 py-0 sm:px-4 sm:py-6">
-      <Player titleId={title.id} episodeId={episode} heading={heading} backHref={`/title/${title.slug}`} />
+      <Player target={{ kind: 'vod', titleId: title.id, episodeId: episode }} heading={heading} backHref={`/title/${title.slug}`} />
     </div>
   );
 }

@@ -1,12 +1,143 @@
 {
-  "meta": { "title": "Chouf — Movies, series and channels", "description": "Stream movies, series and live channels." },
-  "nav": { "home": "Home", "movies": "Movies", "series": "Series", "search": "Search", "account": "My account", "login": "Sign in", "signup": "Sign up", "admin": "Admin", "subscribe": "Subscribe", "logout": "Sign out" },
-  "home": { "continue": "Continue watching", "latestMovies": "New movies", "latestSeries": "Series", "watch": "Watch", "more": "More info", "empty": "The catalog is coming soon." },
-  "title": { "free": "Free", "subscriber": "Subscribers", "season": "Season {number}", "episode": "Episode {number}", "play": "Play", "resume": "Resume", "notAvailable": "Coming soon", "minutes": "{count} min", "seasons": "{count, plural, one {# season} other {# seasons}}" },
-  "search": { "placeholder": "Movie or series title…", "results": "Results for “{q}”", "none": "No results.", "hint": "Type at least 2 characters." },
-  "player": { "loading": "Loading…", "quality": "Quality", "auto": "Auto", "back": "Back", "errors": { "auth_required": "Sign in to watch.", "subscription_required": "This content is for subscribers.", "geo_blocked": "This content is not available in your country.", "too_many_streams": "Maximum number of screens reached. Stop playback on another device.", "not_ready": "This video is still being prepared.", "not_found": "Video not found.", "session_ended": "Playback was stopped.", "generic": "Something went wrong. Please try again." } },
-  "auth": { "email": "Email", "password": "Password", "displayName": "Display name", "login": "Sign in", "signup": "Create my account", "noAccount": "No account yet?", "hasAccount": "Already registered?", "invalid": "Wrong email or password.", "signupFailed": "Sign-up failed: {message}", "checkEmail": "Check your inbox to confirm your account.", "passwordHint": "At least 8 characters" },
-  "account": { "title": "My account", "subscription": "Subscription", "active": "Active until {date}", "none": "No active subscription.", "expired": "Expired on {date}", "payments": "Payments", "noPayments": "No payments.", "language": "Interface language", "save": "Save", "paymentSuccess": "Payment received, thank you! Your subscription activates as soon as it is confirmed.", "status": { "pending": "Pending", "succeeded": "Paid", "failed": "Failed" } },
-  "subscribe": { "title": "Choose your plan", "perMonth": "/ month", "perYear": "/ year", "streams": "{count, plural, one {# screen} other {# screens}} at a time", "cta": "Pay with Konnect", "methods": "Bank card, e-DINAR or wallet", "failed": "The payment did not go through.", "loginFirst": "Sign in to subscribe.", "unavailable": "Payments are temporarily unavailable." },
-  "common": { "error": "Something went wrong.", "loading": "Loading…" }
+  "meta": {
+    "title": "Chouf — Movies, series and channels",
+    "description": "Stream movies, series and live channels."
+  },
+  "nav": {
+    "home": "Home",
+    "movies": "Movies",
+    "series": "Series",
+    "search": "Search",
+    "account": "My account",
+    "login": "Sign in",
+    "signup": "Sign up",
+    "admin": "Admin",
+    "subscribe": "Subscribe",
+    "logout": "Sign out",
+    "live": "Live"
+  },
+  "home": {
+    "continue": "Continue watching",
+    "latestMovies": "New movies",
+    "latestSeries": "Series",
+    "watch": "Watch",
+    "more": "More info",
+    "empty": "The catalog is coming soon."
+  },
+  "title": {
+    "free": "Free",
+    "subscriber": "Subscribers",
+    "season": "Season {number}",
+    "episode": "Episode {number}",
+    "play": "Play",
+    "resume": "Resume",
+    "notAvailable": "Coming soon",
+    "minutes": "{count} min",
+    "seasons": "{count, plural, one {# season} other {# seasons}}"
+  },
+  "search": {
+    "placeholder": "Movie or series title…",
+    "results": "Results for “{q}”",
+    "none": "No results.",
+    "hint": "Type at least 2 characters."
+  },
+  "player": {
+    "loading": "Loading…",
+    "quality": "Quality",
+    "auto": "Auto",
+    "back": "Back",
+    "errors": {
+      "auth_required": "Sign in to watch.",
+      "subscription_required": "This content is for subscribers.",
+      "geo_blocked": "This content is not available in your country.",
+      "too_many_streams": "Maximum number of screens reached. Stop playback on another device.",
+      "not_ready": "This video is still being prepared.",
+      "not_found": "Video not found.",
+      "session_ended": "Playback was stopped.",
+      "generic": "Something went wrong. Please try again.",
+      "offline": "This stream is not available right now."
+    },
+    "live": "Live",
+    "viewers": "{count, plural, =0 {no viewers} one {# viewer} other {# viewers}}",
+    "retry": "Retry"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Display name",
+    "login": "Sign in",
+    "signup": "Create my account",
+    "noAccount": "No account yet?",
+    "hasAccount": "Already registered?",
+    "invalid": "Wrong email or password.",
+    "signupFailed": "Sign-up failed: {message}",
+    "checkEmail": "Check your inbox to confirm your account.",
+    "passwordHint": "At least 8 characters"
+  },
+  "account": {
+    "title": "My account",
+    "subscription": "Subscription",
+    "active": "Active until {date}",
+    "none": "No active subscription.",
+    "expired": "Expired on {date}",
+    "payments": "Payments",
+    "noPayments": "No payments.",
+    "language": "Interface language",
+    "save": "Save",
+    "paymentSuccess": "Payment received, thank you! Your subscription activates as soon as it is confirmed.",
+    "status": {
+      "pending": "Pending",
+      "succeeded": "Paid",
+      "failed": "Failed"
+    }
+  },
+  "subscribe": {
+    "title": "Choose your plan",
+    "perMonth": "/ month",
+    "perYear": "/ year",
+    "streams": "{count, plural, one {# screen} other {# screens}} at a time",
+    "cta": "Pay with Konnect",
+    "methods": "Bank card, e-DINAR or wallet",
+    "failed": "The payment did not go through.",
+    "loginFirst": "Sign in to subscribe.",
+    "unavailable": "Payments are temporarily unavailable."
+  },
+  "common": {
+    "error": "Something went wrong.",
+    "loading": "Loading…"
+  },
+  "live": {
+    "nowLive": "Live now",
+    "liveBadge": "Live",
+    "channels": "Channels",
+    "noChannels": "No channels available.",
+    "upcoming": "Coming up",
+    "soon": "Soon",
+    "free": "Free",
+    "channelOffline": "This channel is temporarily unavailable.",
+    "startsAt": "Starts: {date}",
+    "ended": "This event has ended.",
+    "watchReplay": "Watch the replay",
+    "categories": {
+      "general": "General",
+      "news": "News",
+      "sports": "Sports",
+      "kids": "Kids",
+      "entertainment": "Entertainment",
+      "religious": "Religious",
+      "music": "Music",
+      "documentary": "Documentary"
+    }
+  },
+  "chat": {
+    "title": "Chat",
+    "empty": "Be the first to write.",
+    "placeholder": "Your message…",
+    "loginToChat": "Sign in to join the chat",
+    "send": "Send",
+    "tooFast": "Slow down: at most 5 messages every 10 seconds.",
+    "closed": "The chat is closed.",
+    "failed": "Could not send.",
+    "delete": "Delete"
+  }
 }

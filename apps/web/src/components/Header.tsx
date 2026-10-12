@@ -16,6 +16,7 @@ export async function Header() {
         </Link>
         <nav className="flex flex-1 items-center gap-4 text-sm text-white/80">
           <Link href="/" className="hover:text-white">{t('home')}</Link>
+          <Link href="/live" className="hover:text-white">{t('live')}</Link>
           <Link href="/search" className="hover:text-white">{t('search')}</Link>
           {viewer?.profile.role === 'admin' && (
             <Link href="/admin" className="text-amber-400 hover:text-amber-300">{t('admin')}</Link>

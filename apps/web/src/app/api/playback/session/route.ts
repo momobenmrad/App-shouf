@@ -1,20 +1,34 @@
-import { DENIAL_HTTP_STATUS, playbackSessionSchema } from '@chouf/shared';
+import { DENIAL_HTTP_STATUS, livePlaybackSessionSchema, playbackSessionSchema } from '@chouf/shared';
+import { z } from 'zod';
 import { countryFromHeaders } from '@/server/country';
 import { env } from '@/server/env';
 import { isSameOrigin, json, jsonError, parseBody } from '@/server/http';
 import { startPlayback } from '@/server/playback';
 import { createPlaybackRepo } from '@/server/playback-repo';
+import { startLivePlayback } from '@/server/live';
+import { createLiveRepo } from '@/server/live-repo';
 import { createServiceClient, createUserClient } from '@/server/supabase';
 
 export async function POST(request: Request) {
   if (!isSameOrigin(request, env().APP_URL)) return jsonError(403, 'cross_origin');
-  const body = await parseBody(request, playbackSessionSchema);
+  const body = await parseBody(request, z.union([playbackSessionSchema, livePlaybackSessionSchema]));
   if (!body.ok) return body.response;
 
   const supabase = await createUserClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const country = countryFromHeaders(request.headers, env().DEFAULT_COUNTRY);
+
+  if (!('titleId' in body.data)) {
+    const live = await startLivePlayback(
+      createLiveRepo(createServiceClient()),
+      { userId: user?.id ?? null, channelId: body.data.channelId, eventId: body.data.eventId, deviceId: body.data.deviceId, country },
+      { liveBaseUrl: env().LIVE_BASE_URL, signingSecret: env().PLAYBACK_SIGNING_SECRET, freeMaxStreams: env().FREE_MAX_STREAMS },
+    );
+    if (!live.ok) return jsonError(live.reason === 'offline' ? 409 : DENIAL_HTTP_STATUS[live.reason], live.reason);
+    return json(live);
+  }
 
   const result = await startPlayback(
     createPlaybackRepo(createServiceClient()),
@@ -23,7 +37,7 @@ export async function POST(request: Request) {
       titleId: body.data.titleId,
       episodeId: body.data.episodeId,
       deviceId: body.data.deviceId,
-      country: countryFromHeaders(request.headers, env().DEFAULT_COUNTRY),
+      country,
     },
     { vodBaseUrl: env().VOD_BASE_URL, signingSecret: env().PLAYBACK_SIGNING_SECRET, freeMaxStreams: env().FREE_MAX_STREAMS },
   );

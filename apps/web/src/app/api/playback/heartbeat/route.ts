@@ -2,6 +2,7 @@ import { heartbeatSchema } from '@chouf/shared';
 import { env } from '@/server/env';
 import { isSameOrigin, json, jsonError, parseBody } from '@/server/http';
 import { createServiceClient, createUserClient } from '@/server/supabase';
+import { recordViewer } from '@/server/viewers';
 
 /** Keeps the playback session alive and saves the resume position. Also accepts sendBeacon. */
 export async function POST(request: Request) {
@@ -18,11 +19,11 @@ export async function POST(request: Request) {
   const db = createServiceClient();
   const { data: session } = await db
     .from('playback_sessions')
-    .select('id, asset_id, ended_at')
+    .select('id, asset_id, channel_id, event_id, ended_at')
     .eq('id', body.data.sessionId)
     .eq('user_id', user.id)
     .maybeSingle();
-  if (!session?.asset_id) return jsonError(404, 'session_not_found');
+  if (!session) return jsonError(404, 'session_not_found');
   // Another device took the slot (or the session was pruned): tell the player to stop.
   if (session.ended_at) return jsonError(409, 'session_ended');
 
@@ -31,6 +32,15 @@ export async function POST(request: Request) {
     .from('playback_sessions')
     .update(body.data.ended ? { last_heartbeat_at: now, ended_at: now } : { last_heartbeat_at: now })
     .eq('id', session.id);
+
+  // Live: count the viewer, nothing to resume.
+  if (!session.asset_id) {
+    if (!body.data.ended) {
+      if (session.channel_id) await recordViewer('channel', session.channel_id, session.id);
+      else if (session.event_id) await recordViewer('event', session.event_id, session.id);
+    }
+    return json({ ok: true });
+  }
 
   // Title/episode for "continue watching", resolved server-side from the asset.
   const [{ data: title }, { data: episode }] = await Promise.all([
