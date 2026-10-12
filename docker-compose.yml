@@ -1,0 +1,57 @@
+# Chouf — production stack on a single server.
+#   cp .env.example .env   # fill in the secrets
+#   docker compose up -d --build
+# The VOD edge runs on Cloudflare (apps/edge, `wrangler deploy`); Supabase is managed.
+name: chouf
+
+services:
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:-chouf.tn}
+    volumes:
+      - ./infra/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on: [web]
+
+  web:
+    build: { context: ., dockerfile: apps/web/Dockerfile }
+    image: chouf-web
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379
+    depends_on: [redis]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/ar').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    build: { context: ., dockerfile: apps/worker/Dockerfile }
+    image: chouf-worker
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - work:/work
+    depends_on: [redis]
+    stop_grace_period: 60s
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis-data:/data
+
+volumes:
+  caddy-data:
+  caddy-config:
+  redis-data:
+  work:

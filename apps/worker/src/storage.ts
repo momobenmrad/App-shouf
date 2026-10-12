@@ -17,6 +17,10 @@ export function createS3Storage(config: WorkerConfig): Storage {
     region: config.S3_REGION,
     endpoint: config.S3_ENDPOINT,
     forcePathStyle: true,
+    // SDK ≥3.729 adds CRC32 checksums by default, which breaks presigned browser uploads and
+    // some S3-compatible stores (R2, SeaweedFS). Only send checksums when an API requires them.
+    requestChecksumCalculation: 'WHEN_REQUIRED',
+    responseChecksumValidation: 'WHEN_REQUIRED',
     credentials: { accessKeyId: config.S3_ACCESS_KEY_ID, secretAccessKey: config.S3_SECRET_ACCESS_KEY },
   });
   return {

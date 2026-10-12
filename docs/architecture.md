@@ -85,7 +85,7 @@ est la source de vérité (RLS), et tout ce qui coûte cher en bande passante pa
 | Live | **MediaMTX** (Phase 2) | Binaire Go unique, ingestion RTMPS/SRT/WebRTC, sortie HLS/LL-HLS, enregistrement fMP4 pour le replay, API HTTP + hooks. SRS est plus lourd ; OvenMediaEngine excelle en WebRTC basse latence, qu'on ne vise pas encore. |
 | Reverse proxy | **Caddy** | TLS automatique, config de 15 lignes. Le domaine web passe derrière Cloudflare (proxy HTML uniquement). |
 | Paiement | **Konnect** (+ Stripe optionnel) | Stripe n'accepte pas de marchands établis en Tunisie. Konnect n'a pas de prélèvement récurrent par carte : on vend des **périodes prépayées**, chaque paiement réussi prolonge `current_period_end` ; rappel e-mail avant expiration. |
-| Tests | **Vitest** (unitaires), **pgTAP** (RLS), Playwright (e2e, plus tard) | La logique critique (signature, droits, échelle FFmpeg, bascule de sources) est en fonctions pures testées. |
+| Tests | **Vitest** (unitaires et intégration FFmpeg), **tests SQL** des politiques RLS sur Postgres jetable, Playwright (e2e, plus tard) | La logique critique (signature, droits, échelle FFmpeg, bascule de sources) est en fonctions pures testées. |
 | Monorepo | **pnpm workspaces** | `apps/web`, `apps/worker`, `apps/edge`, `packages/shared`. Pas de Turborepo : inutile à cette taille. |
 
 ## 3. Structure du dépôt
@@ -100,10 +100,10 @@ est la source de vérité (RLS), et tout ce qui coûte cher en bande passante pa
 │   └── shared/         Types DB, schémas zod, signature des URLs, droits, échelle FFmpeg, logique de bascule
 ├── supabase/
 │   ├── migrations/     Schéma SQL + RLS (source de vérité)
-│   ├── tests/          Tests pgTAP des politiques RLS
+│   ├── tests/          Tests SQL (RLS, facturation, sessions) + runner sur Postgres jetable
 │   └── seed.sql        Données de démo
 ├── docker-compose.yml  Prod : web, worker, redis, caddy (+ gateway/mediamtx en Phase 2)
-├── docker-compose.dev.yml  Dev : + MinIO (R2 local) + edge en Node
+├── docker-compose.dev.yml  Dev : Redis + SeaweedFS (R2 local) + edge en Node + worker
 └── docs/
 ```
 
@@ -364,8 +364,8 @@ décision qui pèse le plus sur le budget ; c'est pour ça que la signature est 
 ## 8. Déploiement
 
 - **Prod** : un serveur Ubuntu avec Docker. `docker compose up -d` lance `caddy`, `web`, `worker` et `redis` (+ `gateway` et `mediamtx` en Phase 2). L'edge VOD se déploie sur Cloudflare avec `wrangler deploy`. Migrations : `supabase db push`.
-- **Dev** : `docker compose -f docker-compose.yml -f docker-compose.dev.yml up` ajoute MinIO (R2 local) et l'edge en mode Node. Supabase local via `supabase start`.
-- **CI** (GitHub Actions) : lint, typecheck, tests Vitest, tests pgTAP sur un Postgres éphémère, build des images.
+- **Dev** : `docker compose -f docker-compose.dev.yml up -d` lance Redis, SeaweedFS (stockage S3 local remplaçant R2 ; MinIO ne publie plus d'images publiques), l'edge en mode Node et le worker. Supabase local via `supabase start`, Next.js via `pnpm --filter @chouf/web dev`.
+- **CI** (GitHub Actions) : lint, typecheck, tests Vitest (avec FFmpeg), tests SQL sur un Postgres éphémère, build Next.js et des images Docker.
 - **Observabilité** : logs JSON (pino), Sentry (offre gratuite), Uptime Kuma pour la disponibilité, tableau de bord des jobs dans le back-office.
 
 ## 9. Évolutions prévues (Phase 3)

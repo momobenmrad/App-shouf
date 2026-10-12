@@ -15,6 +15,10 @@ const s3 = new S3Client({
   region: process.env.S3_REGION ?? 'auto',
   endpoint: required('S3_ENDPOINT'),
   forcePathStyle: true,
+  // SDK ≥3.729 adds CRC32 checksums by default, which breaks presigned browser uploads and
+  // some S3-compatible stores (R2, SeaweedFS). Only send checksums when an API requires them.
+  requestChecksumCalculation: 'WHEN_REQUIRED',
+  responseChecksumValidation: 'WHEN_REQUIRED',
   credentials: { accessKeyId: required('S3_ACCESS_KEY_ID'), secretAccessKey: required('S3_SECRET_ACCESS_KEY') },
 });
 const bucket = required('S3_BUCKET');
