@@ -47,7 +47,30 @@ Pour changer de CDN (Bunny), il suffit d'un nouvel adaptateur qui implémente le
 - Déploiement : `git pull && docker compose up -d --build`. Arrêt propre du worker : 60 s (`stop_grace_period`). Un job interrompu est repris par BullMQ.
 - Le volume `work` contient les fichiers temporaires de transcodage. Prévoyez environ 3 fois la taille de la plus grosse source.
 
-## 4. Konnect
+## 4. Live : MediaMTX, gateway et CDN
+
+### DNS et TLS
+- `live-origin.chouf.tn` → IP du serveur, **sans** proxy Cloudflare (nuage gris) : la vidéo ne doit pas transiter par le proxy Cloudflare. Caddy sert ce nom et relaie vers la gateway.
+- Petite audience : `LIVE_BASE_URL=https://live-origin.chouf.tn`.
+- Au-delà de quelques centaines de spectateurs : créer une *pull zone* Bunny avec `live-origin.chouf.tn` comme origine, hostname `live.chouf.tn`, puis `LIVE_BASE_URL=https://live.chouf.tn`. Désactiver les zones de facturation inutiles (Asie, Afrique du Sud, Amérique du Sud). Les segments portent un chemin identique pour tous les spectateurs (`/s/<jeton scellé>`) : Bunny les met en cache une seule fois. Les playlists sont `no-store`, elles sont propres à chaque spectateur.
+- Les `LIVE_ALLOWED_ORIGINS` de la gateway doivent contenir `https://chouf.tn`.
+
+### Ingestion
+- Ports à ouvrir : `1935/tcp` (RTMP) et `8890/udp` (SRT). `LIVE_INGEST_RTMP_URL=rtmp://live-origin.chouf.tn:1935`, `LIVE_INGEST_SRT_URL=srt://live-origin.chouf.tn:8890`.
+- OBS : *Serveur* = `rtmp://live-origin.chouf.tn:1935/live/<slug>`, *Clé de stream* = la clé affichée à la création de l'événement. En SRT : `srt://live-origin.chouf.tn:8890?streamid=publish:live/<slug>:chouf:<clé>&passphrase=…` (SRT chiffre le transport ; RTMPS n'est pas exposé en Phase 2).
+- Réglages encodeur conseillés : H.264, 1080p ou 720p, débit constant 4 à 6 Mb/s, intervalle d'images clés 2 s, AAC 128 kb/s.
+- `MEDIAMTX_HOOK_SECRET` : identique dans `.env` (lu par MediaMTX et la gateway). Il authentifie les hooks de MediaMTX vers la gateway.
+
+### Replay et enregistrements
+- MediaMTX enregistre chaque événement dans le volume `recordings` (`/recordings/live/<slug>/…mp4`, fichiers d'une heure). À la fin de l'événement (ou au clic « Terminer »), le worker concatène, crée l'asset VOD et lance le transcodage. L'admin crée ensuite un titre depuis la page de l'événement.
+- Les enregistrements ne sont jamais supprimés automatiquement. Une fois le replay prêt, nettoyer : `docker compose exec mediamtx rm -rf /recordings/live/<slug>`. Prévoir ~2,5 Go par heure à 5 Mb/s.
+
+### Supervision des sources
+- Le worker sonde chaque source activée toutes les 30 s. Panne confirmée après 3 échecs, retour après 5 succès. Les alertes partent sur `ALERT_WEBHOOK_URL`.
+- Une source dont la licence expire est désactivée à 00 h 05 (heure de Tunis) ; une chaîne sans source sous licence valide passe inactive. Les licences qui expirent dans moins de 30 jours s'affichent en orange dans `/admin/channels/<id>`.
+- Le journal `/admin/incidents` garde l'historique ; les contrôles de santé bruts sont purgés après 30 jours.
+
+## 5. Konnect
 
 1. Ouvrir un compte marchand sur https://dashboard.konnect.network et récupérer la clé API et l'identifiant de wallet.
 2. Tester d'abord en sandbox (`KONNECT_API_URL=https://api.sandbox.konnect.network/api/v2`), puis passer en production (`https://api.konnect.network/api/v2`).
@@ -55,13 +78,15 @@ Pour changer de CDN (Bunny), il suffit d'un nouvel adaptateur qui implémente le
 4. Le statut est toujours revérifié auprès de Konnect avant d'accorder des droits. Le traitement est idempotent, donc un rejeu du webhook est sans risque.
 5. **À vérifier avant la mise en ligne** : les noms de champs de l'API (`init-payment`, `payments/{ref}`) d'après la documentation Konnect en vigueur. Le code les parse de manière défensive (`apps/web/src/server/payments/konnect.ts`).
 
-## 5. Sauvegardes et supervision
+## 6. Sauvegardes et supervision
 
 - Postgres : sauvegardes quotidiennes Supabase (offre Pro). Exporter aussi `pg_dump` chaque semaine vers un autre fournisseur.
 - R2 : les HLS se régénèrent à partir des sources, donc ne supprimez pas `sources/` tant que vous n'avez pas de copie ailleurs.
 - Alertes : renseigner `ALERT_WEBHOOK_URL` (Slack, Discord ou pont Telegram). Le worker y signale les transcodages définitivement échoués et les licences expirées.
 - Disponibilité : Uptime Kuma (ou équivalent) sur `https://chouf.tn/ar` et `https://vod.chouf.tn/health`.
 
-## 6. Rotation du secret de signature
+## 7. Rotation des secrets
 
-Mettre à jour `PLAYBACK_SIGNING_SECRET` (web) et `SIGNING_SECRET` (edge) en même temps. Les lectures en cours s'interrompent : leur token devient invalide et le lecteur doit être relancé.
+- `PLAYBACK_SIGNING_SECRET` (web, gateway) et `SIGNING_SECRET` (edge) doivent changer en même temps. Les lectures en cours s'interrompent : leur token devient invalide et le lecteur doit être relancé.
+- `MEDIAMTX_HOOK_SECRET` : changer la valeur dans `.env` puis `docker compose up -d mediamtx gateway`. Les diffusions en cours sont coupées.
+- Clé de stream d'un événement : bouton « Régénérer la clé » dans `/admin/live/<id>`.

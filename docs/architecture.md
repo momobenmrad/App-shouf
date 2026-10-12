@@ -102,7 +102,7 @@ est la source de vérité (RLS), et tout ce qui coûte cher en bande passante pa
 │   ├── migrations/     Schéma SQL + RLS (source de vérité)
 │   ├── tests/          Tests SQL (RLS, facturation, sessions) + runner sur Postgres jetable
 │   └── seed.sql        Données de démo
-├── docker-compose.yml  Prod : web, worker, redis, caddy (+ gateway/mediamtx en Phase 2)
+├── docker-compose.yml  Prod : caddy, web, worker, gateway, mediamtx, redis
 ├── docker-compose.dev.yml  Dev : Redis + SeaweedFS (R2 local) + edge en Node + worker
 └── docs/
 ```
@@ -319,9 +319,22 @@ stateDiagram-v2
   aucune source valide → chaîne `inactive`. Le géo-blocage utilise l'intersection pays de l'utilisateur ∩
   `territories` de la source active.
 - **Jamais d'exposition directe** : le client reçoit `https://live.chouf.tn/c/{exp}/{sig}/{channelId}/index.m3u8`. La
-  gateway récupère la playlist de la source active, **réécrit** chaque URI en URL locale opaque (URL amont chiffrée
-  AES-GCM), et relaie les segments. Bunny met les segments en cache (clé de cache sans le token), donc l'origine ne
-  sert chaque segment qu'une fois par PoP. Une bascule est transparente pour le lecteur.
+  gateway récupère la playlist de la source active et **réécrit** chaque URI :
+  - les playlists de variantes deviennent `…/{token}/{channelId}/v/{scellé}` : elles restent sous le jeton du
+    spectateur (vérifié à chaque requête) et ne sont pas mises en cache ;
+  - les segments, sections d'initialisation et clés deviennent `/s/{scellé}`, où `scellé` = AES-256-GCM(URL amont,
+    expiration 10 min). Ce chemin est **identique pour tous les spectateurs**, donc Bunny ne demande chaque segment
+    qu'une fois par PoP, et il est impossible d'en déduire l'adresse amont ou d'énumérer d'autres segments.
+  Une bascule de source est transparente : la playlist suivante pointe simplement vers la nouvelle origine.
+- **Événements propres** (ingestion MediaMTX) : même mécanisme sous le préfixe `/e/`, l'amont étant le serveur
+  MediaMTX interne. MediaMTX n'est jamais exposé : il n'autorise les publications qu'après validation de la clé de
+  stream par la gateway (`live_event_keys`, lisible par le seul rôle service) et les lectures que depuis la gateway.
+- **Chat** : table `chat_messages` + Supabase Realtime (`postgres_changes`), RLS pour l'écriture (soi-même, événement
+  en direct), limite de 5 messages / 10 s par trigger, suppression douce par l'admin.
+- **Compteur de spectateurs** : les heartbeats du lecteur alimentent un ensemble trié Redis par chaîne ou événement ;
+  le compte porte sur les sessions vues dans les 30 dernières secondes.
+- **Replay** : à la fin de l'événement (délai de tolérance de 2 min aux coupures d'encodeur), le worker concatène
+  les enregistrements fMP4 de MediaMTX, crée un asset VOD et le transcode comme un film.
 
 ## 6. Sécurité
 

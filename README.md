@@ -3,7 +3,8 @@
 Plateforme de streaming VOD et live pour le Maghreb : films, séries et chaînes sous licence. Interface en arabe (RTL), en français et en anglais.
 
 - **Architecture et coûts** : [`docs/architecture.md`](docs/architecture.md)
-- **Phase 1, tâches et état** : [`docs/phase-1-tasks.md`](docs/phase-1-tasks.md)
+- **Phase 1 (VOD), tâches et état** : [`docs/phase-1-tasks.md`](docs/phase-1-tasks.md)
+- **Phase 2 (live), tâches et état** : [`docs/phase-2-tasks.md`](docs/phase-2-tasks.md)
 - **Exploitation** (R2, Cloudflare, Konnect, mise en production) : [`docs/operations.md`](docs/operations.md)
 
 ## Contenu du dépôt
@@ -11,9 +12,10 @@ Plateforme de streaming VOD et live pour le Maghreb : films, séries et chaînes
 | Dossier | Rôle |
 |---|---|
 | `apps/web` | Next.js 16 : site viewer, back-office `/admin`, API (lecture signée, paiements, uploads) |
-| `apps/worker` | Workers BullMQ : transcodage FFmpeg → HLS, tâches planifiées (abonnements, sessions, licences) |
+| `apps/worker` | Workers BullMQ : transcodage FFmpeg → HLS, supervision des sources (bascule, incidents, alertes), live-to-VOD, tâches planifiées |
 | `apps/edge` | Passerelle VOD signée : Cloudflare Worker devant R2 en prod, serveur Node en dev |
-| `packages/shared` | Types DB, schémas zod, signature des URLs, droits, échelle d'encodage, bascule des sources |
+| `apps/gateway` | Passerelle live : proxy HLS signé des chaînes sous licence et des événements MediaMTX, hooks d'ingestion |
+| `packages/shared` | Types DB, schémas zod, signature des URLs, droits, échelle d'encodage, réécriture HLS, règles de supervision et de bascule |
 | `supabase` | Migrations SQL + RLS (source de vérité), seed, tests SQL |
 
 ## Prérequis
@@ -28,7 +30,7 @@ cp .env.example apps/web/.env.local     # puis compléter les clés Supabase (vo
 
 supabase start                           # Postgres + Auth + Realtime, applique migrations et seed
 export SUPABASE_SERVICE_ROLE_KEY=…       # depuis `supabase status`
-docker compose -f docker-compose.dev.yml up -d --build   # Redis, SeaweedFS (S3), edge :8787, worker
+docker compose -f docker-compose.dev.yml up -d --build   # Redis, SeaweedFS (S3), edge :8787, worker, gateway :8788, MediaMTX
 
 pnpm --filter @chouf/web dev             # http://localhost:3000 → /ar
 ```
