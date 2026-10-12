@@ -1,0 +1,14 @@
+node_modules/
+.next/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+.wrangler/
+.dev.vars
+.DS_Store
+/tmp/
+supabase/.temp/
+supabase/.branches/
