@@ -186,22 +186,22 @@ select tests.ok(
   'active_subscription finds the subscription');
 
 -- Concurrent streams
-select public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, 'device-aaaa', 'TN', 2);
-select public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, 'device-bbbb', 'TN', 2);
-select public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, 'device-aaaa', 'TN', 2);
+select public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, null, 'device-aaaa', 'TN', 2);
+select public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, null, 'device-bbbb', 'TN', 2);
+select public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, null, 'device-aaaa', 'TN', 2);
 select tests.ok(
   (select count(*) = 2 from public.playback_sessions where user_id = '00000000-0000-0000-0000-00000000000b' and ended_at is null),
   'same device reuses its slot');
 do $$
 begin
-  perform public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, 'device-cccc', 'TN', 2);
+  perform public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, null, 'device-cccc', 'TN', 2);
   raise exception 'FAILED: third stream allowed';
 exception when sqlstate 'CH001' then raise notice 'ok - third concurrent stream is refused';
 end;
 $$;
 update public.playback_sessions set last_heartbeat_at = now() - interval '5 minutes'
   where device_id = 'device-bbbb';
-select public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, 'device-cccc', 'TN', 2);
+select public.open_playback_session('00000000-0000-0000-0000-00000000000b', '20000000-0000-0000-0000-000000000001', null, null, 'device-cccc', 'TN', 2);
 select tests.ok(true, 'stale sessions free their slot');
 
 update public.subscriptions set current_period_end = now() - interval '1 second';

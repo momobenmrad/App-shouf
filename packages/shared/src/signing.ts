@@ -1,13 +1,15 @@
 // Signed, time-limited playback URLs. The token lives in the path:
 //   {base}/t/{exp}/{sig}/{resourceId}/master.m3u8   (VOD)
-//   {base}/c/{exp}/{sig}/{resourceId}/index.m3u8    (live channel, Phase 2)
+//   {base}/c/{exp}/{sig}/{resourceId}/index.m3u8    (live channel)
+//   {base}/e/{exp}/{sig}/{resourceId}/index.m3u8    (live event, own ingest)
 // HLS players resolve variant playlists and segments relative to the manifest URL, so every
 // request below the manifest carries the token without rewriting playlists.
 // Uses WebCrypto only, so the same code runs in Node, Next.js and Cloudflare Workers.
 
-export type TokenScope = 'vod' | 'live';
+export type TokenScope = 'vod' | 'live' | 'event';
 
-const SCOPE_PREFIX: Record<TokenScope, string> = { vod: 't', live: 'c' };
+const SCOPE_PREFIX: Record<TokenScope, string> = { vod: 't', live: 'c', event: 'e' };
+const PREFIX_SCOPE: Record<string, TokenScope> = { t: 'vod', c: 'live', e: 'event' };
 const encoder = new TextEncoder();
 type HmacKey = Awaited<ReturnType<typeof crypto.subtle.importKey>>;
 const keyCache = new Map<string, Promise<HmacKey>>();
@@ -73,7 +75,7 @@ export type VerifyResult =
   | { ok: true; scope: TokenScope; resourceId: string; exp: number; rest: string }
   | { ok: false; reason: 'malformed' | 'expired' | 'bad_signature' };
 
-const PATH_RE = /^\/(t|c)\/(\d{1,12})\/([A-Za-z0-9_-]{43})\/([0-9a-f-]{36})\/(.+)$/;
+const PATH_RE = /^\/(t|c|e)\/(\d{1,12})\/([A-Za-z0-9_-]{43})\/([0-9a-f-]{36})\/(.+)$/;
 
 /**
  * Verifies a signed path. `rest` is the path below the resource id (e.g. "720p/seg_0001.ts");
@@ -86,7 +88,7 @@ export async function verifySignedPath(path: string, secret: string, nowSeconds:
   if (rest.split('/').some((seg) => seg === '..' || seg === '.' || seg === '')) {
     return { ok: false, reason: 'malformed' };
   }
-  const scope: TokenScope = prefix === 't' ? 'vod' : 'live';
+  const scope = PREFIX_SCOPE[prefix]!;
   const exp = Number(expRaw);
   if (exp <= nowSeconds) return { ok: false, reason: 'expired' };
   const sig = fromBase64Url(sigRaw);

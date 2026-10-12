@@ -36,6 +36,7 @@ export type ChannelStatus = 'active' | 'inactive';
 export type SourceKind = 'external_hls' | 'internal_ingest';
 export type SourceHealth = 'unknown' | 'healthy' | 'degraded' | 'down';
 export type IncidentKind = 'down' | 'degraded' | 'failover' | 'failback' | 'license_expired' | 'all_sources_down';
+export type LiveEventStatus = 'scheduled' | 'live' | 'ended';
 
 export type Rendition = {
   name: string;
@@ -218,6 +219,7 @@ export type PlaybackSessionRow = {
   user_id: string;
   asset_id: string | null;
   channel_id: string | null;
+  event_id: string | null;
   device_id: string;
   country: string | null;
   started_at: string;
@@ -255,8 +257,51 @@ export type ChannelSourceRow = {
   consecutive_failures: number;
   consecutive_successes: number;
   last_checked_at: string | null;
+  last_media_sequence: number | null;
+  last_sequence_change_at: string | null;
+  last_latency_ms: number | null;
+  last_bitrate_kbps: number | null;
+  last_error: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type LiveEventRow = {
+  id: string;
+  slug: string;
+  name: I18nText;
+  description: I18nText;
+  poster_path: string | null;
+  access: AccessLevel;
+  geo_allow: string[];
+  published: boolean;
+  status: LiveEventStatus;
+  scheduled_at: string | null;
+  started_at: string | null;
+  ended_at: string | null;
+  stream_path: string;
+  chat_enabled: boolean;
+  record: boolean;
+  replay_asset_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type LiveEventKeyRow = {
+  event_id: string;
+  key_hash: string;
+  rotated_at: string;
+};
+
+export type ChatMessageRow = {
+  id: number;
+  event_id: string;
+  user_id: string;
+  display_name: string;
+  body: string;
+  created_at: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
 };
 
 export type SourceHealthCheckRow = {
@@ -386,7 +431,32 @@ export type Database = {
       >;
       playback_sessions: Table<
         PlaybackSessionRow,
-        'id' | 'asset_id' | 'channel_id' | 'country' | 'started_at' | 'last_heartbeat_at' | 'ended_at'
+        'id' | 'asset_id' | 'channel_id' | 'event_id' | 'country' | 'started_at' | 'last_heartbeat_at' | 'ended_at'
+      >;
+      live_events: Table<
+        LiveEventRow,
+        | 'id'
+        | 'description'
+        | 'poster_path'
+        | 'access'
+        | 'geo_allow'
+        | 'published'
+        | 'status'
+        | 'scheduled_at'
+        | 'started_at'
+        | 'ended_at'
+        | 'chat_enabled'
+        | 'record'
+        | 'replay_asset_id'
+        | 'created_at'
+        | 'updated_at',
+        [Rel<'live_events_replay_asset_id_fkey', ['replay_asset_id'], 'media_assets'>]
+      >;
+      live_event_keys: Table<LiveEventKeyRow, 'rotated_at', [Rel<'live_event_keys_event_id_fkey', ['event_id'], 'live_events', true>]>;
+      chat_messages: Table<
+        ChatMessageRow,
+        'id' | 'display_name' | 'created_at' | 'deleted_at' | 'deleted_by',
+        [Rel<'chat_messages_event_id_fkey', ['event_id'], 'live_events'>]
       >;
       channels: Table<
         ChannelRow,
@@ -408,6 +478,11 @@ export type Database = {
         | 'consecutive_failures'
         | 'consecutive_successes'
         | 'last_checked_at'
+        | 'last_media_sequence'
+        | 'last_sequence_change_at'
+        | 'last_latency_ms'
+        | 'last_bitrate_kbps'
+        | 'last_error'
         | 'created_at'
         | 'updated_at',
         [Rel<'channel_sources_channel_id_fkey', ['channel_id'], 'channels'>]
@@ -433,11 +508,13 @@ export type Database = {
       active_subscription: { Args: { p_user_id: string }; Returns: SubscriptionRow };
       apply_successful_payment: { Args: { p_payment_id: string; p_raw?: Json }; Returns: SubscriptionRow };
       expire_subscriptions: { Args: Record<string, never>; Returns: number };
+      authorize_live_publish: { Args: { p_path: string; p_key: string }; Returns: string | null };
       open_playback_session: {
         Args: {
           p_user_id: string;
           p_asset_id: string | null;
           p_channel_id: string | null;
+          p_event_id: string | null;
           p_device_id: string;
           p_country: string | null;
           p_max_streams: number;
@@ -460,6 +537,7 @@ export type Database = {
       source_kind: SourceKind;
       source_health: SourceHealth;
       incident_kind: IncidentKind;
+      live_event_status: LiveEventStatus;
     };
     CompositeTypes: { [_ in never]: never };
   };

@@ -149,3 +149,38 @@ export const channelSourceUpsertSchema = z.object({
   enabled: z.boolean().default(true),
   license_info: licenseInfoSchema,
 });
+
+export const liveEventUpsertSchema = z.object({
+  slug: z.string().trim().toLowerCase().max(80).regex(SLUG),
+  name: requiredI18nText(160),
+  description: i18nTextSchema(2000).default({}),
+  poster_path: z.string().max(300).nullable().optional(),
+  access: accessSchema,
+  geo_allow: countryListSchema.default([]),
+  published: z.boolean().default(false),
+  scheduled_at: z.iso.datetime({ offset: true }).nullable().optional(),
+  chat_enabled: z.boolean().default(true),
+  record: z.boolean().default(true),
+});
+
+export const chatMessageSchema = z.object({
+  eventId: z.uuid(),
+  body: z.string().trim().min(1).max(300),
+});
+
+/** Playback session request: exactly one target. */
+export const livePlaybackSessionSchema = z
+  .object({ channelId: z.uuid().optional(), eventId: z.uuid().optional(), deviceId: deviceIdSchema })
+  .refine((v) => (v.channelId ? 1 : 0) + (v.eventId ? 1 : 0) === 1, { message: 'channelId ou eventId requis' });
+
+/** Body MediaMTX posts to its HTTP authentication hook. */
+export const mediamtxAuthSchema = z.object({
+  user: z.string().default(''),
+  password: z.string().default(''),
+  ip: z.string().default(''),
+  action: z.enum(['publish', 'read', 'playback', 'api', 'metrics', 'pprof']),
+  path: z.string().default(''),
+  protocol: z.string().default(''),
+  id: z.string().nullable().optional(),
+  query: z.string().default(''),
+});

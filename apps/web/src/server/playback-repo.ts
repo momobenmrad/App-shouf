@@ -46,6 +46,7 @@ export function createPlaybackRepo(db: ServiceClient): PlaybackRepo {
         p_user_id: userId,
         p_asset_id: assetId,
         p_channel_id: null,
+        p_event_id: null,
         p_device_id: deviceId,
         p_country: country,
         p_max_streams: maxStreams,

@@ -7,3 +7,6 @@ export * from './storage-keys';
 export * from './channels';
 export * from './schemas';
 export * from './queues';
+export * from './hls';
+export * from './sealed-url';
+export * from './monitoring';
