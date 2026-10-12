@@ -12,6 +12,8 @@ const schema = z.object({
   TRANSCODE_CONCURRENCY: z.coerce.number().int().min(1).max(8).default(1),
   TRANSCODE_PRESET: z.enum(['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow']).default('veryfast'),
   WORK_DIR: z.string().default('/tmp/chouf-work'),
+  /** Where MediaMTX writes event recordings (shared volume). */
+  RECORDINGS_DIR: z.string().default('/recordings'),
   ALERT_WEBHOOK_URL: z.url().optional(),
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 });
