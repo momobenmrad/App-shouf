@@ -1,9 +1,9 @@
 'use client';
 
 import { type ChannelDraft, playlistToDrafts } from '@chouf/shared';
-import { useActionState, useMemo, useState } from 'react';
+import { useActionState, useMemo, useState, useTransition } from 'react';
 import { Link } from '@/i18n/navigation';
-import { type ImportResult, importM3uAction } from '@/server/actions/m3u-import';
+import { type ImportResult, importM3uAction, loadPlaylistFromUrlAction } from '@/server/actions/m3u-import';
 import { L, inputCls } from './fields';
 
 const CATEGORY: Record<ChannelDraft['category'], string> = {
@@ -21,6 +21,18 @@ export function M3uImport() {
   const [state, action, pending] = useActionState<ImportResult, FormData>(importM3uAction, {});
   const [text, setText] = useState('');
   const [includeRadios, setIncludeRadios] = useState(false);
+  const [url, setUrl] = useState('');
+  const [urlError, setUrlError] = useState<string | null>(null);
+  const [loading, startLoading] = useTransition();
+
+  function loadFromUrl() {
+    setUrlError(null);
+    startLoading(async () => {
+      const res = await loadPlaylistFromUrlAction(url);
+      if (res.text) setText(res.text);
+      else setUrlError(res.error ?? 'Téléchargement impossible.');
+    });
+  }
 
   // Same parser as the server: the preview is exactly what will be imported.
   const preview = useMemo(() => (text.trim() ? playlistToDrafts(text, { includeRadios }) : null), [text, includeRadios]);
@@ -61,6 +73,26 @@ export function M3uImport() {
       </div>
 
       <div className="space-y-3 rounded-lg border border-line bg-panel p-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (url) loadFromUrl();
+              }
+            }}
+            placeholder="https://iptv-org.github.io/iptv/countries/tn.m3u"
+            dir="ltr"
+            className={`${inputCls} min-w-0 flex-1`}
+          />
+          <button type="button" onClick={loadFromUrl} disabled={!url || loading} className="rounded-md bg-white/10 px-4 py-2 text-sm hover:bg-white/20 disabled:opacity-50">
+            {loading ? 'Chargement…' : 'Charger depuis l’adresse'}
+          </button>
+        </div>
+        {urlError && <p className="text-xs text-red-400">{urlError}</p>}
         <div className="flex flex-wrap items-center gap-3">
           <input type="file" accept=".m3u,.m3u8,audio/x-mpegurl,application/vnd.apple.mpegurl,text/plain" onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} className="text-xs" />
           <span className="text-xs text-muted">ou collez le contenu :</span>
