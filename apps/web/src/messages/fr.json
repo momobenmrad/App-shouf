@@ -14,7 +14,8 @@
     "admin": "Administration",
     "subscribe": "S'abonner",
     "logout": "Déconnexion",
-    "live": "Direct"
+    "live": "Direct",
+    "profiles": "Changer de profil"
   },
   "home": {
     "continue": "Continuer à regarder",
@@ -139,5 +140,19 @@
     "closed": "Le chat est fermé.",
     "failed": "Envoi impossible.",
     "delete": "Supprimer"
+  },
+  "profiles": {
+    "who": "Qui regarde ?",
+    "kids": "Enfant",
+    "manage": "Gérer les profils",
+    "back": "Retour",
+    "name": "Nom",
+    "kidsProfile": "Profil enfant (contenus jusqu’à 12+ uniquement)",
+    "maturity": "Classification maximale",
+    "allAges": "Tous publics",
+    "save": "Enregistrer",
+    "limit": "5 profils maximum par compte.",
+    "delete": "Supprimer",
+    "add": "Ajouter un profil"
   }
 }

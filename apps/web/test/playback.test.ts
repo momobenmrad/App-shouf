@@ -22,12 +22,13 @@ function repo(overrides: Partial<PlaybackRepo> = {}, state = { sessions: 0 }): P
     getActivePlanStreams: async () => 2,
     openSession: async ({ maxStreams }) => (state.sessions++ < maxStreams ? { id: `session-${state.sessions}` } : 'too_many_streams'),
     getProgress: async () => ({ position_seconds: 1200, completed: false }),
+    tagSession: async () => {},
     ...overrides,
   };
 }
 
 const config = { vodBaseUrl: 'https://vod.chouf.tn', signingSecret: SECRET, freeMaxStreams: 1, nowSeconds: NOW };
-const input = { userId: 'u1', titleId: MOVIE, deviceId: 'device-123456', country: 'TN' };
+const input = { userId: 'u1', profileId: 'p1', titleId: MOVIE, deviceId: 'device-123456', country: 'TN' };
 
 describe('startPlayback', () => {
   it('returns a signed URL valid for the asset and the resume position', async () => {

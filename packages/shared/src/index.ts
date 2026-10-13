@@ -10,3 +10,4 @@ export * from './queues';
 export * from './hls';
 export * from './sealed-url';
 export * from './monitoring';
+export * from './maturity';

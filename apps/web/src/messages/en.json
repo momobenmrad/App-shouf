@@ -14,7 +14,8 @@
     "admin": "Admin",
     "subscribe": "Subscribe",
     "logout": "Sign out",
-    "live": "Live"
+    "live": "Live",
+    "profiles": "Switch profile"
   },
   "home": {
     "continue": "Continue watching",
@@ -139,5 +140,19 @@
     "closed": "The chat is closed.",
     "failed": "Could not send.",
     "delete": "Delete"
+  },
+  "profiles": {
+    "who": "Who’s watching?",
+    "kids": "Kids",
+    "manage": "Manage profiles",
+    "back": "Back",
+    "name": "Name",
+    "kidsProfile": "Kids profile (content rated up to 12+ only)",
+    "maturity": "Maximum rating",
+    "allAges": "All ages",
+    "save": "Save",
+    "limit": "At most 5 profiles per account.",
+    "delete": "Delete",
+    "add": "Add a profile"
   }
 }

@@ -1,5 +1,5 @@
 import 'server-only';
-import type { TitleRow } from '@chouf/shared';
+import type { MaturityRating, TitleRow } from '@chouf/shared';
 import { env } from './env';
 import type { UserClient } from './supabase';
 
@@ -13,23 +13,25 @@ export function artworkUrl(path: string | null | undefined): string | null {
   return `${env().VOD_BASE_URL.replace(/\/+$/, '')}/a/${path}`;
 }
 
-export async function latestTitles(db: UserClient, kind: 'movie' | 'series', limit = 18): Promise<CardTitle[]> {
+export async function latestTitles(db: UserClient, kind: 'movie' | 'series', ratings: MaturityRating[], limit = 18): Promise<CardTitle[]> {
   const { data } = await db
     .from('titles')
     .select(CARD_COLUMNS)
     .eq('status', 'published')
     .eq('kind', kind)
+    .in('maturity_rating', ratings)
     .order('published_at', { ascending: false })
     .limit(limit);
   return data ?? [];
 }
 
-export async function featuredTitle(db: UserClient): Promise<CardTitle | null> {
+export async function featuredTitle(db: UserClient, ratings: MaturityRating[]): Promise<CardTitle | null> {
   const { data } = await db
     .from('titles')
     .select(CARD_COLUMNS)
     .eq('status', 'published')
     .eq('featured', true)
+    .in('maturity_rating', ratings)
     .order('published_at', { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -43,11 +45,11 @@ export interface ContinueItem {
   duration: number | null;
 }
 
-export async function continueWatching(db: UserClient, userId: string): Promise<ContinueItem[]> {
+export async function continueWatching(db: UserClient, profileId: string): Promise<ContinueItem[]> {
   const { data } = await db
     .from('playback_progress')
     .select(`position_seconds, duration_seconds, episode_id, titles!inner(${CARD_COLUMNS})`)
-    .eq('user_id', userId)
+    .eq('profile_id', profileId)
     .eq('completed', false)
     .order('updated_at', { ascending: false })
     .limit(12);

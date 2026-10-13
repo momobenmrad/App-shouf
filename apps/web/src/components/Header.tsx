@@ -2,11 +2,14 @@ import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 import { Link } from '@/i18n/navigation';
 import { getViewer } from '@/server/auth';
+import { getActiveProfile } from '@/server/profile';
+import { ProfileAvatar } from './ProfileAvatar';
 import { LocaleSwitcher } from './LocaleSwitcher';
 
 export async function Header() {
   const t = await getTranslations('nav');
   const viewer = await getViewer();
+  const profile = await getActiveProfile(viewer);
   return (
     <header className="sticky top-0 z-30 border-b border-line/60 bg-ink/85 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
@@ -26,7 +29,14 @@ export async function Header() {
           <LocaleSwitcher />
         </Suspense>
         {viewer ? (
-          <Link href="/account" className="rounded-md bg-panel px-3 py-1.5 text-sm hover:bg-line">{t('account')}</Link>
+          <>
+            {profile && (
+              <Link href="/profiles" title={t('profiles')} className="flex items-center gap-2 rounded-md px-1 py-1 hover:bg-panel">
+                <ProfileAvatar avatar={profile.avatar} color={profile.color} size="sm" />
+              </Link>
+            )}
+            <Link href="/account" className="rounded-md bg-panel px-3 py-1.5 text-sm hover:bg-line">{t('account')}</Link>
+          </>
         ) : (
           <>
             <Link href="/login" className="text-sm text-white/80 hover:text-white">{t('login')}</Link>

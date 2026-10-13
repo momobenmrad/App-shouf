@@ -104,17 +104,18 @@ select tests.ok((select display_name = 'Nouveau nom' from public.profiles), 'vie
 update public.titles set status = 'archived' where slug = 'demo-film';
 select tests.ok((select count(*) = 2 from public.titles where status = 'published'), 'viewer cannot modify titles');
 
-insert into public.playback_progress (user_id, asset_id, title_id, position_seconds)
-  select auth.uid(), '20000000-0000-0000-0000-000000000001', id, 120 from public.titles where slug = 'demo-film';
+insert into public.playback_progress (user_id, profile_id, asset_id, title_id, position_seconds)
+  select auth.uid(), (select id from public.viewer_profiles where user_id = auth.uid() and is_default), '20000000-0000-0000-0000-000000000001', id, 120
+  from public.titles where slug = 'demo-film';
 select tests.ok((select position_seconds = 120 from public.playback_progress), 'viewer writes own progress');
 
 do $$
 begin
-  insert into public.playback_progress (user_id, asset_id, title_id, position_seconds)
-    select '00000000-0000-0000-0000-00000000000c', '20000000-0000-0000-0000-000000000001', id, 5
+  insert into public.playback_progress (user_id, profile_id, asset_id, title_id, position_seconds)
+    select '00000000-0000-0000-0000-00000000000c', (select id from public.viewer_profiles where user_id = auth.uid() and is_default), '20000000-0000-0000-0000-000000000001', id, 5
     from public.titles where slug = 'demo-film';
   raise exception 'FAILED: viewer wrote progress for someone else';
-exception when insufficient_privilege then raise notice 'ok - viewer cannot write progress of another user';
+exception when insufficient_privilege or sqlstate 'CH004' then raise notice 'ok - viewer cannot write progress of another user';
 end;
 $$;
 

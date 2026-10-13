@@ -2,6 +2,8 @@ import type { Locale } from '@chouf/shared';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { TitleCard } from '@/components/TitleCard';
 import { createUserClient } from '@/server/supabase';
+import { getViewer } from '@/server/auth';
+import { getActiveProfile, visibleRatings } from '@/server/profile';
 
 type Props = { params: Promise<{ locale: Locale }>; searchParams: Promise<{ q?: string }> };
 
@@ -12,7 +14,10 @@ export default async function SearchPage({ params, searchParams }: Props) {
   const t = await getTranslations('search');
 
   let results: Awaited<ReturnType<typeof search>> = [];
-  if (q.length >= 2) results = await search(q);
+  if (q.length >= 2) {
+    const ratings = visibleRatings(await getActiveProfile(await getViewer()));
+    results = (await search(q)).filter((r) => ratings.includes(r.maturity_rating));
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">

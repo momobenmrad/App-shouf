@@ -5,7 +5,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { routing } from './i18n/routing';
 
 const handleI18n = createIntlMiddleware(routing);
-const PROTECTED = /^\/(ar|fr|en)\/(admin|account|watch|live\/(?:channel|event))(\/|$)/;
+const PROTECTED = /^\/(ar|fr|en)\/(admin|account|watch|profiles|live\/(?:channel|event))(\/|$)/;
 
 /** Locale routing + Supabase session refresh + sign-in gate for private pages. */
 export default async function proxy(request: NextRequest) {

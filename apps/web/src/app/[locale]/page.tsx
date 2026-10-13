@@ -4,6 +4,7 @@ import { Rail } from '@/components/Rail';
 import { TitleCard } from '@/components/TitleCard';
 import { Link } from '@/i18n/navigation';
 import { getViewer } from '@/server/auth';
+import { getActiveProfile, visibleRatings } from '@/server/profile';
 import { artworkUrl, continueWatching, featuredTitle, latestTitles } from '@/server/catalog';
 import { createUserClient } from '@/server/supabase';
 
@@ -13,11 +14,13 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
   const t = await getTranslations('home');
   const db = await createUserClient();
   const viewer = await getViewer();
+  const profile = await getActiveProfile(viewer);
+  const ratings = visibleRatings(profile);
   const [hero, movies, series, resume] = await Promise.all([
-    featuredTitle(db),
-    latestTitles(db, 'movie'),
-    latestTitles(db, 'series'),
-    viewer ? continueWatching(db, viewer.user.id) : Promise.resolve([]),
+    featuredTitle(db, ratings),
+    latestTitles(db, 'movie', ratings),
+    latestTitles(db, 'series', ratings),
+    profile ? continueWatching(db, profile.id) : Promise.resolve([]),
   ]);
 
   if (!hero && movies.length === 0 && series.length === 0) {

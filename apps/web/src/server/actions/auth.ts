@@ -3,7 +3,9 @@
 import { isLocale } from '@chouf/shared';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { cookies } from 'next/headers';
 import { env } from '../env';
+import { PROFILE_COOKIE, profileCookieOptions } from '../profile';
 import { createUserClient } from '../supabase';
 
 const credentials = z.object({
@@ -22,12 +24,18 @@ export async function signInAction(form: FormData) {
   const locale = parsed.success ? parsed.data.locale : 'ar';
   if (!parsed.success) redirect(`/${locale}/login?error=invalid`);
   const supabase = await createUserClient();
-  const { error } = await supabase.auth.signInWithPassword({ email: parsed.data.email, password: parsed.data.password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email: parsed.data.email, password: parsed.data.password });
   if (error) {
     const next = parsed.data.next ? `&next=${encodeURIComponent(parsed.data.next)}` : '';
     redirect(`/${locale}/login?error=invalid${next}`);
   }
-  redirect(safeNext(parsed.data.next, locale));
+  // Accounts with several profiles choose one first; others land directly on their default profile.
+  const { data: profiles } = await supabase.from('viewer_profiles').select('id, is_default').eq('user_id', data.user.id);
+  const target = safeNext(parsed.data.next, locale);
+  if ((profiles?.length ?? 0) > 1) redirect(`/${locale}/profiles?next=${encodeURIComponent(target)}`);
+  const only = profiles?.[0];
+  if (only) (await cookies()).set(PROFILE_COOKIE, only.id, profileCookieOptions());
+  redirect(target);
 }
 
 export async function signUpAction(form: FormData) {
@@ -55,6 +63,7 @@ export async function signOutAction(form: FormData) {
   const locale = String(form.get('locale') ?? 'ar');
   const supabase = await createUserClient();
   await supabase.auth.signOut();
+  (await cookies()).delete(PROFILE_COOKIE);
   redirect(`/${isLocale(locale) ? locale : 'ar'}`);
 }
 

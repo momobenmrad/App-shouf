@@ -56,11 +56,14 @@ export function createPlaybackRepo(db: ServiceClient): PlaybackRepo {
       if (!data) throw new Error('open_playback_session returned nothing');
       return { id: data.id };
     },
-    async getProgress(userId, assetId) {
+    async tagSession(sessionId, profileId) {
+      await db.from('playback_sessions').update({ profile_id: profileId }).eq('id', sessionId);
+    },
+    async getProgress(profileId, assetId) {
       const { data, error } = await db
         .from('playback_progress')
         .select('position_seconds, completed')
-        .eq('user_id', userId)
+        .eq('profile_id', profileId)
         .eq('asset_id', assetId)
         .maybeSingle();
       fail(error);

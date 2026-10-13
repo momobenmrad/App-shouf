@@ -3,6 +3,8 @@ import { env } from '@/server/env';
 import { isSameOrigin, json, jsonError, parseBody } from '@/server/http';
 import { createServiceClient, createUserClient } from '@/server/supabase';
 import { recordViewer } from '@/server/viewers';
+import { getViewer } from '@/server/auth';
+import { getActiveProfile } from '@/server/profile';
 
 /** Keeps the playback session alive and saves the resume position. Also accepts sendBeacon. */
 export async function POST(request: Request) {
@@ -48,11 +50,13 @@ export async function POST(request: Request) {
     db.from('episodes').select('id, seasons!inner(title_id)').eq('asset_id', session.asset_id).maybeSingle(),
   ]);
   const titleId = title?.id ?? (episode?.seasons as unknown as { title_id: string } | undefined)?.title_id;
-  if (titleId) {
+  const profile = await getActiveProfile(await getViewer());
+  if (titleId && profile) {
     const position = Math.floor(body.data.positionSeconds);
     const duration = body.data.durationSeconds ? Math.floor(body.data.durationSeconds) : null;
     await supabase.from('playback_progress').upsert({
       user_id: user.id,
+      profile_id: profile.id,
       asset_id: session.asset_id,
       title_id: titleId,
       episode_id: episode?.id ?? null,

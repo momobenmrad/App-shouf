@@ -114,7 +114,7 @@ export type TitleRow = {
   name: I18nText;
   synopsis: I18nText;
   release_year: number | null;
-  maturity_rating: 'all' | '10+' | '12+' | '16+' | '18+';
+  maturity_rating: MaturityRating;
   poster_path: string | null;
   backdrop_path: string | null;
   access: AccessLevel;
@@ -163,8 +163,24 @@ export type EpisodeRow = {
   updated_at: string;
 };
 
+export type MaturityRating = 'all' | '10+' | '12+' | '16+' | '18+';
+
+export type ViewerProfileRow = {
+  id: string;
+  user_id: string;
+  name: string;
+  avatar: string;
+  color: number;
+  is_kids: boolean;
+  maturity_max: MaturityRating;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
 export type PlaybackProgressRow = {
   user_id: string;
+  profile_id: string;
   asset_id: string;
   title_id: string;
   episode_id: string | null;
@@ -220,6 +236,7 @@ export type PlaybackSessionRow = {
   asset_id: string | null;
   channel_id: string | null;
   event_id: string | null;
+  profile_id: string | null;
   device_id: string;
   country: string | null;
   started_at: string;
@@ -406,10 +423,15 @@ export type Database = {
           Rel<'episodes_asset_id_fkey', ['asset_id'], 'media_assets'>,
         ]
       >;
+      viewer_profiles: Table<
+        ViewerProfileRow,
+        'id' | 'avatar' | 'color' | 'is_kids' | 'maturity_max' | 'is_default' | 'created_at' | 'updated_at'
+      >;
       playback_progress: Table<
         PlaybackProgressRow,
         'episode_id' | 'position_seconds' | 'duration_seconds' | 'completed' | 'updated_at',
         [
+          Rel<'playback_progress_profile_id_fkey', ['profile_id'], 'viewer_profiles'>,
           Rel<'playback_progress_title_id_fkey', ['title_id'], 'titles'>,
           Rel<'playback_progress_episode_id_fkey', ['episode_id'], 'episodes'>,
           Rel<'playback_progress_asset_id_fkey', ['asset_id'], 'media_assets'>,
@@ -431,7 +453,7 @@ export type Database = {
       >;
       playback_sessions: Table<
         PlaybackSessionRow,
-        'id' | 'asset_id' | 'channel_id' | 'event_id' | 'country' | 'started_at' | 'last_heartbeat_at' | 'ended_at'
+        'id' | 'asset_id' | 'channel_id' | 'event_id' | 'profile_id' | 'country' | 'started_at' | 'last_heartbeat_at' | 'ended_at'
       >;
       live_events: Table<
         LiveEventRow,
@@ -509,6 +531,7 @@ export type Database = {
       apply_successful_payment: { Args: { p_payment_id: string; p_raw?: Json }; Returns: SubscriptionRow };
       expire_subscriptions: { Args: Record<string, never>; Returns: number };
       authorize_live_publish: { Args: { p_path: string; p_key: string }; Returns: string | null };
+      maturity_rank: { Args: { rating: string }; Returns: number };
       open_playback_session: {
         Args: {
           p_user_id: string;

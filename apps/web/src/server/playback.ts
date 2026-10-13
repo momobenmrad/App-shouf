@@ -14,11 +14,15 @@ export interface PlaybackRepo {
   /** Active subscription's max_streams, or null when the user has no active subscription. */
   getActivePlanStreams(userId: string): Promise<number | null>;
   openSession(input: { userId: string; assetId: string; deviceId: string; country: string | null; maxStreams: number }): Promise<{ id: string } | 'too_many_streams'>;
-  getProgress(userId: string, assetId: string): Promise<{ position_seconds: number; completed: boolean } | null>;
+  getProgress(profileId: string, assetId: string): Promise<{ position_seconds: number; completed: boolean } | null>;
+  /** Records which profile opened the session (for history), best effort. */
+  tagSession(sessionId: string, profileId: string): Promise<void>;
 }
 
 export interface StartPlaybackInput {
   userId: string | null;
+  /** Active viewer profile; null when the account has none (should not happen) */
+  profileId: string | null;
   titleId: string;
   episodeId?: string;
   deviceId: string;
@@ -97,7 +101,8 @@ export async function startPlayback(repo: PlaybackRepo, input: StartPlaybackInpu
     exp: expiresAt,
     entry: 'master.m3u8',
   });
-  const progress = await repo.getProgress(input.userId, assetId);
+  if (input.profileId) await repo.tagSession(session.id, input.profileId);
+  const progress = input.profileId ? await repo.getProgress(input.profileId, assetId) : null;
   return {
     ok: true,
     url,

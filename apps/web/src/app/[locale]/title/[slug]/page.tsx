@@ -6,6 +6,8 @@ import { cache } from 'react';
 import { Link } from '@/i18n/navigation';
 import { artworkUrl } from '@/server/catalog';
 import { createUserClient } from '@/server/supabase';
+import { getViewer } from '@/server/auth';
+import { getActiveProfile, visibleRatings } from '@/server/profile';
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 
@@ -31,6 +33,8 @@ export default async function TitlePage({ params }: Props) {
   setRequestLocale(locale);
   const title = await loadTitle(slug);
   if (!title) notFound();
+  const profile = await getActiveProfile(await getViewer());
+  if (!visibleRatings(profile).includes(title.maturity_rating)) notFound();
   const t = await getTranslations('title');
 
   const name = pickText(title.name, locale);

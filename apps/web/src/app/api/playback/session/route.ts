@@ -8,6 +8,8 @@ import { createPlaybackRepo } from '@/server/playback-repo';
 import { startLivePlayback } from '@/server/live';
 import { createLiveRepo } from '@/server/live-repo';
 import { createServiceClient, createUserClient } from '@/server/supabase';
+import { getViewer } from '@/server/auth';
+import { getActiveProfile } from '@/server/profile';
 
 export async function POST(request: Request) {
   if (!isSameOrigin(request, env().APP_URL)) return jsonError(403, 'cross_origin');
@@ -30,10 +32,12 @@ export async function POST(request: Request) {
     return json(live);
   }
 
+  const profile = user ? await getActiveProfile(await getViewer()) : null;
   const result = await startPlayback(
     createPlaybackRepo(createServiceClient()),
     {
       userId: user?.id ?? null,
+      profileId: profile?.id ?? null,
       titleId: body.data.titleId,
       episodeId: body.data.episodeId,
       deviceId: body.data.deviceId,

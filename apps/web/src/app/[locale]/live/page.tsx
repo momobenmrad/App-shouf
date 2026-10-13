@@ -3,6 +3,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { artworkUrl } from '@/server/catalog';
 import { createUserClient } from '@/server/supabase';
+import { getViewer } from '@/server/auth';
+import { getActiveProfile } from '@/server/profile';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +15,9 @@ export default async function LivePage({ params }: { params: Promise<{ locale: L
   setRequestLocale(locale);
   const t = await getTranslations('live');
   const db = await createUserClient();
-  const [{ data: channels }, { data: events }] = await Promise.all([
+  const profile = await getActiveProfile(await getViewer());
+  const kids = profile?.is_kids ?? false;
+  const [{ data: allChannels }, { data: allEvents }] = await Promise.all([
     db.from('channels').select('id, slug, name, logo_path, category, access, active_source_id').eq('status', 'active').order('sort_order'),
     db
       .from('live_events')
@@ -24,6 +28,8 @@ export default async function LivePage({ params }: { params: Promise<{ locale: L
       .order('scheduled_at', { ascending: true, nullsFirst: false })
       .limit(20),
   ]);
+  const channels = kids ? (allChannels ?? []).filter((c) => c.category === 'kids') : allChannels;
+  const events = kids ? [] : allEvents;
   const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' });
   const liveEvents = (events ?? []).filter((e) => e.status === 'live');
   const upcoming = (events ?? []).filter((e) => e.status === 'scheduled');
