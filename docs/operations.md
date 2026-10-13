@@ -70,7 +70,21 @@ Pour changer de CDN (Bunny), il suffit d'un nouvel adaptateur qui implémente le
 - Une source dont la licence expire est désactivée à 00 h 05 (heure de Tunis) ; une chaîne sans source sous licence valide passe inactive. Les licences qui expirent dans moins de 30 jours s'affichent en orange dans `/admin/channels/<id>`.
 - Le journal `/admin/incidents` garde l'historique ; les contrôles de santé bruts sont purgés après 30 jours.
 
-## 5. Konnect
+### Guide des programmes (EPG)
+- Sur chaque chaîne (`/admin/channels/<id>`), renseigner l'URL d'un fichier XMLTV et l'identifiant `<channel id="…">` de la chaîne dans ce fichier, puis « Importer le guide maintenant ». Le worker réimporte toutes les chaînes chaque nuit à 3 h 10 (heure de Tunis), sur une fenêtre de 6 h en arrière et 8 jours en avant.
+- Le fichier XMLTV doit venir du diffuseur ou d'un fournisseur sous contrat (comme les flux).
+
+## 5. Protection du contenu
+
+- Par défaut, le worker chiffre toutes les nouvelles renditions en **HLS AES-128** (`TRANSCODE_PROTECTION=aes128`). La clé (16 octets) est propre à chaque vidéo et stockée avec les playlists : elle n'est accessible que par le chemin signé et limité dans le temps. Les vidéos déjà transcodées en clair restent en clair ; relancer leur transcodage les chiffre.
+- Ce chiffrement empêche la lecture d'un segment récupéré hors de la plateforme, mais pas la capture d'écran ni l'extraction par un lecteur modifié : seul un DRM (Widevine, FairPlay, PlayReady) le fait. Pour l'activer plus tard :
+  1. souscrire à un service de licences (EZDRM, PallyCon, Axinom) ;
+  2. remplacer l'empaquetage ffmpeg par Shaka Packager (CMAF, CENC multi-clés) dans un `KeyProvider` `drm` (`apps/worker/src/protection.ts`) qui demande les clés au service ;
+  3. ajouter une route `/api/drm/license` qui relaie la demande de licence du lecteur au service après avoir vérifié la session de lecture ;
+  4. configurer `hls.js` (Widevine) et la lecture native Safari (FairPlay) avec cette route.
+  Le téléchargement hors-ligne dépend de cette étape : sans DRM, un fichier téléchargé est un fichier copié.
+
+## 6. Konnect
 
 1. Ouvrir un compte marchand sur https://dashboard.konnect.network et récupérer la clé API et l'identifiant de wallet.
 2. Tester d'abord en sandbox (`KONNECT_API_URL=https://api.sandbox.konnect.network/api/v2`), puis passer en production (`https://api.konnect.network/api/v2`).
@@ -78,14 +92,14 @@ Pour changer de CDN (Bunny), il suffit d'un nouvel adaptateur qui implémente le
 4. Le statut est toujours revérifié auprès de Konnect avant d'accorder des droits. Le traitement est idempotent, donc un rejeu du webhook est sans risque.
 5. **À vérifier avant la mise en ligne** : les noms de champs de l'API (`init-payment`, `payments/{ref}`) d'après la documentation Konnect en vigueur. Le code les parse de manière défensive (`apps/web/src/server/payments/konnect.ts`).
 
-## 6. Sauvegardes et supervision
+## 7. Sauvegardes et supervision
 
 - Postgres : sauvegardes quotidiennes Supabase (offre Pro). Exporter aussi `pg_dump` chaque semaine vers un autre fournisseur.
 - R2 : les HLS se régénèrent à partir des sources, donc ne supprimez pas `sources/` tant que vous n'avez pas de copie ailleurs.
 - Alertes : renseigner `ALERT_WEBHOOK_URL` (Slack, Discord ou pont Telegram). Le worker y signale les transcodages définitivement échoués et les licences expirées.
 - Disponibilité : Uptime Kuma (ou équivalent) sur `https://chouf.tn/ar` et `https://vod.chouf.tn/health`.
 
-## 7. Rotation des secrets
+## 8. Rotation des secrets
 
 - `PLAYBACK_SIGNING_SECRET` (web, gateway) et `SIGNING_SECRET` (edge) doivent changer en même temps. Les lectures en cours s'interrompent : leur token devient invalide et le lecteur doit être relancé.
 - `MEDIAMTX_HOOK_SECRET` : changer la valeur dans `.env` puis `docker compose up -d mediamtx gateway`. Les diffusions en cours sont coupées.

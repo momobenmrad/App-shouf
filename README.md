@@ -5,6 +5,7 @@ Plateforme de streaming VOD et live pour le Maghreb : films, séries et chaînes
 - **Architecture et coûts** : [`docs/architecture.md`](docs/architecture.md)
 - **Phase 1 (VOD), tâches et état** : [`docs/phase-1-tasks.md`](docs/phase-1-tasks.md)
 - **Phase 2 (live), tâches et état** : [`docs/phase-2-tasks.md`](docs/phase-2-tasks.md)
+- **Phase 3 (profils, EPG, recommandations, protection), tâches et état** : [`docs/phase-3-tasks.md`](docs/phase-3-tasks.md)
 - **Exploitation** (R2, Cloudflare, Konnect, mise en production) : [`docs/operations.md`](docs/operations.md)
 
 ## Contenu du dépôt

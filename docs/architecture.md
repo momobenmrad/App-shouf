@@ -383,8 +383,23 @@ décision qui pèse le plus sur le budget ; c'est pour ça que la signature est 
 - **CI** (GitHub Actions) : lint, typecheck, tests Vitest (avec FFmpeg), tests SQL sur un Postgres éphémère, build Next.js et des images Docker.
 - **Observabilité** : logs JSON (pino), Sentry (offre gratuite), Uptime Kuma pour la disponibilité, tableau de bord des jobs dans le back-office.
 
-## 9. Évolutions prévues (Phase 3)
+## 9. Phase 3 : profils, EPG, recommandations, protection
 
-Chaînes 24/7 avec EPG (table `epg_programs`), apps TV (Expo / React Native TV), DRM multi-clé via un service
-(EZDRM, PallyCon) avec un packager CMAF (Shaka Packager), recommandations (pgvector), téléchargement hors-ligne
-(nécessite le DRM), profils multiples (table `viewer_profiles`, qui touchera `playback_progress`).
+- **Profils** : `viewer_profiles` (5 par compte, un profil par défaut créé par trigger à l'inscription). La progression
+  (`playback_progress`, clé `(profile_id, asset_id)`) et les sessions portent le profil. Le profil actif est un cookie
+  `httpOnly` vérifié côté serveur à chaque requête. Un profil enfant est plafonné à `12+` : le catalogue, la recherche,
+  les fiches et le direct sont filtrés par `maturity_rating` côté serveur (la RLS ne connaît pas le profil actif).
+- **EPG** : `epg_programs` alimentée depuis des fichiers XMLTV (`channels.epg_url`, `channels.epg_channel_id`), import
+  nocturne par le worker et import immédiat depuis le back-office ; `epg_now_next()` pour l'affichage.
+- **Recommandations** : trois fonctions SQL `SECURITY DEFINER` (`trending_titles`, `recommended_titles_for_me`,
+  `similar_titles_for_me`) qui agrègent l'historique de tous les profils sans jamais exposer qui a regardé quoi, et
+  ne renvoient que des titres publiés dans la classification du profil. Pas d'embeddings pour l'instant : à 1 000 titres
+  et quelques milliers de profils, genres + co-visionnage suffisent et coûtent zéro.
+- **Protection** : renditions chiffrées en HLS AES-128 (`media_assets.protection`), clé de 16 octets par vidéo stockée
+  avec les playlists et donc servie uniquement sous le jeton signé. Le DRM (`protection = 'drm'`) viendra par un
+  `KeyProvider` supplémentaire et une route de licence (voir `docs/operations.md` § 5 et `docs/phase-3-tasks.md`).
+
+## 10. Plus tard
+
+DRM Widevine/FairPlay via un service de licences, téléchargement hors-ligne (dépend du DRM), apps TV (projet Expo
+séparé consommant les API existantes), appairage TV par code, routes JSON de catalogue pour les apps natives.
