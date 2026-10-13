@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 export default async function AdminChannels() {
   const db = await createUserClient();
   const [{ data: channels }, { data: incidents }] = await Promise.all([
-    db.from('channels').select('id, slug, name, category, status, access, active_source_id, auto_disabled_reason, channel_sources(id, label, priority, enabled, health, last_latency_ms)').order('sort_order'),
+    db.from('channels').select('id, slug, name, category, status, access, active_source_id, auto_disabled_reason, channel_sources!channel_sources_channel_id_fkey(id, label, priority, enabled, health, last_latency_ms)').order('sort_order'),
     db.from('source_incidents').select('channel_id').is('resolved_at', null),
   ]);
   const openByChannel = new Map<string, number>();
@@ -21,7 +21,10 @@ export default async function AdminChannels() {
       <LiveRefresh tables={['channels', 'channel_sources', 'source_incidents']} supabaseUrl={env().NEXT_PUBLIC_SUPABASE_URL} supabaseAnonKey={env().NEXT_PUBLIC_SUPABASE_ANON_KEY} />
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Chaînes</h1>
-        <Link href="/admin/channels/new" locale="fr" className="rounded-md bg-brand px-4 py-2 text-sm font-semibold hover:bg-brand-dark">+ Nouvelle chaîne</Link>
+        <div className="flex gap-3">
+          <Link href="/admin/channels/import" locale="fr" className="rounded-md border border-line px-4 py-2 text-sm hover:bg-panel">Importer une playlist M3U</Link>
+          <Link href="/admin/channels/new" locale="fr" className="rounded-md bg-brand px-4 py-2 text-sm font-semibold hover:bg-brand-dark">+ Nouvelle chaîne</Link>
+        </div>
       </div>
       <table className="w-full overflow-hidden rounded-lg border border-line text-sm">
         <thead className="bg-panel text-left text-muted">

@@ -12,3 +12,4 @@ export * from './sealed-url';
 export * from './monitoring';
 export * from './maturity';
 export * from './xmltv';
+export * from './m3u';
