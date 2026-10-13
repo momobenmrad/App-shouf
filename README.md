@@ -8,6 +8,16 @@ Plateforme de streaming VOD et live pour le Maghreb : films, séries et chaînes
 - **Phase 3 (profils, EPG, recommandations, protection), tâches et état** : [`docs/phase-3-tasks.md`](docs/phase-3-tasks.md)
 - **Exploitation** (R2, Cloudflare, Konnect, mise en production) : [`docs/operations.md`](docs/operations.md)
 
+## Essayer la démo
+
+Une démo complète tourne en local avec Docker, sans aucune configuration :
+
+```bash
+docker compose -f docker-compose.demo.yml up --build
+```
+
+Puis http://localhost:3000 (`samir@demo.tn` / `demo1234`, ou `admin@demo.tn` pour le back-office). Détails : [demo/README.md](demo/README.md).
+
 ## Contenu du dépôt
 
 | Dossier | Rôle |

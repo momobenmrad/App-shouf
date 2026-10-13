@@ -21,7 +21,8 @@ const FALLBACK_ORDER: Record<Locale, Locale[]> = {
 /** Picks the best translation of a catalog text, falling back to the other languages. */
 export function pickText(text: I18nText | null | undefined, locale: Locale): string {
   if (!text) return '';
-  for (const l of FALLBACK_ORDER[locale]) {
+  // Unknown locale (e.g. a stray /favicon.ico reaching the [locale] route): use the French order.
+  for (const l of FALLBACK_ORDER[locale] ?? FALLBACK_ORDER.fr) {
     const value = text[l]?.trim();
     if (value) return value;
   }

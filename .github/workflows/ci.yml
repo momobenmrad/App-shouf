@@ -47,3 +47,22 @@ jobs:
       - run: docker build -f apps/web/Dockerfile -t chouf-web .
       - run: docker build -f apps/worker/Dockerfile -t chouf-worker .
       - run: docker build -f apps/gateway/Dockerfile -t chouf-gateway .
+
+  demo:
+    runs-on: ubuntu-latest
+    needs: [check]
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f docker-compose.demo.yml up -d --build --wait
+      - name: Smoke test the demo kit
+        run: |
+          set -euo pipefail
+          curl -fsS -o /dev/null http://localhost:3000/ar
+          curl -fsS http://localhost:3000/fr | grep -q 'Sidi Bou'
+          TOKEN=$(curl -fsS -X POST 'http://localhost:54321/auth/v1/token?grant_type=password' -H 'content-type: application/json' \
+            -d '{"email":"samir@demo.tn","password":"demo1234"}' | jq -r .access_token)
+          curl -fsS -H "Authorization: Bearer $TOKEN" 'http://localhost:54321/rest/v1/viewer_profiles?select=name' | grep -q Yasmine
+          curl -fsS -o /dev/null http://localhost:8787/a/artwork/sidi-bou-poster.jpg
+          curl -fsS http://localhost:8787/live/watania-principale/index.m3u8 | grep -q EXT-X-STREAM-INF
+      - if: failure()
+        run: docker compose -f docker-compose.demo.yml logs --no-color

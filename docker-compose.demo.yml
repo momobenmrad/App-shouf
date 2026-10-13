@@ -1,0 +1,62 @@
+# Chouf — local demo, nothing to configure:
+#   docker compose -f docker-compose.demo.yml up --build
+#   → http://localhost:3000   (samir@demo.tn / admin@demo.tn, password demo1234)
+# Reset the demo data: docker compose -f docker-compose.demo.yml down -v
+# Demo only: fixed secrets, fake accounts, no uploads or payments. See demo/README.md.
+name: chouf-demo
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: demo
+      PGPASSWORD: demo  # for the healthcheck
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C.UTF-8
+    volumes:
+      - ./demo/db/init.sh:/docker-entrypoint-initdb.d/10-chouf.sh:ro
+      - ./supabase:/chouf/supabase:ro
+      - ./demo/db/seed-demo.sql:/chouf/demo/seed-demo.sql:ro
+      - demo-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "psql -h 127.0.0.1 -U postgres -Atc \"select 1 from pg_namespace where nspname = 'demo_ready'\" | grep -q 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+
+  postgrest:
+    image: postgrest/postgrest:v12.2.3
+    environment:
+      PGRST_DB_URI: postgres://authenticator:demo@db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
+      PGRST_JWT_SECRET: chouf-demo-jwt-secret-not-for-production-0001
+    depends_on:
+      db: { condition: service_healthy }
+
+  redis:
+    image: redis:7.4-alpine
+
+  app:
+    build: { context: ., dockerfile: demo/Dockerfile }
+    image: chouf-demo
+    environment:
+      DEMO_JWT_SECRET: chouf-demo-jwt-secret-not-for-production-0001
+      POSTGREST_URL: http://postgrest:3000
+      REDIS_URL: redis://redis:6379
+      DEMO_HOST: ${DEMO_HOST:-localhost}
+    ports:
+      - "3000:3000"    # site
+      - "54321:54321"  # demo auth + API
+      - "8787:8787"    # demo VOD edge
+      - "8788:8788"    # live gateway
+    depends_on: [postgrest, redis]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "Promise.all(['http://127.0.0.1:3000/fr','http://127.0.0.1:8788/health','http://127.0.0.1:54321/rest/v1/titles?select=id&limit=1'].map(u=>fetch(u).then(r=>{if(!r.ok)throw r.status}))).then(()=>process.exit(0),()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  demo-db:
