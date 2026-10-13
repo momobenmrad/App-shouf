@@ -1,5 +1,21 @@
 # Exploitation
 
+## 0. Démarrage rapide
+
+1. Créez les comptes : Supabase (Pro), Cloudflare (domaine, R2, Workers), Konnect, un serveur Ubuntu (Hetzner), un SMTP.
+2. Sur le serveur, en root :
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/momobenmrad/App-shouf/main/scripts/bootstrap-server.sh | bash -s -- chouf.tn
+   ```
+   Le script installe Docker, ouvre le pare-feu, clone le dépôt dans `/opt/chouf` et génère `.env` avec des secrets aléatoires.
+3. Complétez `/opt/chouf/.env` avec les clés des sections 1, 2 et 6 ci-dessous.
+4. Vérifiez la configuration avant le premier démarrage :
+   ```bash
+   cd /opt/chouf && docker compose build && docker compose run --rm worker node dist/preflight.js
+   ```
+   Chaque ligne indique ✔, ⚠ (non bloquant) ou ✘ avec la correction à faire : secret de l'edge différent, CORS R2 sans `ETag`, migrations non appliquées, clé Konnect refusée, etc.
+5. `docker compose up -d`, puis suivez les recettes de `docs/phase-*-tasks.md`.
+
 ## 1. Supabase
 
 1. Créer un projet (région Europe, Francfort ou Paris : la plus proche du Maghreb). Prendre l'offre **Pro**, car l'offre gratuite se met en pause.

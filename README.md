@@ -54,8 +54,12 @@ pnpm test:db                               # migrations + tests RLS sur un Postg
 Un serveur (Hetzner) avec Docker, Supabase Cloud, Cloudflare R2 et Workers :
 
 ```bash
-cp .env.example .env && $EDITOR .env
-docker compose up -d --build
+# sur le serveur, en root : Docker, pare-feu, clone dans /opt/chouf, .env avec secrets générés
+curl -fsSL https://raw.githubusercontent.com/momobenmrad/App-shouf/main/scripts/bootstrap-server.sh | bash -s -- chouf.tn
+$EDITOR /opt/chouf/.env                   # clés Supabase, R2, Konnect
+cd /opt/chouf && docker compose build
+docker compose run --rm worker node dist/preflight.js   # contrôle de la configuration
+docker compose up -d
 pnpm --filter @chouf/edge deploy          # wrangler, après `wrangler secret put SIGNING_SECRET`
 ```
 
