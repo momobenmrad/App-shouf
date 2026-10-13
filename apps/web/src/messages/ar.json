@@ -1,0 +1,174 @@
+{
+  "meta": {
+    "title": "شوف — أفلام ومسلسلات وقنوات",
+    "description": "شاهد الأفلام والمسلسلات والقنوات مباشرة."
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "movies": "أفلام",
+    "series": "مسلسلات",
+    "search": "بحث",
+    "account": "حسابي",
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "admin": "الإدارة",
+    "subscribe": "اشترك",
+    "logout": "تسجيل الخروج",
+    "live": "مباشر",
+    "profiles": "تغيير الملف الشخصي"
+  },
+  "home": {
+    "continue": "تابع المشاهدة",
+    "latestMovies": "أحدث الأفلام",
+    "latestSeries": "مسلسلات",
+    "watch": "شاهد",
+    "more": "المزيد",
+    "empty": "الكتالوج قادم قريبًا.",
+    "trending": "الأكثر مشاهدة",
+    "forYou": "مختارات لك",
+    "because": "لأنك شاهدت {title}"
+  },
+  "title": {
+    "free": "مجاني",
+    "subscriber": "للمشتركين",
+    "season": "الموسم {number}",
+    "episode": "الحلقة {number}",
+    "play": "تشغيل",
+    "resume": "استئناف",
+    "notAvailable": "قريبًا",
+    "minutes": "{count} دقيقة",
+    "seasons": "{count, plural, one {موسم واحد} two {موسمان} few {# مواسم} many {# موسمًا} other {# موسم}}",
+    "similar": "مشابه لهذا"
+  },
+  "search": {
+    "placeholder": "اسم فيلم أو مسلسل…",
+    "results": "نتائج البحث عن «{q}»",
+    "none": "لا توجد نتائج.",
+    "hint": "اكتب حرفين على الأقل."
+  },
+  "player": {
+    "loading": "جارٍ التحميل…",
+    "quality": "الجودة",
+    "auto": "تلقائي",
+    "back": "رجوع",
+    "errors": {
+      "auth_required": "سجّل الدخول للمشاهدة.",
+      "subscription_required": "هذا المحتوى مخصص للمشتركين.",
+      "geo_blocked": "هذا المحتوى غير متاح في بلدك.",
+      "too_many_streams": "تم بلوغ الحد الأقصى للشاشات. أوقف التشغيل على جهاز آخر.",
+      "not_ready": "هذا الفيديو قيد التحضير.",
+      "not_found": "الفيديو غير موجود.",
+      "session_ended": "تم إيقاف التشغيل.",
+      "generic": "حدث خطأ. حاول مرة أخرى.",
+      "offline": "هذا البث غير متاح حاليًا."
+    },
+    "live": "مباشر",
+    "viewers": "{count, plural, =0 {لا مشاهدين} one {مشاهد واحد} two {مشاهدان} few {# مشاهدين} many {# مشاهدًا} other {# مشاهد}}",
+    "retry": "أعد المحاولة"
+  },
+  "auth": {
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "displayName": "الاسم المعروض",
+    "login": "دخول",
+    "signup": "إنشاء حسابي",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب؟",
+    "invalid": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "signupFailed": "تعذّر التسجيل: {message}",
+    "checkEmail": "تحقق من بريدك الإلكتروني لتأكيد حسابك.",
+    "passwordHint": "8 أحرف على الأقل"
+  },
+  "account": {
+    "title": "حسابي",
+    "subscription": "الاشتراك",
+    "active": "نشط حتى {date}",
+    "none": "لا يوجد اشتراك نشط.",
+    "expired": "انتهى في {date}",
+    "payments": "المدفوعات",
+    "noPayments": "لا توجد مدفوعات.",
+    "language": "لغة الواجهة",
+    "save": "حفظ",
+    "paymentSuccess": "تم استلام الدفع، شكرًا! سيُفعَّل اشتراكك فور تأكيده.",
+    "status": {
+      "pending": "قيد الانتظار",
+      "succeeded": "مدفوع",
+      "failed": "فشل"
+    }
+  },
+  "subscribe": {
+    "title": "اختر عرضك",
+    "perMonth": "/ شهر",
+    "perYear": "/ سنة",
+    "streams": "{count, plural, one {شاشة واحدة} two {شاشتان} few {# شاشات} many {# شاشة} other {# شاشة}} في نفس الوقت",
+    "cta": "ادفع عبر Konnect",
+    "methods": "بطاقة بنكية أو e-DINAR أو محفظة",
+    "failed": "لم تتم عملية الدفع.",
+    "loginFirst": "سجّل الدخول للاشتراك.",
+    "unavailable": "الدفع غير متاح حاليًا."
+  },
+  "common": {
+    "error": "حدث خطأ.",
+    "loading": "جارٍ التحميل…"
+  },
+  "live": {
+    "nowLive": "مباشر الآن",
+    "liveBadge": "مباشر",
+    "channels": "القنوات",
+    "noChannels": "لا توجد قنوات متاحة.",
+    "upcoming": "قريبًا",
+    "soon": "قريبًا",
+    "free": "مجاني",
+    "channelOffline": "هذه القناة غير متاحة مؤقتًا.",
+    "startsAt": "يبدأ: {date}",
+    "ended": "انتهى هذا الحدث.",
+    "watchReplay": "شاهد الإعادة",
+    "categories": {
+      "general": "عامة",
+      "news": "أخبار",
+      "sports": "رياضة",
+      "kids": "أطفال",
+      "entertainment": "ترفيه",
+      "religious": "دينية",
+      "music": "موسيقى",
+      "documentary": "وثائقية"
+    },
+    "guide": "دليل التلفزيون",
+    "nowOn": "الآن",
+    "next": "التالي",
+    "schedule": "برامج اليوم"
+  },
+  "chat": {
+    "title": "الدردشة",
+    "empty": "كن أول من يكتب.",
+    "placeholder": "رسالتك…",
+    "loginToChat": "سجّل الدخول للمشاركة",
+    "send": "إرسال",
+    "tooFast": "تمهّل: 5 رسائل كحد أقصى كل 10 ثوانٍ.",
+    "closed": "الدردشة مغلقة.",
+    "failed": "تعذّر الإرسال.",
+    "delete": "حذف"
+  },
+  "profiles": {
+    "who": "من يشاهد؟",
+    "kids": "أطفال",
+    "manage": "إدارة الملفات الشخصية",
+    "back": "رجوع",
+    "name": "الاسم",
+    "kidsProfile": "ملف أطفال (محتوى حتى +12 فقط)",
+    "maturity": "التصنيف الأقصى",
+    "allAges": "لجميع الأعمار",
+    "save": "حفظ",
+    "limit": "5 ملفات شخصية كحد أقصى لكل حساب.",
+    "delete": "حذف",
+    "add": "إضافة ملف شخصي"
+  },
+  "guide": {
+    "title": "دليل البرامج",
+    "earlier": "أبكر",
+    "now": "الآن",
+    "later": "لاحقًا",
+    "empty": "لا توجد قنوات.",
+    "noData": "البرنامج غير متاح"
+  }
+}

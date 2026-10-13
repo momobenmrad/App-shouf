@@ -85,7 +85,7 @@ est la source de vérité (RLS), et tout ce qui coûte cher en bande passante pa
 | Live | **MediaMTX** (Phase 2) | Binaire Go unique, ingestion RTMPS/SRT/WebRTC, sortie HLS/LL-HLS, enregistrement fMP4 pour le replay, API HTTP + hooks. SRS est plus lourd ; OvenMediaEngine excelle en WebRTC basse latence, qu'on ne vise pas encore. |
 | Reverse proxy | **Caddy** | TLS automatique, config de 15 lignes. Le domaine web passe derrière Cloudflare (proxy HTML uniquement). |
 | Paiement | **Konnect** (+ Stripe optionnel) | Stripe n'accepte pas de marchands établis en Tunisie. Konnect n'a pas de prélèvement récurrent par carte : on vend des **périodes prépayées**, chaque paiement réussi prolonge `current_period_end` ; rappel e-mail avant expiration. |
-| Tests | **Vitest** (unitaires), **pgTAP** (RLS), Playwright (e2e, plus tard) | La logique critique (signature, droits, échelle FFmpeg, bascule de sources) est en fonctions pures testées. |
+| Tests | **Vitest** (unitaires et intégration FFmpeg), **tests SQL** des politiques RLS sur Postgres jetable, Playwright (e2e, plus tard) | La logique critique (signature, droits, échelle FFmpeg, bascule de sources) est en fonctions pures testées. |
 | Monorepo | **pnpm workspaces** | `apps/web`, `apps/worker`, `apps/edge`, `packages/shared`. Pas de Turborepo : inutile à cette taille. |
 
 ## 3. Structure du dépôt
@@ -100,10 +100,10 @@ est la source de vérité (RLS), et tout ce qui coûte cher en bande passante pa
 │   └── shared/         Types DB, schémas zod, signature des URLs, droits, échelle FFmpeg, logique de bascule
 ├── supabase/
 │   ├── migrations/     Schéma SQL + RLS (source de vérité)
-│   ├── tests/          Tests pgTAP des politiques RLS
+│   ├── tests/          Tests SQL (RLS, facturation, sessions) + runner sur Postgres jetable
 │   └── seed.sql        Données de démo
-├── docker-compose.yml  Prod : web, worker, redis, caddy (+ gateway/mediamtx en Phase 2)
-├── docker-compose.dev.yml  Dev : + MinIO (R2 local) + edge en Node
+├── docker-compose.yml  Prod : caddy, web, worker, gateway, mediamtx, redis
+├── docker-compose.dev.yml  Dev : Redis + SeaweedFS (R2 local) + edge en Node + worker
 └── docs/
 ```
 
@@ -312,16 +312,31 @@ stateDiagram-v2
 - **Contrôle** (toutes les 30 s par source, worker `source-monitor`) : GET de la playlist (timeout 5 s, mesure de
   latence), vérification `#EXTM3U`, choix de la variante, téléchargement du dernier segment pour mesurer le débit,
   vérification que la playlist avance (live figé = `degraded`). Résultat écrit dans `source_health_checks`.
-- **Hystérésis** : 3 échecs → `down`, 5 succès → `healthy`, pour éviter le *flapping*. Toute la décision est une
-  fonction pure `decideActiveSource(sources, now)` testée unitairement.
+- **Hystérésis** : 3 échecs → `down`, 5 succès → `healthy`, pour éviter le *flapping*. Exception : quand la chaîne
+  est hors service (aucune source active), un seul contrôle réussi suffit à remettre une source à l'antenne, car
+  l'anti-rebond ne doit pas prolonger une panne totale. Toute la décision est une fonction pure
+  `decideActiveSource(sources, currentId, today)` testée unitairement.
 - **Alertes** : webhook générique (Telegram, Discord ou Slack) + e-mail, avec déduplication par incident ouvert.
 - **Licences** : job quotidien. Expiration dans moins de 30 jours → alerte ; expirée → source désactivée ; plus
   aucune source valide → chaîne `inactive`. Le géo-blocage utilise l'intersection pays de l'utilisateur ∩
   `territories` de la source active.
 - **Jamais d'exposition directe** : le client reçoit `https://live.chouf.tn/c/{exp}/{sig}/{channelId}/index.m3u8`. La
-  gateway récupère la playlist de la source active, **réécrit** chaque URI en URL locale opaque (URL amont chiffrée
-  AES-GCM), et relaie les segments. Bunny met les segments en cache (clé de cache sans le token), donc l'origine ne
-  sert chaque segment qu'une fois par PoP. Une bascule est transparente pour le lecteur.
+  gateway récupère la playlist de la source active et **réécrit** chaque URI :
+  - les playlists de variantes deviennent `…/{token}/{channelId}/v/{scellé}` : elles restent sous le jeton du
+    spectateur (vérifié à chaque requête) et ne sont pas mises en cache ;
+  - les segments, sections d'initialisation et clés deviennent `/s/{scellé}`, où `scellé` = AES-256-GCM(URL amont,
+    expiration 10 min). Ce chemin est **identique pour tous les spectateurs**, donc Bunny ne demande chaque segment
+    qu'une fois par PoP, et il est impossible d'en déduire l'adresse amont ou d'énumérer d'autres segments.
+  Une bascule de source est transparente : la playlist suivante pointe simplement vers la nouvelle origine.
+- **Événements propres** (ingestion MediaMTX) : même mécanisme sous le préfixe `/e/`, l'amont étant le serveur
+  MediaMTX interne. MediaMTX n'est jamais exposé : il n'autorise les publications qu'après validation de la clé de
+  stream par la gateway (`live_event_keys`, lisible par le seul rôle service) et les lectures que depuis la gateway.
+- **Chat** : table `chat_messages` + Supabase Realtime (`postgres_changes`), RLS pour l'écriture (soi-même, événement
+  en direct), limite de 5 messages / 10 s par trigger, suppression douce par l'admin.
+- **Compteur de spectateurs** : les heartbeats du lecteur alimentent un ensemble trié Redis par chaîne ou événement ;
+  le compte porte sur les sessions vues dans les 30 dernières secondes.
+- **Replay** : à la fin de l'événement (délai de tolérance de 2 min aux coupures d'encodeur), le worker concatène
+  les enregistrements fMP4 de MediaMTX, crée un asset VOD et le transcode comme un film.
 
 ## 6. Sécurité
 
@@ -364,12 +379,27 @@ décision qui pèse le plus sur le budget ; c'est pour ça que la signature est 
 ## 8. Déploiement
 
 - **Prod** : un serveur Ubuntu avec Docker. `docker compose up -d` lance `caddy`, `web`, `worker` et `redis` (+ `gateway` et `mediamtx` en Phase 2). L'edge VOD se déploie sur Cloudflare avec `wrangler deploy`. Migrations : `supabase db push`.
-- **Dev** : `docker compose -f docker-compose.yml -f docker-compose.dev.yml up` ajoute MinIO (R2 local) et l'edge en mode Node. Supabase local via `supabase start`.
-- **CI** (GitHub Actions) : lint, typecheck, tests Vitest, tests pgTAP sur un Postgres éphémère, build des images.
+- **Dev** : `docker compose -f docker-compose.dev.yml up -d` lance Redis, SeaweedFS (stockage S3 local remplaçant R2 ; MinIO ne publie plus d'images publiques), l'edge en mode Node et le worker. Supabase local via `supabase start`, Next.js via `pnpm --filter @chouf/web dev`.
+- **CI** (GitHub Actions) : lint, typecheck, tests Vitest (avec FFmpeg), tests SQL sur un Postgres éphémère, build Next.js et des images Docker.
 - **Observabilité** : logs JSON (pino), Sentry (offre gratuite), Uptime Kuma pour la disponibilité, tableau de bord des jobs dans le back-office.
 
-## 9. Évolutions prévues (Phase 3)
+## 9. Phase 3 : profils, EPG, recommandations, protection
 
-Chaînes 24/7 avec EPG (table `epg_programs`), apps TV (Expo / React Native TV), DRM multi-clé via un service
-(EZDRM, PallyCon) avec un packager CMAF (Shaka Packager), recommandations (pgvector), téléchargement hors-ligne
-(nécessite le DRM), profils multiples (table `viewer_profiles`, qui touchera `playback_progress`).
+- **Profils** : `viewer_profiles` (5 par compte, un profil par défaut créé par trigger à l'inscription). La progression
+  (`playback_progress`, clé `(profile_id, asset_id)`) et les sessions portent le profil. Le profil actif est un cookie
+  `httpOnly` vérifié côté serveur à chaque requête. Un profil enfant est plafonné à `12+` : le catalogue, la recherche,
+  les fiches et le direct sont filtrés par `maturity_rating` côté serveur (la RLS ne connaît pas le profil actif).
+- **EPG** : `epg_programs` alimentée depuis des fichiers XMLTV (`channels.epg_url`, `channels.epg_channel_id`), import
+  nocturne par le worker et import immédiat depuis le back-office ; `epg_now_next()` pour l'affichage.
+- **Recommandations** : trois fonctions SQL `SECURITY DEFINER` (`trending_titles`, `recommended_titles_for_me`,
+  `similar_titles_for_me`) qui agrègent l'historique de tous les profils sans jamais exposer qui a regardé quoi, et
+  ne renvoient que des titres publiés dans la classification du profil. Pas d'embeddings pour l'instant : à 1 000 titres
+  et quelques milliers de profils, genres + co-visionnage suffisent et coûtent zéro.
+- **Protection** : renditions chiffrées en HLS AES-128 (`media_assets.protection`), clé de 16 octets par vidéo stockée
+  avec les playlists et donc servie uniquement sous le jeton signé. Le DRM (`protection = 'drm'`) viendra par un
+  `KeyProvider` supplémentaire et une route de licence (voir `docs/operations.md` § 5 et `docs/phase-3-tasks.md`).
+
+## 10. Plus tard
+
+DRM Widevine/FairPlay via un service de licences, téléchargement hors-ligne (dépend du DRM), apps TV (projet Expo
+séparé consommant les API existantes), appairage TV par code, routes JSON de catalogue pour les apps natives.

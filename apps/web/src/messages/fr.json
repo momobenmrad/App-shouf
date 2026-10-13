@@ -1,0 +1,174 @@
+{
+  "meta": {
+    "title": "Chouf — Films, séries et chaînes",
+    "description": "Regardez films, séries et chaînes en streaming."
+  },
+  "nav": {
+    "home": "Accueil",
+    "movies": "Films",
+    "series": "Séries",
+    "search": "Rechercher",
+    "account": "Mon compte",
+    "login": "Connexion",
+    "signup": "Créer un compte",
+    "admin": "Administration",
+    "subscribe": "S'abonner",
+    "logout": "Déconnexion",
+    "live": "Direct",
+    "profiles": "Changer de profil"
+  },
+  "home": {
+    "continue": "Continuer à regarder",
+    "latestMovies": "Films récents",
+    "latestSeries": "Séries",
+    "watch": "Regarder",
+    "more": "Plus d'infos",
+    "empty": "Le catalogue arrive bientôt.",
+    "trending": "Tendances",
+    "forYou": "Pour vous",
+    "because": "Parce que vous avez regardé {title}"
+  },
+  "title": {
+    "free": "Gratuit",
+    "subscriber": "Abonnés",
+    "season": "Saison {number}",
+    "episode": "Épisode {number}",
+    "play": "Lecture",
+    "resume": "Reprendre",
+    "notAvailable": "Bientôt disponible",
+    "minutes": "{count} min",
+    "seasons": "{count, plural, one {# saison} other {# saisons}}",
+    "similar": "Dans le même esprit"
+  },
+  "search": {
+    "placeholder": "Titre d'un film ou d'une série…",
+    "results": "Résultats pour « {q} »",
+    "none": "Aucun résultat.",
+    "hint": "Tapez au moins 2 caractères."
+  },
+  "player": {
+    "loading": "Chargement…",
+    "quality": "Qualité",
+    "auto": "Auto",
+    "back": "Retour",
+    "errors": {
+      "auth_required": "Connectez-vous pour regarder.",
+      "subscription_required": "Ce contenu est réservé aux abonnés.",
+      "geo_blocked": "Ce contenu n'est pas disponible dans votre pays.",
+      "too_many_streams": "Nombre maximal d'écrans atteint. Arrêtez la lecture sur un autre appareil.",
+      "not_ready": "Cette vidéo est en cours de préparation.",
+      "not_found": "Vidéo introuvable.",
+      "session_ended": "La lecture a été arrêtée.",
+      "generic": "Une erreur est survenue. Réessayez.",
+      "offline": "Cette diffusion est indisponible pour le moment."
+    },
+    "live": "Direct",
+    "viewers": "{count, plural, =0 {aucun spectateur} one {# spectateur} other {# spectateurs}}",
+    "retry": "Réessayer"
+  },
+  "auth": {
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "displayName": "Nom affiché",
+    "login": "Se connecter",
+    "signup": "Créer mon compte",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Déjà inscrit ?",
+    "invalid": "E-mail ou mot de passe incorrect.",
+    "signupFailed": "Inscription impossible : {message}",
+    "checkEmail": "Vérifiez votre boîte mail pour confirmer votre compte.",
+    "passwordHint": "8 caractères minimum"
+  },
+  "account": {
+    "title": "Mon compte",
+    "subscription": "Abonnement",
+    "active": "Actif jusqu'au {date}",
+    "none": "Aucun abonnement actif.",
+    "expired": "Expiré le {date}",
+    "payments": "Paiements",
+    "noPayments": "Aucun paiement.",
+    "language": "Langue de l'interface",
+    "save": "Enregistrer",
+    "paymentSuccess": "Paiement reçu, merci ! Votre abonnement est activé dès sa confirmation.",
+    "status": {
+      "pending": "En attente",
+      "succeeded": "Payé",
+      "failed": "Échoué"
+    }
+  },
+  "subscribe": {
+    "title": "Choisissez votre offre",
+    "perMonth": "/ mois",
+    "perYear": "/ an",
+    "streams": "{count, plural, one {# écran} other {# écrans}} en simultané",
+    "cta": "Payer avec Konnect",
+    "methods": "Carte bancaire, e-DINAR ou wallet",
+    "failed": "Le paiement n'a pas abouti.",
+    "loginFirst": "Connectez-vous pour vous abonner.",
+    "unavailable": "Le paiement est momentanément indisponible."
+  },
+  "common": {
+    "error": "Une erreur est survenue.",
+    "loading": "Chargement…"
+  },
+  "live": {
+    "nowLive": "En direct maintenant",
+    "liveBadge": "Direct",
+    "channels": "Chaînes",
+    "noChannels": "Aucune chaîne disponible.",
+    "upcoming": "À venir",
+    "soon": "Bientôt",
+    "free": "Gratuit",
+    "channelOffline": "Cette chaîne est momentanément indisponible.",
+    "startsAt": "Début : {date}",
+    "ended": "Cet événement est terminé.",
+    "watchReplay": "Voir le replay",
+    "categories": {
+      "general": "Généraliste",
+      "news": "Information",
+      "sports": "Sport",
+      "kids": "Jeunesse",
+      "entertainment": "Divertissement",
+      "religious": "Religieux",
+      "music": "Musique",
+      "documentary": "Documentaire"
+    },
+    "guide": "Guide TV",
+    "nowOn": "En ce moment",
+    "next": "À suivre",
+    "schedule": "Programme du jour"
+  },
+  "chat": {
+    "title": "Chat",
+    "empty": "Soyez le premier à écrire.",
+    "placeholder": "Votre message…",
+    "loginToChat": "Connectez-vous pour participer",
+    "send": "Envoyer",
+    "tooFast": "Doucement : 5 messages maximum toutes les 10 secondes.",
+    "closed": "Le chat est fermé.",
+    "failed": "Envoi impossible.",
+    "delete": "Supprimer"
+  },
+  "profiles": {
+    "who": "Qui regarde ?",
+    "kids": "Enfant",
+    "manage": "Gérer les profils",
+    "back": "Retour",
+    "name": "Nom",
+    "kidsProfile": "Profil enfant (contenus jusqu’à 12+ uniquement)",
+    "maturity": "Classification maximale",
+    "allAges": "Tous publics",
+    "save": "Enregistrer",
+    "limit": "5 profils maximum par compte.",
+    "delete": "Supprimer",
+    "add": "Ajouter un profil"
+  },
+  "guide": {
+    "title": "Guide des programmes",
+    "earlier": "Plus tôt",
+    "now": "Maintenant",
+    "later": "Plus tard",
+    "empty": "Aucune chaîne.",
+    "noData": "Programme indisponible"
+  }
+}

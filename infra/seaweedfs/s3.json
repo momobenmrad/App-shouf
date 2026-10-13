@@ -1,0 +1,9 @@
+{
+  "identities": [
+    {
+      "name": "chouf-dev",
+      "credentials": [{ "accessKey": "chouf", "secretKey": "chouf-dev-secret" }],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}

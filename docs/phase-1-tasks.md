@@ -1,27 +1,39 @@
 # Phase 1 (VOD) : tâches ordonnées
 
-Chaque tâche se termine par un commit. ✅ = livré dans ce dépôt ; ⏳ = nécessite des comptes externes (Supabase, R2, Konnect) pour la validation de bout en bout.
+Chaque tâche a fait l'objet d'au moins un commit.
+- ✅ : livré et vérifié dans le dépôt.
+- 🔌 : la recette finale nécessite les comptes externes (Supabase, Cloudflare R2/Workers, Konnect).
 
-| # | Tâche | Critères de validation | État |
-|---|---|---|---|
-| T0 | **Socle du monorepo** : pnpm workspaces, TypeScript strict, ESLint, Vitest, `.env.example` | `pnpm install && pnpm typecheck && pnpm test` passent | ✅ |
-| T1 | **Schéma DB + RLS** : migrations (catalogue, médias, lecture, abonnements, chaînes), `is_admin()`, triggers, seed | Les migrations s'appliquent sur un Postgres vierge ; les tests pgTAP RLS passent (un viewer ne lit ni `channel_sources` ni les titres `draft`, ne peut pas devenir admin, ne modifie que sa progression) | ✅ |
-| T2 | **Package partagé** : types DB, schémas zod, signature HMAC des URLs, calcul des droits, échelle FFmpeg, logique de bascule des sources | Tests unitaires : signature valide, expirée ou falsifiée ; droits free, abonné, expiré, géo ; échelle plafonnée à la source ; bascule et retour avec hystérésis | ✅ |
-| T3 | **Edge VOD** (Hono) : vérification du token dans le chemin, lecture R2/S3, cache, CORS, types MIME | Tests : 403 si signature invalide ou expirée, 200 et bon `Content-Type` sinon ; fonctionne en Node (dev) et en Worker (prod) | ✅ |
-| T4 | **Worker de transcodage** : BullMQ, ffprobe, ffmpeg multi-renditions, progression, upload HLS, retries | Test d'intégration : une mire de 4 s produit `master.m3u8` + renditions ≤ source ; un job en échec passe à `failed` avec l'erreur | ✅ |
-| T5 | **Web : socle** : Next.js 16, Tailwind 4, next-intl ar/fr/en (RTL), client Supabase SSR, proxy d'auth, layout et navigation | `/ar` en `dir="rtl"`, `/fr` et `/en` en LTR ; `pnpm build` passe | ✅ |
-| T6 | **Auth** : inscription, connexion, déconnexion, compte | Création de compte → profil `viewer` créé par trigger ; `/admin` redirige un viewer | ✅ ⏳ |
-| T7 | **Catalogue et recherche** : accueil (rails), fiche titre, saisons et épisodes, recherche trigram | Seuls les titres publiés s'affichent ; la recherche trouve un titre malgré une faute de frappe (trigram) en arabe, français ou anglais | ✅ ⏳ |
-| T8 | **Lecteur** : hls.js, session de lecture signée, reprise, heartbeat, limite de flux, sélection de qualité | Reprise à ±5 s ; 3ᵉ flux simultané refusé (409) ; contenu abonné refusé sans abonnement (402) ; hors territoire (451) | ✅ ⏳ |
-| T9 | **Abonnement** : offres, checkout Konnect, webhook vérifié, application idempotente, expiration | Deux webhooks identiques prolongent une seule fois ; un paiement non `completed` chez Konnect ne donne aucun droit | ✅ ⏳ |
-| T10 | **Back-office** : tableau de bord, CRUD titres, saisons et épisodes, upload multipart avec reprise, suivi temps réel du transcodage, relance | Upload d'1 Go interrompu puis repris sans renvoyer les parts déjà envoyées ; la progression du transcodage s'affiche en direct | ✅ ⏳ |
-| T11 | **Déploiement** : Dockerfiles, `docker-compose.yml` (prod), `docker-compose.dev.yml` (MinIO + edge), Caddy, `wrangler.toml`, CI GitHub Actions | `docker compose config` valide ; la CI exécute lint, typecheck, tests et pgTAP | ✅ |
+| # | Tâche | Critères de validation | État | Preuve |
+|---|---|---|---|---|
+| T0 | **Socle du monorepo** : pnpm workspaces, TypeScript strict, ESLint, Vitest, `.env.example` | `pnpm install && pnpm typecheck && pnpm lint && pnpm test` passent | ✅ | 64 tests verts |
+| T1 | **Schéma DB + RLS** : 5 migrations, `is_admin()`, triggers, fonctions transactionnelles, seed | Migrations appliquées sur un Postgres vierge. Un viewer ne lit ni `channel_sources` ni les brouillons, ne peut pas devenir admin, ne modifie que sa progression, ne peut ni s'octroyer un abonnement ni appeler les fonctions de facturation | ✅ | `pnpm test:db` : 38 assertions |
+| T2 | **Package partagé** : types DB, schémas zod, signature HMAC, droits, échelle FFmpeg, bascule des sources, licences | Signature valide, expirée ou falsifiée ; droits free, abonné, expiré, géo (fermé si pays inconnu) ; échelle plafonnée ; hystérésis 3 échecs / 5 succès | ✅ | 35 tests |
+| T3 | **Edge VOD** (Hono) : token dans le chemin, R2/S3, cache sur l'objet, CORS | 403 si signature invalide ou expirée ; types MIME corrects ; build Worker (`wrangler --dry-run`) et Node | ✅ | 5 tests + e2e |
+| T4 | **Worker de transcodage** : BullMQ, ffprobe, FFmpeg multi-renditions, progression, poster, upload, retries ; tâches planifiées (expiration des abonnements, sessions, licences) | Une mire produit `master.m3u8` et des renditions ≤ source ; un échec repasse en file puis `failed` à la dernière tentative | ✅ | 8 tests avec vrai FFmpeg |
+| T5 | **Web : socle** : Next.js 16, Tailwind 4, next-intl ar/fr/en, Supabase SSR, `proxy.ts` | `/ar` en `dir="rtl"`, `/fr` et `/en` en LTR ; `pnpm build` ; image Docker démarrée | ✅ | smoke test du conteneur |
+| T6 | **Auth** : inscription, connexion, déconnexion, langue du profil | Profil `viewer` créé par trigger (testé en SQL) ; `/admin`, `/account`, `/watch` redirigent vers la connexion | ✅ 🔌 | |
+| T7 | **Catalogue et recherche** : accueil (hero, rails, « continuer »), fiche titre, saisons et épisodes, recherche trigram normalisée (accents, alif, tashkeel) | Seuls les titres publiés s'affichent ; faute de frappe tolérée ; recherche en arabe | ✅ 🔌 | tests SQL |
+| T8 | **Lecteur** : hls.js / HLS natif Safari, session signée, reprise, heartbeat + `sendBeacon`, qualité, limite de flux | 401, 402 (abonnement), 451 (géo), 409 (3ᵉ flux), 425 (pas prêt) ; reprise hors générique | ✅ 🔌 | 8 tests + SQL |
+| T9 | **Abonnement** : offres, checkout Konnect, webhook revérifié auprès de Konnect, application idempotente | Double webhook = une seule prolongation ; paiement en attente, échoué ou au mauvais montant = aucun droit | ✅ 🔌 | 5 tests + SQL |
+| T10 | **Back-office** : tableau de bord, CRUD titres, saisons et épisodes, affiches, upload multipart avec reprise, suivi temps réel, relance | Upload repris sans renvoyer les parts déjà présentes (ListParts) ; progression via Realtime | ✅ 🔌 | 3 tests + e2e upload |
+| T11 | **Déploiement** : Dockerfiles, Compose prod et dev, Caddy (accès réservé à Cloudflare), `wrangler.toml`, CI | `docker compose config` valide ; image web construite et lancée ; stack de dev (SeaweedFS + bucket) démarrée | ✅ | |
 
-## Recette de bout en bout (à faire avec les vrais comptes)
+## Test de bout en bout réalisé (sans comptes externes)
 
-1. Créer le projet Supabase, lancer `supabase db push`, renseigner `.env`.
-2. Créer le bucket R2 + CORS (voir `docs/operations.md`), déployer l'edge (`pnpm --filter @chouf/edge deploy`).
+SeaweedFS (S3), worker et edge réels :
+1. upload multipart via URLs présignées, comme le navigateur, avec l'ETag exposé en CORS ;
+2. transcodage d'un 720p de 8 s en 240p, 360p, 480p et 720p ;
+3. lecture du manifeste, d'une variante et d'un segment via l'edge avec URL signée ;
+4. 403 pour un token falsifié, un token expiré et un accès anonyme direct au bucket.
+
+Ce test a révélé un vrai bug, corrigé depuis : le SDK AWS ajoutait un checksum CRC32 aux URLs présignées, ce qui cassait les uploads du navigateur.
+
+## Recette finale avec les vrais comptes
+
+1. Créer le projet Supabase, `supabase link` puis `supabase db push`. Renseigner `.env`.
+2. Créer le bucket R2 et sa règle CORS, puis déployer l'edge (voir `docs/operations.md`).
 3. Sur le serveur : `docker compose up -d --build`.
 4. Promouvoir son compte : `update profiles set role = 'admin' where id = '…';`
-5. Uploader un film, attendre `ready`, le publier, le regarder depuis un compte viewer en mode free puis subscriber.
-6. Payer en sandbox Konnect, vérifier la prolongation de l'abonnement.
+5. Uploader un film, attendre `ready`, le publier, le regarder depuis un compte viewer en free puis en subscriber.
+6. Payer en sandbox Konnect et vérifier la prolongation dans `/account`.

@@ -1,0 +1,53 @@
+# MediaMTX configuration for Chouf live events.
+# Ingest: RTMP (:1935) and SRT (:8890/udp). Output: classic HLS (fMP4) read by the gateway only.
+# Every publish is authenticated by the gateway (stream key per event); recordings feed live-to-vod.
+
+logLevel: info
+logDestinations: [stdout]
+
+# Only the protocols we use.
+rtsp: no
+webrtc: no
+api: no
+metrics: no
+pprof: no
+playback: no
+
+rtmp: yes
+rtmpAddress: :1935
+srt: yes
+srtAddress: :8890
+
+hls: yes
+hlsAddress: :8888
+hlsAlwaysRemux: yes
+hlsVariant: fmp4
+hlsSegmentCount: 7
+hlsSegmentDuration: 4s
+hlsPartDuration: 200ms
+hlsSegmentMaxSize: 50M
+hlsAllowOrigin: '*'
+
+# Authentication delegated to the gateway (publish = stream key, read = internal only).
+authMethod: http
+authHTTPAddress: http://gateway:8788/hooks/mediamtx/${MEDIAMTX_HOOK_SECRET}/auth
+authHTTPExclude: []
+
+pathDefaults:
+  # Recording for the replay (live-to-vod). One file per hour; never auto-deleted.
+  record: yes
+  recordPath: /recordings/%path/%Y-%m-%d_%H-%M-%S-%f
+  recordFormat: fmp4
+  recordPartDuration: 1s
+  recordSegmentDuration: 1h
+  recordDeleteAfter: 0s
+  # Status hooks → gateway (busybox wget is available in the -ffmpeg image).
+  runOnReady: wget -qO- --post-data= "http://gateway:8788/hooks/mediamtx/${MEDIAMTX_HOOK_SECRET}/ready?path=$MTX_PATH"
+  runOnReadyRestart: no
+  runOnNotReady: wget -qO- --post-data= "http://gateway:8788/hooks/mediamtx/${MEDIAMTX_HOOK_SECRET}/not-ready?path=$MTX_PATH"
+
+paths:
+  # Events publish to live/<slug>; anything else is refused by the auth hook.
+  'live/~^[a-z0-9-]+$':
+  all_others:
+    record: no
