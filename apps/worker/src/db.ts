@@ -15,7 +15,7 @@ export interface TranscodeRepo {
   getAsset(id: string): Promise<MediaAssetRow | null>;
   startJob(assetId: string, queueJobId: string, attempt: number): Promise<string>;
   finishJob(jobId: string, status: 'completed' | 'failed', log?: string): Promise<void>;
-  updateAsset(id: string, patch: Partial<Pick<MediaAssetRow, 'status' | 'progress' | 'error' | 'duration_seconds' | 'width' | 'height' | 'hls_prefix'>> & { renditions?: Rendition[] }): Promise<void>;
+  updateAsset(id: string, patch: Partial<Pick<MediaAssetRow, 'status' | 'progress' | 'error' | 'duration_seconds' | 'width' | 'height' | 'hls_prefix' | 'protection'>> & { renditions?: Rendition[] }): Promise<void>;
 }
 
 function check<T extends { error: { message: string } | null }>(res: T): T {

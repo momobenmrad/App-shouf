@@ -37,6 +37,7 @@ export type SourceKind = 'external_hls' | 'internal_ingest';
 export type SourceHealth = 'unknown' | 'healthy' | 'degraded' | 'down';
 export type IncidentKind = 'down' | 'degraded' | 'failover' | 'failback' | 'license_expired' | 'all_sources_down';
 export type LiveEventStatus = 'scheduled' | 'live' | 'ended';
+export type AssetProtection = 'none' | 'aes128' | 'drm';
 
 export type Rendition = {
   name: string;
@@ -79,6 +80,7 @@ export type MediaAssetRow = {
   width: number | null;
   height: number | null;
   renditions: Rendition[];
+  protection: AssetProtection;
   progress: number;
   error: string | null;
   created_by: string | null;
@@ -372,6 +374,7 @@ export type Database = {
         | 'width'
         | 'height'
         | 'renditions'
+        | 'protection'
         | 'progress'
         | 'error'
         | 'created_by'
@@ -591,6 +594,7 @@ export type Database = {
       source_health: SourceHealth;
       incident_kind: IncidentKind;
       live_event_status: LiveEventStatus;
+      asset_protection: AssetProtection;
     };
     CompositeTypes: { [_ in never]: never };
   };

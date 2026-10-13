@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getBrowserSupabase } from '@/lib/supabase-browser';
 import { uploadVideo } from '@/lib/uploader';
 
-type Asset = Pick<MediaAssetRow, 'id' | 'original_filename' | 'status' | 'progress' | 'error' | 'size_bytes' | 'height' | 'duration_seconds' | 'created_at'>;
+type Asset = Pick<MediaAssetRow, 'id' | 'original_filename' | 'status' | 'progress' | 'error' | 'size_bytes' | 'height' | 'duration_seconds' | 'created_at' | 'protection'>;
 
 const STATUS: Record<string, string> = { uploading: 'Envoi', uploaded: 'Envoyé', queued: 'En file', processing: 'Transcodage', ready: 'Prêt', failed: 'Échec' };
 const COLOR: Record<string, string> = { ready: 'text-emerald-400', failed: 'text-red-400', processing: 'text-sky-400', queued: 'text-amber-400' };
@@ -108,6 +108,7 @@ export function MediaManager({ initial, supabaseUrl, supabaseAnonKey }: { initia
               </td>
               <td className="p-3 text-muted">
                 {(a.size_bytes / 1024 ** 3).toFixed(2)} Go{a.height ? ` · ${a.height}p` : ''}{a.duration_seconds ? ` · ${Math.round(a.duration_seconds / 60)} min` : ''}
+                {a.status === 'ready' && <span title={a.protection === 'aes128' ? 'Chiffré AES-128' : 'Non chiffré'} className="ms-2">{a.protection === 'none' ? '🔓' : '🔒'}</span>}
               </td>
               <td className="p-3 text-end">{a.status === 'failed' && <button onClick={() => retry(a.id)} className="rounded bg-white/10 px-3 py-1 text-xs hover:bg-white/20">Relancer</button>}</td>
             </tr>

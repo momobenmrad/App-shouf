@@ -1,10 +1,11 @@
 import type { MediaAssetRow } from '@chouf/shared';
-import { copyFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { copyFileSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import pino from 'pino';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { TranscodeRepo } from '../src/db';
+import { aes128Provider } from '../src/protection';
 import type { Storage } from '../src/storage';
 import { processTranscode } from '../src/transcode';
 import { makeClip } from './helpers';
@@ -21,6 +22,7 @@ function fakes(downloadError?: Error) {
   const updates: Record<string, unknown>[] = [];
   const jobs: { status: string; log?: string }[] = [];
   const uploaded: string[] = [];
+  const contents = new Map<string, Buffer>();
   const repo: TranscodeRepo = {
     getAsset: async () => asset,
     startJob: async () => 'job-row-1',
@@ -32,9 +34,12 @@ function fakes(downloadError?: Error) {
       if (downloadError) throw downloadError;
       copyFileSync(fixture, file);
     },
-    uploadFile: async (key) => void uploaded.push(key),
+    uploadFile: async (key, file) => {
+      uploaded.push(key);
+      if (key.endsWith('.m3u8') || key.endsWith('.bin') || key.endsWith('seg_00000.ts')) contents.set(key, readFileSync(file));
+    },
   };
-  return { repo, storage, updates, jobs, uploaded };
+  return { repo, storage, updates, jobs, uploaded, contents };
 }
 
 const log = pino({ level: 'silent' });
@@ -51,6 +56,20 @@ describe('processTranscode', () => {
     expect(f.uploaded).toContain(`hls/${ASSET_ID}/480p/index.m3u8`);
     expect(f.uploaded).toContain(`hls/${ASSET_ID}/poster.jpg`);
     expect(f.jobs).toEqual([{ status: 'completed', log: undefined }]);
+    expect(last.protection).toBe('none');
+    expect(f.uploaded).not.toContain(`hls/${ASSET_ID}/key.bin`);
+  }, 60_000);
+
+  it('encrypts renditions with a per-asset AES-128 key served next to the playlists', async () => {
+    const f = fakes();
+    await processTranscode({ id: 'q3', data: { assetId: ASSET_ID }, attemptsMade: 0, maxAttempts: 3 }, { ...deps(f), keyProvider: aes128Provider });
+    expect(f.updates.at(-1)).toMatchObject({ status: 'ready', protection: 'aes128' });
+    expect(f.contents.get(`hls/${ASSET_ID}/key.bin`)).toHaveLength(16);
+    const variant = f.contents.get(`hls/${ASSET_ID}/360p/index.m3u8`)!.toString();
+    expect(variant).toContain('#EXT-X-KEY:METHOD=AES-128,URI="../key.bin"');
+    // Encrypted segments no longer start with the MPEG-TS sync byte.
+    expect(f.contents.get(`hls/${ASSET_ID}/360p/seg_00000.ts`)![0]).not.toBe(0x47);
+    expect(f.uploaded).not.toContain(`hls/${ASSET_ID}/key.info`);
   }, 60_000);
 
   it('requeues on a retryable failure and fails the asset on the last attempt', async () => {

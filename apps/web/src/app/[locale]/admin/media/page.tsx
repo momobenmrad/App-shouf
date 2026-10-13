@@ -6,7 +6,7 @@ export default async function AdminMedia() {
   const db = await createUserClient();
   const { data } = await db
     .from('media_assets')
-    .select('id, original_filename, status, progress, error, size_bytes, height, duration_seconds, created_at')
+    .select('id, original_filename, status, progress, error, size_bytes, height, duration_seconds, created_at, protection')
     .order('created_at', { ascending: false })
     .limit(200);
   return (

@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import type { Logger } from 'pino';
 import type { TranscodeRepo } from './db';
 import { buildHlsArgs, extractPoster, probe, runFfmpeg } from './ffmpeg';
+import { type KeyProvider, noProtection } from './protection';
 import { type Storage, uploadDirectory } from './storage';
 
 export interface TranscodeDeps {
@@ -11,6 +12,7 @@ export interface TranscodeDeps {
   storage: Storage;
   workDir: string;
   preset: string;
+  keyProvider?: KeyProvider;
   log: Logger;
 }
 
@@ -44,11 +46,13 @@ export async function processTranscode(job: JobInfo, deps: TranscodeDeps): Promi
 
     const outDir = join(dir, 'hls');
     for (const r of renditions) await mkdir(join(outDir, r.name), { recursive: true });
+    const keyProvider = deps.keyProvider ?? noProtection;
+    const keys = await keyProvider.prepare(asset.id, outDir, dir);
 
     let lastReported = -1;
     let lastWrite = 0;
     await runFfmpeg(
-      buildHlsArgs({ input, outDir, renditions, hasAudio: info.hasAudio, preset: deps.preset }),
+      buildHlsArgs({ input, outDir, renditions, hasAudio: info.hasAudio, preset: deps.preset, keyInfoFile: keys?.keyInfoFile }),
       info.durationSeconds,
       (pct) => {
         const now = Date.now();
@@ -74,6 +78,7 @@ export async function processTranscode(job: JobInfo, deps: TranscodeDeps): Promi
       width: info.width,
       height: info.height,
       renditions,
+      protection: keyProvider.protection,
     });
     await repo.finishJob(jobRowId, 'completed');
   } catch (err) {

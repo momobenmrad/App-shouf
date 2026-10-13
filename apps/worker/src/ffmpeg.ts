@@ -64,13 +64,15 @@ export interface HlsArgsInput {
   hasAudio: boolean;
   preset: string;
   segmentSeconds?: number;
+  /** ffmpeg key info file: enables HLS AES-128 encryption of every rendition. */
+  keyInfoFile?: string;
 }
 
 /**
  * One decode, N encodes: split the video, scale each branch, encode H.264 with keyframes forced
  * every 2 s so all renditions align, and mux to HLS with a master playlist.
  */
-export function buildHlsArgs({ input, outDir, renditions, hasAudio, preset, segmentSeconds = 6 }: HlsArgsInput): string[] {
+export function buildHlsArgs({ input, outDir, renditions, hasAudio, preset, segmentSeconds = 6, keyInfoFile }: HlsArgsInput): string[] {
   const n = renditions.length;
   const split = `[0:v:0]split=${n}${renditions.map((_, i) => `[v${i}]`).join('')}`;
   const scales = renditions.map((r, i) => `[v${i}]scale=${r.width}:${r.height}:flags=bicubic,setsar=1[v${i}o]`);
@@ -104,6 +106,7 @@ export function buildHlsArgs({ input, outDir, renditions, hasAudio, preset, segm
     '-hls_playlist_type', 'vod',
     '-hls_flags', 'independent_segments',
     '-hls_segment_type', 'mpegts',
+    ...(keyInfoFile ? ['-hls_key_info_file', keyInfoFile] : []),
     '-hls_segment_filename', `${outDir}/%v/seg_%05d.ts`,
     '-master_pl_name', 'master.m3u8',
     '-var_stream_map', streamMap,

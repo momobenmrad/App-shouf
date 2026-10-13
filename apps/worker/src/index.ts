@@ -10,6 +10,7 @@ import { createLiveToVodRepo } from './live-to-vod-repo';
 import { processLiveToVod } from './live-to-vod';
 import { runMonitorCycle } from './monitor';
 import { createMonitorRepo, pruneHealthChecks } from './monitor-repo';
+import { keyProviderFor } from './protection';
 import { enforceLicenses, expireSubscriptions, pruneSessions } from './maintenance';
 import { createS3Storage } from './storage';
 import { processTranscode } from './transcode';
@@ -35,7 +36,7 @@ const transcodeWorker = new Worker<TranscodeJobData | LiveToVodJobData>(
     }
     return processTranscode(
       { id: job.id ?? 'unknown', data: job.data as TranscodeJobData, attemptsMade: job.attemptsMade, maxAttempts: job.opts.attempts ?? 1 },
-      { repo, storage, workDir: config.WORK_DIR, preset: config.TRANSCODE_PRESET, log },
+      { repo, storage, workDir: config.WORK_DIR, preset: config.TRANSCODE_PRESET, keyProvider: keyProviderFor(config.TRANSCODE_PROTECTION), log },
     );
   },
   // Long jobs: renew the lock often enough and allow up to 6 h per encode.
@@ -89,7 +90,7 @@ const monitorWorker = new Worker<unknown, unknown, MonitorJobName>(
   { connection, concurrency: 1, lockDuration: 60_000 },
 );
 
-log.info({ concurrency: config.TRANSCODE_CONCURRENCY, preset: config.TRANSCODE_PRESET }, 'worker started');
+log.info({ concurrency: config.TRANSCODE_CONCURRENCY, preset: config.TRANSCODE_PRESET, protection: config.TRANSCODE_PROTECTION }, 'worker started');
 
 async function shutdown(signal: string) {
   log.info({ signal }, 'shutting down');

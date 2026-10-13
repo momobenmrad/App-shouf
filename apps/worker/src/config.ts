@@ -11,6 +11,8 @@ const schema = z.object({
   S3_SECRET_ACCESS_KEY: z.string().min(1),
   TRANSCODE_CONCURRENCY: z.coerce.number().int().min(1).max(8).default(1),
   TRANSCODE_PRESET: z.enum(['ultrafast', 'superfast', 'veryfast', 'faster', 'fast', 'medium', 'slow']).default('veryfast'),
+  /** Protection applied to new renditions: AES-128 keys served under the signed playback path. */
+  TRANSCODE_PROTECTION: z.enum(['none', 'aes128']).default('aes128'),
   WORK_DIR: z.string().default('/tmp/chouf-work'),
   /** Where MediaMTX writes event recordings (shared volume). */
   RECORDINGS_DIR: z.string().default('/recordings'),
