@@ -87,7 +87,7 @@ Pour changer de CDN (Bunny), il suffit d'un nouvel adaptateur qui implémente le
 - Le journal `/admin/incidents` garde l'historique ; les contrôles de santé bruts sont purgés après 30 jours.
 
 ### Import d'une playlist M3U
-- `/admin/channels` → « Importer une playlist M3U » : fichier `.m3u` ou contenu collé. L'aperçu montre exactement ce qui sera créé (slug, nom arabe et français, catégorie devinée depuis `group-title`, pays, langue, identifiant du guide `tvg-id`).
+- `/admin/channels` → « Importer une playlist M3U » : adresse https d'une playlist (par exemple `https://iptv-org.github.io/iptv/countries/tn.m3u`), fichier `.m3u` ou contenu collé. Le téléchargement par adresse est limité à 2 Mo et refuse les adresses internes. L'aperçu montre exactement ce qui sera créé (slug, nom arabe et français, catégorie devinée depuis `group-title`, pays, langue, identifiant du guide `tvg-id`).
 - Chaque chaîne est créée **inactive et sans source**. Les adresses de la playlist ne sont pas enregistrées : pour diffuser une chaîne, ajoutez sa source avec l'adresse officielle fournie par le diffuseur et sa licence, puis activez-la.
 - Les radios sont ignorées par défaut (la gateway ne relaie que du HLS). Les chaînes dont le slug existe déjà ne sont pas modifiées. 500 chaînes et 2 Mo maximum par import.
 

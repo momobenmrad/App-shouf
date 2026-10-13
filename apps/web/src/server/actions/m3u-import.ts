@@ -3,10 +3,17 @@
 import { playlistToDrafts } from '@chouf/shared';
 import { revalidatePath } from 'next/cache';
 import { getAdmin } from '../auth';
+import { MAX_PLAYLIST_BYTES, fetchPlaylist } from '../m3u-fetch';
 import { createUserClient } from '../supabase';
 
-const MAX_PLAYLIST_BYTES = 2 * 1024 * 1024;
 const MAX_CHANNELS = 500;
+
+/** Downloads a playlist from an https URL so the admin can preview it before importing. */
+export async function loadPlaylistFromUrlAction(url: string): Promise<{ text?: string; error?: string }> {
+  if (!(await getAdmin())) return { error: 'Accès réservé aux administrateurs.' };
+  const result = await fetchPlaylist(url);
+  return result.ok ? { text: result.text } : { error: result.error };
+}
 
 export interface ImportResult {
   error?: string;
