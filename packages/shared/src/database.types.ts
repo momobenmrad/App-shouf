@@ -555,6 +555,9 @@ export type Database = {
       expire_subscriptions: { Args: Record<string, never>; Returns: number };
       authorize_live_publish: { Args: { p_path: string; p_key: string }; Returns: string | null };
       maturity_rank: { Args: { rating: string }; Returns: number };
+      trending_titles: { Args: { p_ratings: string[]; p_days?: number; p_limit?: number }; Returns: TitleRow[] };
+      recommended_titles_for_me: { Args: { p_profile_id: string; p_ratings: string[]; p_limit?: number }; Returns: TitleRow[] };
+      similar_titles_for_me: { Args: { p_title_id: string; p_profile_id: string; p_ratings: string[]; p_limit?: number }; Returns: TitleRow[] };
       epg_now_next: {
         Args: { p_at?: string };
         Returns: { channel_id: string; now_title: I18nText | null; now_start: string | null; now_end: string | null; next_title: I18nText | null; next_start: string | null }[];

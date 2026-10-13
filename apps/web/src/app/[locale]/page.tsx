@@ -5,6 +5,7 @@ import { TitleCard } from '@/components/TitleCard';
 import { Link } from '@/i18n/navigation';
 import { getViewer } from '@/server/auth';
 import { getActiveProfile, visibleRatings } from '@/server/profile';
+import { becauseYouWatched, forYou, trending } from '@/server/recommendations';
 import { artworkUrl, continueWatching, featuredTitle, latestTitles } from '@/server/catalog';
 import { createUserClient } from '@/server/supabase';
 
@@ -16,11 +17,14 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
   const viewer = await getViewer();
   const profile = await getActiveProfile(viewer);
   const ratings = visibleRatings(profile);
-  const [hero, movies, series, resume] = await Promise.all([
+  const [hero, movies, series, resume, hot, picks, because] = await Promise.all([
     featuredTitle(db, ratings),
     latestTitles(db, 'movie', ratings),
     latestTitles(db, 'series', ratings),
     profile ? continueWatching(db, profile.id) : Promise.resolve([]),
+    trending(db, ratings),
+    profile ? forYou(db, profile, ratings) : Promise.resolve([]),
+    profile ? becauseYouWatched(db, profile, ratings) : Promise.resolve(null),
   ]);
 
   if (!hero && movies.length === 0 && series.length === 0) {
@@ -57,6 +61,27 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
               locale={locale}
               progress={item.duration ? item.position / item.duration : 0}
             />
+          ))}
+        </Rail>
+      )}
+      {because && (
+        <Rail title={t('because', { title: pickText(because.seed.name, locale) })}>
+          {because.titles.map((m) => (
+            <TitleCard key={m.id} title={m} locale={locale} />
+          ))}
+        </Rail>
+      )}
+      {picks.length > 0 && (
+        <Rail title={t('forYou')}>
+          {picks.map((m) => (
+            <TitleCard key={m.id} title={m} locale={locale} />
+          ))}
+        </Rail>
+      )}
+      {hot.length > 0 && (
+        <Rail title={t('trending')}>
+          {hot.map((m) => (
+            <TitleCard key={m.id} title={m} locale={locale} />
           ))}
         </Rail>
       )}

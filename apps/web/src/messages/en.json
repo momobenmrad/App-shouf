@@ -23,7 +23,10 @@
     "latestSeries": "Series",
     "watch": "Watch",
     "more": "More info",
-    "empty": "The catalog is coming soon."
+    "empty": "The catalog is coming soon.",
+    "trending": "Trending",
+    "forYou": "For you",
+    "because": "Because you watched {title}"
   },
   "title": {
     "free": "Free",
@@ -34,7 +37,8 @@
     "resume": "Resume",
     "notAvailable": "Coming soon",
     "minutes": "{count} min",
-    "seasons": "{count, plural, one {# season} other {# seasons}}"
+    "seasons": "{count, plural, one {# season} other {# seasons}}",
+    "similar": "More like this"
   },
   "search": {
     "placeholder": "Movie or series title…",

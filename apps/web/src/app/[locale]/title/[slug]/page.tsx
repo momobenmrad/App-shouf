@@ -8,6 +8,9 @@ import { artworkUrl } from '@/server/catalog';
 import { createUserClient } from '@/server/supabase';
 import { getViewer } from '@/server/auth';
 import { getActiveProfile, visibleRatings } from '@/server/profile';
+import { similarTo } from '@/server/recommendations';
+import { Rail } from '@/components/Rail';
+import { TitleCard } from '@/components/TitleCard';
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 
@@ -34,8 +37,10 @@ export default async function TitlePage({ params }: Props) {
   const title = await loadTitle(slug);
   if (!title) notFound();
   const profile = await getActiveProfile(await getViewer());
-  if (!visibleRatings(profile).includes(title.maturity_rating)) notFound();
+  const ratings = visibleRatings(profile);
+  if (!ratings.includes(title.maturity_rating)) notFound();
   const t = await getTranslations('title');
+  const similar = await similarTo(await createUserClient(), title.id, profile, ratings);
 
   const name = pickText(title.name, locale);
   const poster = artworkUrl(title.poster_path);
@@ -96,6 +101,13 @@ export default async function TitlePage({ params }: Props) {
           </ol>
         </section>
       ))}
+      {similar.length > 0 && (
+        <Rail title={t('similar')}>
+          {similar.map((m) => (
+            <TitleCard key={m.id} title={m} locale={locale} />
+          ))}
+        </Rail>
+      )}
     </article>
   );
 }

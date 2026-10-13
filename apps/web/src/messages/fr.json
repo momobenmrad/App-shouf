@@ -23,7 +23,10 @@
     "latestSeries": "Séries",
     "watch": "Regarder",
     "more": "Plus d'infos",
-    "empty": "Le catalogue arrive bientôt."
+    "empty": "Le catalogue arrive bientôt.",
+    "trending": "Tendances",
+    "forYou": "Pour vous",
+    "because": "Parce que vous avez regardé {title}"
   },
   "title": {
     "free": "Gratuit",
@@ -34,7 +37,8 @@
     "resume": "Reprendre",
     "notAvailable": "Bientôt disponible",
     "minutes": "{count} min",
-    "seasons": "{count, plural, one {# saison} other {# saisons}}"
+    "seasons": "{count, plural, one {# saison} other {# saisons}}",
+    "similar": "Dans le même esprit"
   },
   "search": {
     "placeholder": "Titre d'un film ou d'une série…",

@@ -23,7 +23,10 @@
     "latestSeries": "مسلسلات",
     "watch": "شاهد",
     "more": "المزيد",
-    "empty": "الكتالوج قادم قريبًا."
+    "empty": "الكتالوج قادم قريبًا.",
+    "trending": "الأكثر مشاهدة",
+    "forYou": "مختارات لك",
+    "because": "لأنك شاهدت {title}"
   },
   "title": {
     "free": "مجاني",
@@ -34,7 +37,8 @@
     "resume": "استئناف",
     "notAvailable": "قريبًا",
     "minutes": "{count} دقيقة",
-    "seasons": "{count, plural, one {موسم واحد} two {موسمان} few {# مواسم} many {# موسمًا} other {# موسم}}"
+    "seasons": "{count, plural, one {موسم واحد} two {موسمان} few {# مواسم} many {# موسمًا} other {# موسم}}",
+    "similar": "مشابه لهذا"
   },
   "search": {
     "placeholder": "اسم فيلم أو مسلسل…",
