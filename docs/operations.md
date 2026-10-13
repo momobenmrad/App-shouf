@@ -86,6 +86,11 @@ Pour changer de CDN (Bunny), il suffit d'un nouvel adaptateur qui implémente le
 - Une source dont la licence expire est désactivée à 00 h 05 (heure de Tunis) ; une chaîne sans source sous licence valide passe inactive. Les licences qui expirent dans moins de 30 jours s'affichent en orange dans `/admin/channels/<id>`.
 - Le journal `/admin/incidents` garde l'historique ; les contrôles de santé bruts sont purgés après 30 jours.
 
+### Import d'une playlist M3U
+- `/admin/channels` → « Importer une playlist M3U » : fichier `.m3u` ou contenu collé. L'aperçu montre exactement ce qui sera créé (slug, nom arabe et français, catégorie devinée depuis `group-title`, pays, langue, identifiant du guide `tvg-id`).
+- Chaque chaîne est créée **inactive et sans source**. Les adresses de la playlist ne sont pas enregistrées : pour diffuser une chaîne, ajoutez sa source avec l'adresse officielle fournie par le diffuseur et sa licence, puis activez-la.
+- Les radios sont ignorées par défaut (la gateway ne relaie que du HLS). Les chaînes dont le slug existe déjà ne sont pas modifiées. 500 chaînes et 2 Mo maximum par import.
+
 ### Guide des programmes (EPG)
 - Sur chaque chaîne (`/admin/channels/<id>`), renseigner l'URL d'un fichier XMLTV et l'identifiant `<channel id="…">` de la chaîne dans ce fichier, puis « Importer le guide maintenant ». Le worker réimporte toutes les chaînes chaque nuit à 3 h 10 (heure de Tunis), sur une fenêtre de 6 h en arrière et 8 jours en avant.
 - Le fichier XMLTV doit venir du diffuseur ou d'un fournisseur sous contrat (comme les flux).
