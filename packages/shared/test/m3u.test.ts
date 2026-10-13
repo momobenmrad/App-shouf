@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { guessCategory, parseM3u, playlistToDrafts, slugify, splitI18nName } from '../src/m3u';
+import { cleanChannelName, guessCategory, parseM3u, parseTvgId, playlistToDrafts, slugify, splitI18nName } from '../src/m3u';
 
 const PLAYLIST = `﻿#EXTM3U x-tvg-url="http://example.org/epg/tunisie.xml"
 
@@ -100,5 +100,44 @@ describe('playlistToDrafts', () => {
     const result = playlistToDrafts('#EXTM3U\n#EXTINF:-1,نسمة\nhttp://example.org/n.m3u8\n');
     expect(result.drafts).toEqual([]);
     expect(result.skipped[0]!.reason).toBe('nom inutilisable');
+  });
+});
+
+describe('public playlists (iptv-org format)', () => {
+  const IPTV_ORG = `#EXTM3U
+#EXTINF:-1 tvg-id="ElWatania1.tn@SD",El Watania 1 (1080i)
+https://sw1.tanitweb.net/TunisiaTV/_definst_/watania1/chunklist.m3u8
+#EXTINF:-1 tvg-id="ElWatania1.tn@SD",El Watania 1 (1080p)
+https://sw1.tanitweb.net/TunisiaTV/_definst_/watania1/playlist.m3u8?DVR
+#EXTINF:-1 tvg-id="ElWatania2.tn@SD",El Watania 2 (1080p)
+https://sw1.tanitweb.net/TunisiaTV/_definst_/watania2/playlist.m3u8
+#EXTINF:-1 tvg-id="Alarabiya.ae@SD",Al Arabiya (1080p) [Geo-blocked]
+https://example.org/alarabiya/index.m3u8
+#EXTINF:-1,Studio TV (720p) [Not 24/7]
+https://example.org/studio/index.m3u8
+`;
+
+  it('cleans quality and status tags from names', () => {
+    expect(cleanChannelName('El Watania 1 (1080i)')).toBe('El Watania 1');
+    expect(cleanChannelName('Al Arabiya (1080p) [Geo-blocked]')).toBe('Al Arabiya');
+    expect(cleanChannelName('Canal (HEVC) [Not 24/7]')).toBe('Canal');
+    expect(cleanChannelName('Carthage+ (Tunis)')).toBe('Carthage+ (Tunis)');
+  });
+
+  it('reads country and base id from feed-suffixed tvg-ids', () => {
+    expect(parseTvgId('ElWatania1.tn@SD')).toEqual({ base: 'ElWatania1.tn', country: 'TN' });
+    expect(parseTvgId('Nessma')).toEqual({ base: 'Nessma', country: null });
+    expect(parseTvgId(undefined)).toEqual({ base: null, country: null });
+  });
+
+  it('turns quality variants of one channel into a single draft with a clean slug and country', () => {
+    const { drafts, skipped } = playlistToDrafts(IPTV_ORG, { defaultCountry: 'TN' });
+    expect(drafts.map((d) => [d.slug, d.name.fr, d.country, d.epg_channel_id])).toEqual([
+      ['elwatania1', 'El Watania 1', 'TN', 'ElWatania1.tn@SD'],
+      ['elwatania2', 'El Watania 2', 'TN', 'ElWatania2.tn@SD'],
+      ['alarabiya', 'Al Arabiya', 'AE', 'Alarabiya.ae@SD'],
+      ['studio-tv', 'Studio TV', 'TN', null],
+    ]);
+    expect(skipped).toEqual([{ line: 4, name: 'El Watania 1 (1080p)', reason: 'doublon de « elwatania1 »' }]);
   });
 });

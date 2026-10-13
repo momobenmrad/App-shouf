@@ -106,6 +106,23 @@ export function guessCategory(group: string | undefined, name: string): ChannelC
 
 const ARABIC = /[؀-ۿ]/;
 
+/** Removes quality/status tags common in public playlists: "(1080p)", "(HEVC)", "[Not 24/7]", "[Geo-blocked]". */
+export function cleanChannelName(name: string): string {
+  return name
+    .replace(/\s*\[[^\]]*\]/g, '')
+    .replace(/\s*\((?:\d{3,4}[pi]|hevc|4k|uhd|fhd|hd|sd)\)/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/** "ElWatania1.tn@SD" → { base: "ElWatania1.tn", country: "TN" } (iptv-org style ids carry a feed suffix). */
+export function parseTvgId(tvgId: string | undefined): { base: string | null; country: string | null } {
+  if (!tvgId) return { base: null, country: null };
+  const base = tvgId.split('@')[0]!.trim();
+  const m = /\.([a-z]{2})$/i.exec(base);
+  return { base: base || null, country: m ? m[1]!.toUpperCase() : null };
+}
+
 /** "الوطنية 1 | Watania 1" → { ar: "الوطنية 1", fr: "Watania 1" }; a single name goes to ar or fr by script. */
 export function splitI18nName(name: string): I18nText {
   const parts = name.split(/\s+[|/]\s+/).map((p) => p.trim()).filter(Boolean);
@@ -122,7 +139,8 @@ export function slugify(value: string): string {
     .normalize('NFKD')
     .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
-    .replace(/\.(tn|ma|dz|fr)$/, '')
+    .replace(/@[a-z0-9]+$/, '')
+    .replace(/\.[a-z]{2}$/, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80)
@@ -156,10 +174,11 @@ export interface DraftOptions {
 }
 
 export function toChannelDraft(entry: M3uEntry, opts: DraftOptions = {}): ChannelDraft | null {
-  const name = splitI18nName(entry.name);
-  const slug = slugify(entry.attrs['tvg-id'] || entry.attrs['tvg-name'] || name.fr || name.en || entry.name) || slugify(name.fr ?? '');
+  const name = splitI18nName(cleanChannelName(entry.name));
+  const tvg = parseTvgId(entry.attrs['tvg-id']);
+  const slug = slugify(tvg.base || entry.attrs['tvg-name'] || name.fr || name.en || entry.name) || slugify(name.fr ?? '');
   if (!slug) return null;
-  const country = (entry.attrs['tvg-country'] ?? '').split(/[;,]/)[0]?.trim().toUpperCase();
+  const country = ((entry.attrs['tvg-country'] ?? '').split(/[;,]/)[0]?.trim() || tvg.country || '').toUpperCase();
   const language = (entry.attrs['tvg-language'] ?? '').split(/[;,]/)[0]?.trim().toLowerCase();
   return {
     slug,
