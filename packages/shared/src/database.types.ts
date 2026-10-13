@@ -257,8 +257,23 @@ export type ChannelRow = {
   active_source_id: string | null;
   auto_disabled_reason: string | null;
   sort_order: number;
+  epg_url: string | null;
+  epg_channel_id: string | null;
+  epg_updated_at: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type EpgProgramRow = {
+  id: number;
+  channel_id: string;
+  start_at: string;
+  end_at: string;
+  title: I18nText;
+  description: I18nText;
+  category: string | null;
+  rating: string | null;
+  external_id: string | null;
 };
 
 export type ChannelSourceRow = {
@@ -489,8 +504,16 @@ export type Database = {
         | 'active_source_id'
         | 'auto_disabled_reason'
         | 'sort_order'
+        | 'epg_url'
+        | 'epg_channel_id'
+        | 'epg_updated_at'
         | 'created_at'
         | 'updated_at'
+      >;
+      epg_programs: Table<
+        EpgProgramRow,
+        'id' | 'description' | 'category' | 'rating' | 'external_id',
+        [Rel<'epg_programs_channel_id_fkey', ['channel_id'], 'channels'>]
       >;
       channel_sources: Table<
         ChannelSourceRow,
@@ -532,6 +555,10 @@ export type Database = {
       expire_subscriptions: { Args: Record<string, never>; Returns: number };
       authorize_live_publish: { Args: { p_path: string; p_key: string }; Returns: string | null };
       maturity_rank: { Args: { rating: string }; Returns: number };
+      epg_now_next: {
+        Args: { p_at?: string };
+        Returns: { channel_id: string; now_title: I18nText | null; now_start: string | null; now_end: string | null; next_title: I18nText | null; next_start: string | null }[];
+      };
       open_playback_session: {
         Args: {
           p_user_id: string;

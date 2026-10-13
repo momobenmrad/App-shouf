@@ -1,6 +1,7 @@
 import { daysUntilExpiry, pickText } from '@chouf/shared';
 import { notFound } from 'next/navigation';
 import { ChannelForm } from '@/components/admin/ChannelForm';
+import { EpgImportButton } from '@/components/admin/EpgImportButton';
 import { HealthBadge, INCIDENT_LABEL } from '@/components/admin/HealthBadge';
 import { LiveRefresh } from '@/components/admin/LiveRefresh';
 import { SourceForm } from '@/components/admin/SourceForm';
@@ -17,10 +18,11 @@ export default async function EditChannel({ params }: { params: Promise<{ id: st
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/.test(id)) notFound();
   const db = await createUserClient();
-  const [{ data: channel }, { data: sources }, { data: incidents }] = await Promise.all([
+  const [{ data: channel }, { data: sources }, { data: incidents }, { count: upcoming }] = await Promise.all([
     db.from('channels').select('*').eq('id', id).maybeSingle(),
     db.from('channel_sources').select('*').eq('channel_id', id).order('priority'),
     db.from('source_incidents').select('*').eq('channel_id', id).order('started_at', { ascending: false }).limit(30),
+    db.from('epg_programs').select('id', { count: 'exact', head: true }).eq('channel_id', id).gt('end_at', new Date().toISOString()),
   ]);
   if (!channel) notFound();
   const sourceIds = (sources ?? []).map((s) => s.id);
@@ -42,6 +44,10 @@ export default async function EditChannel({ params }: { params: Promise<{ id: st
         </form>
       </div>
       <ChannelForm channel={channel} assetsBaseUrl={env().VOD_BASE_URL} />
+      <section className="rounded-lg border border-line bg-panel p-5">
+        <h2 className="mb-2 font-semibold">Guide des programmes</h2>
+        <EpgImportButton channelId={channel.id} programmeCount={upcoming ?? 0} />
+      </section>
 
       <section className="space-y-4">
         <h2 className="text-xl font-bold">Sources et santé</h2>

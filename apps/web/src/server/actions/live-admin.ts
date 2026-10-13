@@ -1,6 +1,6 @@
 'use server';
 
-import { channelSourceUpsertSchema, channelUpsertSchema, liveEventUpsertSchema } from '@chouf/shared';
+import { channelSourceUpsertSchema, channelUpsertSchema, liveEventUpsertSchema, parseXmltv, selectProgrammes } from '@chouf/shared';
 import { createHash, randomBytes } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -37,6 +37,8 @@ export async function saveChannelAction(_prev: ActionState, form: FormData): Pro
     language: text(form, 'language'),
     status: text(form, 'status'),
     access: text(form, 'access'),
+    epg_url: nullable(text(form, 'epg_url')),
+    epg_channel_id: nullable(text(form, 'epg_channel_id')),
   });
   if (!parsed.success) return { error: issues(parsed.error) };
   const row = { ...parsed.data, sort_order: Number(text(form, 'sort_order')) || 0, auto_disabled_reason: null };
@@ -94,6 +96,38 @@ export async function deleteSourceAction(form: FormData) {
   const db = await adminDb();
   await db.from('channel_sources').delete().eq('id', text(form, 'id'));
   revalidatePath(`/fr/admin/channels/${text(form, 'channel_id')}`);
+}
+
+/** Immediate EPG import for one channel (the worker does it nightly for all). */
+export async function importEpgNowAction(_prev: ActionState, form: FormData): Promise<ActionState> {
+  const db = await adminDb();
+  const id = text(form, 'id');
+  const { data: channel } = await db.from('channels').select('id, epg_url, epg_channel_id').eq('id', id).single();
+  if (!channel?.epg_url || !channel.epg_channel_id) return { error: 'Renseignez l’URL XMLTV et l’identifiant de la chaîne.' };
+  let xml: string;
+  try {
+    const res = await fetch(channel.epg_url, { signal: AbortSignal.timeout(30_000), headers: { Accept: 'application/xml,text/xml' } });
+    if (!res.ok) return { error: `Téléchargement impossible (HTTP ${res.status}).` };
+    xml = await res.text();
+  } catch (err) {
+    return { error: `Téléchargement impossible : ${err instanceof Error ? err.message : String(err)}` };
+  }
+  const doc = parseXmltv(xml);
+  const from = new Date(Date.now() - 6 * 3_600_000).toISOString();
+  const to = new Date(Date.now() + 8 * 86_400_000).toISOString();
+  const rows = selectProgrammes(doc, channel.epg_channel_id, from, to);
+  if (rows.length === 0) {
+    return { error: `Aucun programme pour « ${channel.epg_channel_id} ». Identifiants présents : ${doc.channels.map((c) => c.id).slice(0, 15).join(', ') || 'aucun'}` };
+  }
+  await db.from('epg_programs').delete().eq('channel_id', id).gte('start_at', from).lt('start_at', to);
+  const { error } = await db.from('epg_programs').upsert(
+    rows.map((p) => ({ channel_id: id, start_at: p.start, end_at: p.end, title: p.title, description: p.description, category: p.category, rating: p.rating })),
+    { onConflict: 'channel_id,start_at' },
+  );
+  if (error) return { error: error.message };
+  await db.from('channels').update({ epg_updated_at: new Date().toISOString() }).eq('id', id);
+  revalidatePath(`/fr/admin/channels/${id}`);
+  return { ok: true };
 }
 
 export async function resolveIncidentAction(form: FormData) {

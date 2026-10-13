@@ -17,7 +17,7 @@ export interface LiveToVodJobData {
 
 export type TranscodeQueueJob = { name: 'transcode'; data: TranscodeJobData } | { name: 'live-to-vod'; data: LiveToVodJobData };
 
-export type MaintenanceJobName = 'expire-subscriptions' | 'enforce-licenses' | 'prune-sessions' | 'prune-health-checks';
+export type MaintenanceJobName = 'expire-subscriptions' | 'enforce-licenses' | 'prune-sessions' | 'prune-health-checks' | 'import-epg';
 export type MonitorJobName = 'probe-sources';
 
 export const TRANSCODE_JOB_OPTIONS = {

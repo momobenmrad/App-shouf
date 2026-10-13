@@ -2,6 +2,7 @@ import { type Locale, pickText } from '@chouf/shared';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { artworkUrl } from '@/server/catalog';
+import { nowNextByChannel } from '@/server/epg';
 import { createUserClient } from '@/server/supabase';
 import { getViewer } from '@/server/auth';
 import { getActiveProfile } from '@/server/profile';
@@ -29,6 +30,7 @@ export default async function LivePage({ params }: { params: Promise<{ locale: L
       .limit(20),
   ]);
   const channels = kids ? (allChannels ?? []).filter((c) => c.category === 'kids') : allChannels;
+  const epg = await nowNextByChannel(db);
   const events = kids ? [] : allEvents;
   const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' });
   const liveEvents = (events ?? []).filter((e) => e.status === 'live');
@@ -52,7 +54,10 @@ export default async function LivePage({ params }: { params: Promise<{ locale: L
       )}
 
       <section>
-        <h2 className="mb-4 text-2xl font-black">{t('channels')}</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-2xl font-black">{t('channels')}</h2>
+          <Link href="/live/guide" className="rounded border border-line px-3 py-1 text-sm hover:bg-panel">📅 {t('guide')}</Link>
+        </div>
         {!channels?.length ? (
           <p className="text-muted">{t('noChannels')}</p>
         ) : (
@@ -66,6 +71,7 @@ export default async function LivePage({ params }: { params: Promise<{ locale: L
                     <Link key={ch.id} href={`/live/channel/${ch.slug}`} aria-disabled={!ch.active_source_id} className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-lg border border-line bg-panel p-3 text-center hover:border-brand aria-disabled:opacity-40">
                       {artworkUrl(ch.logo_path) ? <img src={artworkUrl(ch.logo_path)!} alt="" className="max-h-12 object-contain" /> : <span className="text-2xl">📺</span>}
                       <span className="line-clamp-1 text-xs">{pickText(ch.name, locale)}</span>
+                      {epg.get(ch.id)?.now && <span className="line-clamp-1 text-[10px] text-muted">{pickText(epg.get(ch.id)!.now!.title, locale)}</span>}
                       {ch.access === 'free' && <span className="text-[10px] uppercase text-emerald-400">{t('free')}</span>}
                     </Link>
                   ))}

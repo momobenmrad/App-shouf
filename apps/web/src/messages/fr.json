@@ -128,7 +128,11 @@
       "religious": "Religieux",
       "music": "Musique",
       "documentary": "Documentaire"
-    }
+    },
+    "guide": "Guide TV",
+    "nowOn": "En ce moment",
+    "next": "À suivre",
+    "schedule": "Programme du jour"
   },
   "chat": {
     "title": "Chat",
@@ -154,5 +158,13 @@
     "limit": "5 profils maximum par compte.",
     "delete": "Supprimer",
     "add": "Ajouter un profil"
+  },
+  "guide": {
+    "title": "Guide des programmes",
+    "earlier": "Plus tôt",
+    "now": "Maintenant",
+    "later": "Plus tard",
+    "empty": "Aucune chaîne.",
+    "noData": "Programme indisponible"
   }
 }

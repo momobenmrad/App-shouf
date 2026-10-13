@@ -11,3 +11,4 @@ export * from './hls';
 export * from './sealed-url';
 export * from './monitoring';
 export * from './maturity';
+export * from './xmltv';

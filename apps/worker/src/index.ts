@@ -4,6 +4,8 @@ import pino from 'pino';
 import { createAlerter } from './alerts';
 import { loadConfig } from './config';
 import { createServiceClient, createTranscodeRepo } from './db';
+import { importEpg } from './epg';
+import { createEpgRepo } from './epg-repo';
 import { createLiveToVodRepo } from './live-to-vod-repo';
 import { processLiveToVod } from './live-to-vod';
 import { runMonitorCycle } from './monitor';
@@ -52,6 +54,7 @@ await maintenanceQueue.upsertJobScheduler('expire-subscriptions', { pattern: '*/
 await maintenanceQueue.upsertJobScheduler('prune-sessions', { every: 5 * 60_000 }, { name: 'prune-sessions' });
 await maintenanceQueue.upsertJobScheduler('enforce-licenses', { pattern: '5 0 * * *', tz: 'Africa/Tunis' }, { name: 'enforce-licenses' });
 await maintenanceQueue.upsertJobScheduler('prune-health-checks', { pattern: '35 1 * * *', tz: 'Africa/Tunis' }, { name: 'prune-health-checks' });
+await maintenanceQueue.upsertJobScheduler('import-epg', { pattern: '10 3 * * *', tz: 'Africa/Tunis' }, { name: 'import-epg' });
 
 const maintenanceWorker = new Worker<unknown, unknown, MaintenanceJobName>(
   QUEUES.maintenance,
@@ -65,6 +68,8 @@ const maintenanceWorker = new Worker<unknown, unknown, MaintenanceJobName>(
         return enforceLicenses(db, alert, log);
       case 'prune-health-checks':
         return pruneHealthChecks(db);
+      case 'import-epg':
+        return importEpg(createEpgRepo(db), log);
     }
   },
   { connection, concurrency: 1 },

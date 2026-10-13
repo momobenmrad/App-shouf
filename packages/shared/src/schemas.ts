@@ -138,6 +138,8 @@ export const channelUpsertSchema = z.object({
   language: z.string().toLowerCase().regex(/^[a-z]{2}$/),
   status: z.enum(['active', 'inactive']),
   access: accessSchema,
+  epg_url: z.url({ protocol: /^https?$/ }).nullable().optional(),
+  epg_channel_id: z.string().trim().max(120).nullable().optional(),
 });
 
 export const channelSourceUpsertSchema = z.object({
