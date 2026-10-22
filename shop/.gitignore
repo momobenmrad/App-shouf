@@ -1,0 +1,7 @@
+/storage/*
+!/storage/.htaccess
+!/storage/.gitkeep
+/uploads/*
+!/uploads/.htaccess
+!/uploads/.gitkeep
+/dist/
