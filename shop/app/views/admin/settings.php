@@ -95,6 +95,20 @@ $image = function (string $key, string $label, string $hint) {
         <?php $image('hero_image', 'Image de la bannière d’accueil', 'Paysage, 2000 × 1000 px conseillé. Sans image, un montage des produits mis en avant est affiché.') ?>
         <?php $input('products_per_page', 'Produits par page', ['type' => 'number', 'attrs' => 'min="4" max="48"']) ?>
 
+        <?php $others = array_diff(enabled_locales(), [setting('default_locale', 'fr')]); ?>
+        <?php if ($others): ?>
+            <h2 class="form-section">Traductions des textes de la boutique</h2>
+            <p class="hint">Facultatif. Laissés vides, les textes d’origine sont traduits automatiquement tant que vous ne les avez pas modifiés ; sinon, votre texte s’affiche tel quel.</p>
+            <?php foreach ($others as $l): ?>
+                <fieldset class="pay-card">
+                    <legend><strong><?= e(SUPPORTED_LOCALES[$l]['name']) ?></strong></legend>
+                    <?php foreach (['announcement' => 'Bandeau d’annonce', 'hero_title' => 'Titre de l’accueil', 'hero_subtitle' => 'Sous-titre', 'hero_cta' => 'Texte du bouton', 'shop_tagline' => 'Slogan'] as $k => $label): ?>
+                        <?php $input($k . '_' . $l, $label, ['attrs' => 'dir="' . SUPPORTED_LOCALES[$l]['dir'] . '" lang="' . $l . '"']) ?>
+                    <?php endforeach ?>
+                </fieldset>
+            <?php endforeach ?>
+        <?php endif ?>
+
     <?php elseif ($tab === 'vente'): ?>
         <h2 class="form-section">Langues et devise</h2>
         <?php $fields[] = 'locales'; $enabled = enabled_locales(); ?>

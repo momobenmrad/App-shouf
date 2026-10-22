@@ -5,10 +5,10 @@
     <div class="container hero-inner">
         <div class="hero-copy">
             <p class="eyebrow"><?= e(setting('shop_name')) ?></p>
-            <h1><?= e(setting('hero_title')) ?></h1>
-            <p class="hero-sub"><?= e(setting('hero_subtitle')) ?></p>
+            <h1><?= e(shop_text('hero_title')) ?></h1>
+            <p class="hero-sub"><?= e(shop_text('hero_subtitle')) ?></p>
             <div class="hero-actions">
-                <a class="btn btn-primary btn-lg" href="<?= e(url('/boutique')) ?>"><?= e(setting('hero_cta') ?: __('home.cta')) ?></a>
+                <a class="btn btn-primary btn-lg" href="<?= e(url('/boutique')) ?>"><?= e(shop_text('hero_cta') ?: __('home.cta')) ?></a>
                 <a class="btn btn-ghost btn-lg" href="<?= e(url('/boutique', ['promo' => 1])) ?>"><?= e(__('home.see_deals')) ?></a>
             </div>
         </div>

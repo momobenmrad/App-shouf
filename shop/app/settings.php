@@ -1,9 +1,18 @@
 <?php
 declare(strict_types=1);
 
+/** Storefront texts the merchant writes; each can be overridden per language (hero_title_ar, …). */
+const TRANSLATABLE_SETTINGS = ['shop_tagline', 'announcement', 'hero_title', 'hero_subtitle', 'hero_cta'];
+
 function setting_defaults(): array
 {
-    return [
+    $perLanguage = [];
+    foreach (TRANSLATABLE_SETTINGS as $key) {
+        foreach (['fr', 'ar', 'en'] as $l) {
+            $perLanguage[$key . '_' . $l] = '';
+        }
+    }
+    return $perLanguage + [
         // Identité
         'shop_name' => 'Ma Boutique',
         'shop_tagline' => 'Des produits choisis avec soin, livrés chez vous.',
@@ -119,4 +128,23 @@ function save_settings(array $values): void
         }
     }
     unset($GLOBALS['_settings']);
+}
+
+/**
+ * A merchant text in the visitor's language: the per-language override when set, otherwise the
+ * translated built-in default while the merchant has not changed it, otherwise the text as written.
+ */
+function shop_text(string $key): string
+{
+    $loc = locale();
+    if (($override = trim((string) setting($key . '_' . $loc, ''))) !== '') {
+        return $override;
+    }
+    $value = (string) setting($key, '');
+    $untouched = $value === (setting_defaults()[$key] ?? null)
+        || ($key === 'announcement' && preg_match('/^Livraison offerte dès /u', $value));
+    if (!$untouched || $loc === 'fr') {
+        return $value;
+    }
+    return __('default.' . $key, ['amount' => format_money((int) setting('free_shipping_threshold', 0), true)]);
 }

@@ -2,7 +2,7 @@
 $shopName = (string) setting('shop_name');
 $brand = (string) setting('brand_color', '#0f766e');
 $pageTitle = $title ?? $shopName;
-$metaDescription = $description ?? (setting('meta_description') ?: setting('shop_tagline'));
+$metaDescription = $description ?? (setting('meta_description') ?: shop_text('shop_tagline'));
 $canonical = abs_url(current_path());
 $ogImage = !empty($og_image) ? abs_media($og_image) : (setting('logo') ? abs_media(setting('logo')) : null);
 $cartCount = cart_count();
@@ -48,7 +48,7 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
 <body>
 <a class="skip-link" href="#main"><?= e(__('a11y.skip')) ?></a>
 
-<?php if ($announcement = setting('announcement')): ?>
+<?php if ($announcement = shop_text('announcement')): ?>
     <div class="announcement"><div class="container"><?= e($announcement) ?></div></div>
 <?php endif ?>
 
@@ -168,7 +168,7 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
                     <span class="logo-text"><?= e($shopName) ?></span>
                 <?php endif ?>
             </a>
-            <p><?= e(setting('footer_text') ?: setting('shop_tagline')) ?></p>
+            <p><?= e(setting('footer_text') ?: shop_text('shop_tagline')) ?></p>
             <ul class="contact-list">
                 <?php if (setting('shop_phone')): ?><li><a href="tel:<?= e(preg_replace('/[^0-9+]/', '', (string) setting('shop_phone'))) ?>" dir="ltr"><?= e(setting('shop_phone')) ?></a></li><?php endif ?>
                 <?php if (setting('shop_email')): ?><li><a href="mailto:<?= e(setting('shop_email')) ?>"><?= e(setting('shop_email')) ?></a></li><?php endif ?>

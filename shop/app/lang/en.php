@@ -247,4 +247,9 @@ return [
 
     'not_found.title' => 'Page not found',
     'not_found.text' => 'The page you are looking for does not exist or has moved.',
+    'default.shop_tagline' => 'Carefully chosen products, delivered to your door.',
+    'default.announcement' => 'Free delivery on orders over :amount',
+    'default.hero_title' => 'Quality, without compromise.',
+    'default.hero_subtitle' => 'Discover our selection of products, delivered fast nationwide.',
+    'default.hero_cta' => 'Shop now',
 ];

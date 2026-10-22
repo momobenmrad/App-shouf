@@ -42,7 +42,7 @@ function home_page(): void
         }
     }
     render('shop/home', [
-        'title' => setting('meta_title') ?: setting('shop_name') . ' — ' . setting('shop_tagline'),
+        'title' => setting('meta_title') ?: setting('shop_name') . ' — ' . shop_text('shop_tagline'),
         'featured' => $featured,
         'latest' => $latest,
         'bestsellers' => $bestsellers,

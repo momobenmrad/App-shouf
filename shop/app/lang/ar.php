@@ -247,4 +247,9 @@ return [
 
     'not_found.title' => 'الصفحة غير موجودة',
     'not_found.text' => 'الصفحة المطلوبة غير موجودة أو تم نقلها.',
+    'default.shop_tagline' => 'منتجات مختارة بعناية، تصلك إلى باب بيتك.',
+    'default.announcement' => 'توصيل مجاني للطلبات ابتداءً من :amount',
+    'default.hero_title' => 'الجودة، دون أي تنازل.',
+    'default.hero_subtitle' => 'اكتشف تشكيلتنا المختارة، مع توصيل سريع إلى كامل أنحاء البلاد.',
+    'default.hero_cta' => 'تسوّق الآن',
 ];

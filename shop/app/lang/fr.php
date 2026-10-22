@@ -247,4 +247,9 @@ return [
 
     'not_found.title' => 'Page introuvable',
     'not_found.text' => 'La page demandée n’existe pas ou a été déplacée.',
+    'default.shop_tagline' => 'Des produits choisis avec soin, livrés chez vous.',
+    'default.announcement' => 'Livraison offerte dès :amount d’achat',
+    'default.hero_title' => 'La qualité, sans compromis.',
+    'default.hero_subtitle' => 'Découvrez notre sélection de produits, livrés rapidement partout dans le pays.',
+    'default.hero_cta' => 'Découvrir la boutique',
 ];

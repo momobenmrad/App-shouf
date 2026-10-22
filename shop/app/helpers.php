@@ -252,10 +252,14 @@ function currency_decimals(): int
     return (int) setting('currency_decimals', 3);
 }
 
-function format_money(int|float|null $minor): string
+/** Formats minor units for display; $compact drops the decimals of whole amounts ("150 DT"). */
+function format_money(int|float|null $minor, bool $compact = false): string
 {
     $dec = currency_decimals();
     $amount = ((int) $minor) / (10 ** $dec);
+    if ($compact && (int) $minor % (10 ** $dec) === 0) {
+        $dec = 0;
+    }
     $num = number_format($amount, $dec, ',', "\u{202F}");
     $sym = setting('currency_symbol', 'DT');
     return setting('currency_position', 'after') === 'before' ? $sym . "\u{00A0}" . $num : $num . "\u{00A0}" . $sym;
