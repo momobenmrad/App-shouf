@@ -52,3 +52,35 @@ npx remotion render BoutiqueTikTok out/boutique-tiktok.mp4 --codec=h264 --crf=16
    - « POV : ton client veut une boutique en ligne mais refuse de payer Shopify tous les mois »
    - « Combien coûte un site e-commerce en 2026 ? Moins que tu crois. »
    - « J'ai livré cette boutique en 3 minutes d'installation »
+
+---
+
+# Vidéo 2 — « Boutique premium » (avant / après + commandes)
+
+Composition `BoutiquePremium` (`src/premium/`), 25 s, 1080×1920. Concept tiré de la recherche sur les formats qui marchent :
+les **refontes « premium »** (vidéos à plusieurs millions de vues selon Creative Bloq) et le **son de commande e-commerce**
+(page TikTok « Shopify Order Sounds » : ~893 000 publications), appliqués à une boutique. Le « ka-ching » est synthétisé
+(pas le son de Shopify).
+
+| Temps | Scène |
+|---|---|
+| 0–2 s | Le résultat flashé ½ s → rembobinage → l'**AVANT** (vieux site fictif, `public/shots/before.png`) + tampon « AVANT » |
+| 2–6 s | Curseur avant / après qui révèle la nouvelle boutique, flash sur le temps fort |
+| 6–11 s | 3 preuves : design premium, panier en 1 tap, paiement à la livraison |
+| 11–17 s | Écran verrouillé : notifications « Nouvelle commande » en rafale, total qui grimpe (mention « commandes simulées ») |
+| 17–21 s | Plateforme à abonnement vs site sur mesure |
+| 21–25 s | « Commente SITE et je fais l'avant / après de TA boutique gratuitement » |
+
+```bash
+python3 audio/make_audio_premium.py
+npx remotion render BoutiquePremium out/boutique-premium.mp4 --codec=h264 --crf=16
+npx remotion still BoutiquePremium out/couverture-premium.jpg --frame=40
+```
+
+Timings partagés : `src/premium/timeline.ts` ↔ `audio/make_audio_premium.py`.
+
+**Légende proposée** :
+> Boutique en ligne : avant / après 😳 De « envoyez-nous un message » à un vrai site qui encaisse. Commente « SITE » pour l'avant/après de ta boutique 👇
+> #siteweb #ecommerce #boutiqueenligne #webdesign #avantapres
+
+**Honnêteté publicitaire** : les commandes affichées sont une démo, d'où la mention « commandes simulées ». Ne pas la retirer ni présenter ces montants comme des résultats réels.
