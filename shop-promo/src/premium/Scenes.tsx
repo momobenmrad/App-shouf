@@ -14,7 +14,7 @@ import { ORDER_FRAMES, ORDERS, PROOF, REVEAL_FLASH, SLIDE_END, SLIDE_START } fro
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 // Formatted by hand: the headless renderer has no ICU data for fr-FR grouping.
-const dt = (millimes: number) => {
+export const dt = (millimes: number) => {
   const whole = Math.floor(millimes / 1000)
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, "\u202f");
@@ -22,7 +22,7 @@ const dt = (millimes: number) => {
 };
 
 /** Red rubber-stamp label ("AVANT"). */
-const Stamp: React.FC<{ label: string; at: number; color?: string; style?: React.CSSProperties }> = ({
+export const Stamp: React.FC<{ label: string; at: number; color?: string; style?: React.CSSProperties }> = ({
   label,
   at,
   color = "#ef4444",
@@ -103,7 +103,7 @@ export const PremiumReveal: React.FC = () => {
   const frame = useCurrentFrame();
   const p = interpolate(frame, [SLIDE_START, SLIDE_END], [0, 100], { ...clamp, easing: ease });
   const done = frame >= REVEAL_FLASH;
-  const knobX = css(390) * (p / 100);
+  const knobX = css(390) * (1 - p / 100); // "after" slides in from the right, under the APRÈS label
   return (
     <AbsoluteFill>
       {done ? (
@@ -130,7 +130,7 @@ export const PremiumReveal: React.FC = () => {
       </div>
       <Phone style={{ scale: done ? interpolate(frame, [REVEAL_FLASH, 120], [1.04, 1], clamp) : 1 }}>
         <Screen src="before.png" />
-        <div style={{ position: "absolute", inset: 0, clipPath: `inset(0 ${100 - p}% 0 0)` }}>
+        <div style={{ position: "absolute", inset: 0, clipPath: `inset(0 0 0 ${100 - p}%)` }}>
           <Screen src="home-top.png" />
         </div>
         {!done && p > 0 && p < 100 ? (
@@ -236,7 +236,7 @@ export const PremiumProofs: React.FC = () => {
 };
 
 /** iOS-style notification banner. */
-const Notification: React.FC<{ city: string; amount: number; index: number }> = ({ city, amount, index }) => (
+export const Notification: React.FC<{ city: string; amount: number; index: number }> = ({ city, amount, index }) => (
   <div
     style={{
       display: "flex",

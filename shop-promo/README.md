@@ -84,3 +84,24 @@ Timings partagés : `src/premium/timeline.ts` ↔ `audio/make_audio_premium.py`.
 > #siteweb #ecommerce #boutiqueenligne #webdesign #avantapres
 
 **Honnêteté publicitaire** : les commandes affichées sont une démo, d'où la mention « commandes simulées ». Ne pas la retirer ni présenter ces montants comme des résultats réels.
+
+---
+
+# Vidéo 2b — « Boutique premium » 15 s avec voix off
+
+Composition `BoutiquePremium15` (`src/premium15/`), 15 s, refaite après l'analyse TikTok de la vidéo 1
+(décrochage à 0:02, 12 % de visionnage moyen) :
+
+- **Image 0 complète** : accroche lisible tout de suite (« Si ta boutique ressemble à ÇA… ») + téléphone coupé AVANT | APRÈS.
+- **Accroche orientée commerçant** et **voix off française** ElevenLabs (voix « Raphael — Publicité, shorts, social media »,
+  modèle `eleven_v4`, prise 1 : `public/audio/voice/take1.mp3`). Les scènes sont calées sur les pauses mesurées de cette prise.
+- **Boucle** : la dernière seconde revient exactement à l'image 0.
+
+```bash
+python3 audio/make_audio_premium15.py   # mixe voix + beat (atténué sous la voix) + bruitages
+npx remotion render BoutiquePremium15 out/boutique-premium-15s.mp4 --codec=h264 --crf=16
+```
+
+Pour changer de prise ou de texte : régénérer la voix, remplacer `take1.mp3`, puis réajuster les numéros d'images dans
+`src/premium15/timeline.ts` et `audio/make_audio_premium15.py` (repérer les pauses avec
+`ffmpeg -i take1.mp3 -af silencedetect=noise=-30dB:d=0.07 -f null -`).
