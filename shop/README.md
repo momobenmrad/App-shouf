@@ -6,6 +6,7 @@ Boutique en ligne complète, prête à être livrée à un client et installée 
 - **Paiements** : paiement à la livraison, **Konnect** et **Flouci** (Tunisie), **Stripe** (international).
 - **Langues** : français, arabe (mise en page de droite à gauche) et anglais, au choix.
 - **Administration** : tableau de bord (ventes, stock faible, meilleures ventes), commandes (statuts, e-mails au client, facture imprimable, export CSV), produits (photos glisser-déposer, variantes, duplication, actions groupées), catégories, codes promo, pages, clients, messages, paramètres sans toucher au code.
+- **Appli installable (PWA)** : les clients ajoutent la boutique à l'écran d'accueil de leur téléphone (Android et iPhone) ; elle s'ouvre en plein écran comme une appli, avec l'icône aux couleurs de la boutique (générée automatiquement depuis le logo ou la couleur principale) et une page « pas de connexion ». Aucune publication sur les stores n'est nécessaire. Nécessite HTTPS.
 - **Marque blanche** : nom, logo, couleur principale, textes, bandeau, réseaux sociaux, WhatsApp… tout se règle dans l'admin.
 
 ## Sommaire

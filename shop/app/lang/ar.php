@@ -252,4 +252,12 @@ return [
     'default.hero_title' => 'الجودة، دون أي تنازل.',
     'default.hero_subtitle' => 'اكتشف تشكيلتنا المختارة، مع توصيل سريع إلى كامل أنحاء البلاد.',
     'default.hero_cta' => 'تسوّق الآن',
+    'pwa.install' => 'ثبّت التطبيق',
+    'pwa.install_short' => 'تثبيت',
+    'pwa.banner_title' => 'تطبيق :shop',
+    'pwa.banner_text' => 'اطلب بسرعة أكبر من شاشتك الرئيسية.',
+    'pwa.ios_hint' => 'اضغط على «مشاركة» ثم «إضافة إلى الشاشة الرئيسية».',
+    'pwa.offline_title' => 'لا يوجد اتصال',
+    'pwa.offline_text' => 'تحقق من اتصالك بالإنترنت ثم أعد المحاولة.',
+    'pwa.retry' => 'إعادة المحاولة',
 ];

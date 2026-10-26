@@ -5,6 +5,7 @@ require APP_DIR . '/controllers/shop.php';
 require APP_DIR . '/controllers/checkout.php';
 require APP_DIR . '/controllers/admin.php';
 require APP_DIR . '/controllers/admin_catalog.php';
+require APP_DIR . '/controllers/pwa.php';
 
 /** Request path relative to the shop root, e.g. "/produit/sac-cuir". */
 function current_path(): string
@@ -46,6 +47,11 @@ function routes(): array
         ['POST', '/newsletter', 'newsletter_subscribe'],
         ['GET', '/sitemap.xml', 'sitemap'],
         ['GET', '/robots.txt', 'robots'],
+
+        // Appli installable (PWA)
+        ['GET', '/manifest.webmanifest', 'pwa_manifest'],
+        ['GET', '/sw.js', 'pwa_service_worker'],
+        ['GET', '/app-icon-(192|512)\\.png', 'pwa_icon'],
 
         // Panier & commande
         ['GET', '/panier', 'cart_page'],

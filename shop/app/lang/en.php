@@ -252,4 +252,12 @@ return [
     'default.hero_title' => 'Quality, without compromise.',
     'default.hero_subtitle' => 'Discover our selection of products, delivered fast nationwide.',
     'default.hero_cta' => 'Shop now',
+    'pwa.install' => 'Install the app',
+    'pwa.install_short' => 'Install',
+    'pwa.banner_title' => 'The :shop app',
+    'pwa.banner_text' => 'Order faster, right from your home screen.',
+    'pwa.ios_hint' => 'Tap “Share”, then “Add to Home Screen”.',
+    'pwa.offline_title' => 'No connection',
+    'pwa.offline_text' => 'Check your internet connection and try again.',
+    'pwa.retry' => 'Try again',
 ];

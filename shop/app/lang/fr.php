@@ -252,4 +252,12 @@ return [
     'default.hero_title' => 'La qualité, sans compromis.',
     'default.hero_subtitle' => 'Découvrez notre sélection de produits, livrés rapidement partout dans le pays.',
     'default.hero_cta' => 'Découvrir la boutique',
+    'pwa.install' => 'Installer l’appli',
+    'pwa.install_short' => 'Installer',
+    'pwa.banner_title' => 'L’appli :shop',
+    'pwa.banner_text' => 'Commandez plus vite, depuis votre écran d’accueil.',
+    'pwa.ios_hint' => 'Touchez « Partager » puis « Sur l’écran d’accueil ».',
+    'pwa.offline_title' => 'Pas de connexion',
+    'pwa.offline_text' => 'Vérifiez votre connexion Internet puis réessayez.',
+    'pwa.retry' => 'Réessayer',
 ];

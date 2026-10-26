@@ -272,4 +272,62 @@
             form.submit();
         }
     }));
+
+    /* ---------------------------------------------------------- installable app (PWA) */
+
+    if ('serviceWorker' in navigator && SHOP.sw && window.isSecureContext) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register(SHOP.sw, { scope: SHOP.swScope }).catch(() => { /* app still works as a site */ });
+        });
+    }
+
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+    const banner = $('[data-install-banner]');
+    const store = {
+        get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
+        set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
+    };
+    let deferredPrompt = null;
+    const showInstall = () => {
+        if (standalone) return;
+        $$('[data-install]').forEach((b) => { b.hidden = false; });
+        const dismissed = Number(store.get('installDismissed') || 0);
+        if (banner && Date.now() - dismissed > 14 * 864e5 && window.innerWidth <= 860) {
+            setTimeout(() => { banner.hidden = false; }, 4000);
+        }
+    };
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstall();
+    });
+    if (isIos && !standalone) {
+        const hint = $('[data-install-hint]');
+        if (hint) hint.textContent = SHOP.i18n.iosInstall;
+        showInstall();
+    }
+    document.addEventListener('click', async (e) => {
+        if (e.target.closest('[data-install-dismiss]')) {
+            banner.hidden = true;
+            store.set('installDismissed', String(Date.now()));
+            return;
+        }
+        if (!e.target.closest('[data-install]')) return;
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const choice = await deferredPrompt.userChoice.catch(() => null);
+            deferredPrompt = null;
+            if (choice && choice.outcome === 'accepted') {
+                $$('[data-install]').forEach((b) => { b.hidden = true; });
+                if (banner) banner.hidden = true;
+            }
+        } else if (isIos) {
+            showToast(`<p>${escapeHtml(SHOP.i18n.iosInstall)}</p>`, 'toast-info', 6000);
+        }
+    });
+    window.addEventListener('appinstalled', () => {
+        $$('[data-install]').forEach((b) => { b.hidden = true; });
+        if (banner) banner.hidden = true;
+    });
 })();

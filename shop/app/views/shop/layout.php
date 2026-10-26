@@ -27,6 +27,11 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
     <meta name="twitter:card" content="summary_large_image">
     <meta name="theme-color" content="<?= e($brand) ?>">
     <link rel="icon" href="<?= e(setting('favicon') ? media(setting('favicon')) : asset('assets/img/favicon.svg')) ?>">
+    <link rel="manifest" href="<?= e(url('/manifest.webmanifest')) ?>">
+    <link rel="apple-touch-icon" href="<?= e(url('/app-icon-192.png')) ?>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="<?= e(mb_substr($shopName, 0, 12)) ?>">
     <link rel="stylesheet" href="<?= e(asset('assets/css/app.css')) ?>">
     <style>
         :root {
@@ -136,6 +141,7 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
             <a href="<?= e(url('/suivi')) ?>"><?= e(__('nav.track')) ?></a>
             <a href="<?= e(url('/contact')) ?>"><?= e(__('nav.contact')) ?></a>
         </nav>
+        <button class="btn btn-outline btn-block install-btn" type="button" data-install hidden>📲 <?= e(__('pwa.install')) ?></button>
         <?php if (count(enabled_locales()) > 1): ?>
             <div class="drawer-langs">
                 <?php foreach (enabled_locales() as $l): ?>
@@ -174,6 +180,7 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
                 <?php if (setting('shop_email')): ?><li><a href="mailto:<?= e(setting('shop_email')) ?>"><?= e(setting('shop_email')) ?></a></li><?php endif ?>
                 <?php if (setting('shop_address')): ?><li><?= e(setting('shop_address')) ?></li><?php endif ?>
             </ul>
+            <button class="btn btn-outline btn-sm install-btn" type="button" data-install hidden>📲 <?= e(__('pwa.install')) ?></button>
             <div class="socials">
                 <?php foreach (['facebook' => 'Facebook', 'instagram' => 'Instagram', 'tiktok' => 'TikTok'] as $key => $label): ?>
                     <?php if ($link = setting($key)): ?>
@@ -234,6 +241,18 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
     </a>
 <?php endif ?>
 
+<div class="install-banner" data-install-banner hidden>
+    <img src="<?= e(url('/app-icon-192.png')) ?>" alt="" width="44" height="44">
+    <div class="install-banner-text">
+        <strong><?= e(__('pwa.banner_title', ['shop' => $shopName])) ?></strong>
+        <span data-install-hint><?= e(__('pwa.banner_text')) ?></span>
+    </div>
+    <button class="btn btn-primary btn-sm" type="button" data-install><?= e(__('pwa.install_short')) ?></button>
+    <button class="icon-btn" type="button" data-install-dismiss aria-label="<?= e(__('nav.close')) ?>">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+</div>
+
 <div class="toast-region" aria-live="polite" data-toasts></div>
 
 <script>
@@ -241,6 +260,8 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
         'csrf' => csrf_token(),
         'cartUrl' => url('/panier'),
         'checkoutUrl' => url('/commande'),
+        'sw' => config('pretty_urls', true) ? url('/sw.js') : null,
+        'swScope' => base_path() . '/',
         'money' => ['decimals' => currency_decimals(), 'symbol' => setting('currency_symbol'), 'position' => setting('currency_position')],
         'i18n' => [
             'added' => __('cart.added'),
@@ -250,6 +271,7 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
             'chooseOption' => __('product.choose_option'),
             'onlyLeft' => __('product.only_left'),
             'inStock' => __('product.in_stock'),
+            'iosInstall' => __('pwa.ios_hint'),
         ],
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?>;
 </script>
