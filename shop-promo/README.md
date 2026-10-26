@@ -132,3 +132,13 @@ npx remotion render Episode1 out/episode1-offre-48h.mp4 --codec=h264 --crf=16
 **Légende proposée** :
 > Épisode 1 : je crée des boutiques en ligne en Tunisie 🇹🇳 Site + appli, clé en main, sans abonnement. 🔥 590 DT au lieu de 690 DT pendant 48h (jusqu'au mer. 28 oct. à 23h59). Paiement à la livraison, Konnect, Flouci inclus. Commente « BOUTIQUE » pour la démo 👇
 > #creationsiteweb #ecommercetunisie #boutiqueenligne #tunisie #entrepreneur
+
+## FlownovaExplainer (80 s, darija)
+
+Vidéo explicative de la marque Flownova avec la mascotte Nova : histoire d'Amira (vendeuse Instagram), 4 étapes (boutique + appli, commandes + e-mail client, paiements, ventes et stock), FAQ (prix, lien en bio), CTA « اكتب Flownova » et boucle.
+Sous-titres darija RTL ; pas encore de voix (voir `flownova-script.md` pour l'enregistrer et l'ajouter).
+
+```
+python3 audio/make_audio_flownova.py
+npx remotion render FlownovaExplainer out/flownova-explainer.mp4 --codec=h264 --crf=18
+```
