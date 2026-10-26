@@ -16,7 +16,14 @@ import { C, cairo, FPS, inter, PHONE_W } from "../theme";
 import { Amira, FlowMark, Logo, Nova, Step } from "./Brand";
 import {
   F_TOTAL,
+  AFTER_MONTH,
+  CTA_BOX,
+  CTA_SEND,
+  DASH_STOCK,
   FAQ_INSTA,
+  FAQ_NOSUB,
+  FAQ_ONCE,
+  FAQ_ORDER,
   FAQ_PRICE,
   FAQ_TAP,
   LOOP_FADE,
@@ -76,7 +83,7 @@ const talkingAt = (frame: number) => {
   for (let i = SUBS.length - 1; i >= 0; i--) {
     const [start, text] = SUBS[i];
     if (frame >= start) {
-      return frame - start < text.split(" ").length * 9 + 14;
+      return frame - start < text.split(" ").length * 11 + 6;
     }
   }
   return false;
@@ -306,8 +313,8 @@ const PhoneGlyph: React.FC<{ size: number }> = ({ size }) => (
 
 const ChaosScene: React.FC = () => {
   const frame = useCurrentFrame();
-  const total = usePop(140, 160);
-  const dim = interpolate(frame, [138, 150], [1, 0.35], clamp);
+  const total = usePop(124, 160); // "و في آخر الشهر؟"
+  const dim = interpolate(frame, [122, 134], [1, 0.35], clamp);
   return (
     <SceneIn>
       <div
@@ -365,9 +372,9 @@ const ChaosScene: React.FC = () => {
       </div>
       {/* missed calls */}
       {[
-        [110, 1010, 70],
-        [700, 960, 86],
-        [420, 1100, 102],
+        [110, 1010, 56],
+        [700, 960, 70],
+        [420, 1100, 84],
       ].map(([x, y, at], i) => {
         const p = spring({ frame: frame - at, fps: FPS, config: { damping: 10, stiffness: 220 } });
         const ring = frame > at && frame < at + 60 ? Math.sin(frame * 2.2) * 12 : 0;
@@ -412,11 +419,11 @@ const ChaosScene: React.FC = () => {
           padding: "50px 0",
           textAlign: "center",
           scale: String(total),
-          rotate: `${Math.sin(frame * 1.3) * (frame > 150 && frame < 175 ? 3 : 0)}deg`,
+          rotate: `${Math.sin(frame * 1.3) * (frame > 134 && frame < 160 ? 3 : 0)}deg`,
         }}
       >
         <div style={{ fontFamily: cairo, fontWeight: 800, fontSize: 52, color: "#57534e" }}>مبيعات الشهر</div>
-        <div style={{ fontFamily: inter, fontWeight: 900, fontSize: 170, color: "#dc2626", letterSpacing: -4 }}>??? DT</div>
+        <div dir="ltr" style={{ fontFamily: inter, fontWeight: 900, fontSize: 170, color: "#dc2626", letterSpacing: -4 }}>??? DT</div>
       </div>
       <CornerNova from={S.chaos.from} mood="worried" />
     </SceneIn>
@@ -428,8 +435,8 @@ const SolutionScene: React.FC = () => {
   const frame = useCurrentFrame();
   const logo = usePop(4, 140);
   const ph = usePop(40, 120);
-  const site = usePop(70);
-  const app = usePop(84);
+  const site = usePop(100); // "موقع"
+  const app = usePop(122); // "تطبيق"
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{ background: "#fff", opacity: interpolate(frame, [0, 10], [0.9, 0], clamp) }} />
@@ -486,7 +493,7 @@ const StoreScene: React.FC = () => {
     <SceneIn>
       <Step n={1} title="متجر بإسمك + تطبيق" p={step} />
       <Phone style={phoneAt(900, 0.6)}>
-        <Screen src="home-full.png" y={interpolate(frame, [12, 88], [0, 1500], { ...clamp, easing: (t) => t * t * (3 - 2 * t) })} />
+        <Screen src="home-full.png" y={interpolate(frame, [10, 76], [0, 1500], { ...clamp, easing: (t) => t * t * (3 - 2 * t) })} />
         <AbsoluteFill style={{ opacity: home, background: "linear-gradient(160deg,#134e4a,#0f172a)" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 44, padding: "190px 48px" }}>
             {Array.from({ length: 12 }).map((_, i) => (
@@ -701,7 +708,7 @@ const DashScene: React.FC = () => {
   const frame = useCurrentFrame();
   const step = useEnter(0);
   const count = interpolate(frame, [12, 60], [0, 1], { ...clamp, easing: (t) => 1 - (1 - t) ** 3 });
-  const stock = usePop(100, 150);
+  const stock = usePop(DASH_STOCK, 150);
   return (
     <SceneIn>
       <Step n={4} title="مبيعاتك و الستوك" p={step} />
@@ -766,7 +773,7 @@ const AfterScene: React.FC = () => {
   const frame = useCurrentFrame();
   const face = useEnter(0);
   const ring = interpolate(frame, [10, 80], [0, 1], { ...clamp, easing: (t) => 1 - (1 - t) ** 2 });
-  const month = usePop(110, 160);
+  const month = usePop(AFTER_MONTH, 160);
   const R = 120;
   return (
     <SceneIn>
@@ -844,13 +851,13 @@ const FaqScene: React.FC = () => {
   const frame = useCurrentFrame();
   const q1 = usePop(2);
   const price = usePop(FAQ_PRICE, 140);
-  const once = usePop(FAQ_PRICE + 50);
-  const nosub = usePop(FAQ_PRICE + 80);
+  const once = usePop(FAQ_ONCE);
+  const nosub = usePop(FAQ_NOSUB);
   const out = interpolate(frame, [FAQ_INSTA - 10, FAQ_INSTA], [0, 1], clamp);
   const q2 = usePop(FAQ_INSTA);
   const ph = usePop(FAQ_INSTA + 10, 120);
   const shop = interpolate(frame, [FAQ_TAP + 8, FAQ_TAP + 18], [0, 1], clamp);
-  const order = usePop(FAQ_TAP + 34, 180);
+  const order = usePop(FAQ_ORDER, 180);
   const amount = Math.round(PRICE_DT * interpolate(frame, [FAQ_PRICE, FAQ_PRICE + 30], [0, 1], { ...clamp, easing: (t) => 1 - (1 - t) ** 3 }));
   return (
     <AbsoluteFill>
@@ -939,9 +946,9 @@ const FaqScene: React.FC = () => {
 const CtaScene: React.FC = () => {
   const frame = useCurrentFrame();
   const logo = usePop(2, 140);
-  const box = usePop(90, 160);
-  const typed = "Flownova".slice(0, Math.max(0, Math.floor((frame - 104) / 3)));
-  const sent = usePop(140, 220);
+  const box = usePop(CTA_BOX, 160);
+  const typed = "Flownova".slice(0, Math.max(0, Math.floor((frame - CTA_BOX - 14) / 3)));
+  const sent = usePop(CTA_SEND, 220);
   return (
     <SceneIn>
       <div style={{ position: "absolute", top: 170, left: 0, right: 0, display: "flex", justifyContent: "center", scale: String(logo) }}>
@@ -977,7 +984,7 @@ const CtaScene: React.FC = () => {
           {typed || "Ajouter un commentaire…"}
           {typed && typed.length < 8 && frame % 16 < 8 ? "|" : ""}
         </div>
-        <div style={{ width: 76, height: 76, borderRadius: 99, background: frame >= 140 ? "#fe2c55" : "#e7e5e4", display: "grid", placeItems: "center", scale: String(interpolate(sent, [0, 1], [1.3, 1])) }}>
+        <div style={{ width: 76, height: 76, borderRadius: 99, background: frame >= CTA_SEND ? "#fe2c55" : "#e7e5e4", display: "grid", placeItems: "center", scale: String(interpolate(sent, [0, 1], [1.3, 1])) }}>
           <svg viewBox="0 0 24 24" width={40} height={40}>
             <path d="M4 12l16-8-6 16-2-6z" fill="#fff" />
           </svg>
@@ -1046,7 +1053,7 @@ export const FlownovaComposition: React.FC = () => (
   <Composition
     id="FlownovaExplainer"
     component={FlownovaVideo}
-    defaultProps={{ voice: false }}
+    defaultProps={{ voice: true }}
     durationInFrames={F_TOTAL}
     fps={FPS}
     width={1080}

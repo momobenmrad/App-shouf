@@ -4,7 +4,8 @@ plus sound effects on the animation frames.
 
 Outputs public/audio/flownova_music.wav. When a recorded voice-over exists at
 public/audio/flownova/voice.mp3 (timed on SUBS in timeline.ts), also writes
-public/audio/flownova_full.wav with the music ducked under it (render with props {"voice": true}).
+public/audio/flownova_full.wav with the music ducked under it (the default, props {"voice": true}) and
+public/audio/flownova_voice.wav (voice + effects only, to add a trending sound in TikTok).
 
 Usage: python3 audio/make_audio_flownova.py
 """
@@ -22,13 +23,13 @@ from make_audio_premium import kaching  # noqa: E402
 from make_audio_premium15 import duck  # noqa: E402
 
 FPS = 30
-TOTAL = 2400
+TOTAL = 2100
 DUR = TOTAL / FPS
 HERE = os.path.dirname(__file__)
 VOICE = os.path.join(HERE, "..", "public", "audio", "flownova", "voice.mp3")
 
 # Scene starts (absolute frames), mirrored from timeline.ts.
-STORY, CHAOS, SOLUTION, STORE, ORDERS, PAY, DASH, AFTER, FAQ, CTA = 150, 420, 660, 840, 1050, 1260, 1440, 1650, 1860, 2190
+STORY, CHAOS, SOLUTION, STORE, ORDERS, PAY, DASH, AFTER, FAQ, CTA = 170, 439, 655, 830, 990, 1158, 1294, 1428, 1573, 1848
 LOOP = TOTAL - 20
 
 
@@ -63,47 +64,47 @@ def build():
 
     place(sfx, whoosh(0.4), 0, 0.5)
     place(sfx, whoosh(0.35), t(STORY) - 0.1, 0.5)
-    for i in range(14):  # incoming DMs
+    for i in range(14):  # incoming DMs (every 16 frames from local 40)
         place(sfx, pop(990 + (i % 3) * 60), t(STORY + 40 + i * 16), 0.45)
     place(sfx, whoosh(0.35, up=False), t(CHAOS) - 0.1, 0.5)
     for i in range(5):  # pen scribbles
         place(sfx, click(), t(CHAOS + 6 + i * 18), 0.35)
-    for at in (70, 86, 102):  # missed calls
+    for at in (56, 70, 84):  # missed calls
         place(sfx, ding(), t(CHAOS + at), 0.35)
-    place(sfx, impact(), t(CHAOS + 140), 0.8)
+    place(sfx, impact(), t(CHAOS + 124), 0.8)
     place(sfx, riser(1.2), t(SOLUTION) - 1.2, 0.6)
     place(sfx, impact(), t(SOLUTION), 0.9)
     place(sfx, ding(), t(SOLUTION + 4), 0.6)
-    for at in (70, 84):
+    for at in (100, 122):
         place(sfx, pop(880), t(SOLUTION + at), 0.6)
     for start in (STORE, ORDERS, PAY, DASH):  # step number spins in
         place(sfx, whoosh(0.3), t(start) - 0.1, 0.55)
         place(sfx, pop(660), t(start + 6), 0.6)
-    place(sfx, pop(1200), t(STORE + 102), 0.6)
-    place(sfx, ding(), t(STORE + 126), 0.6)
-    place(sfx, click(), t(ORDERS + 96), 0.8)
-    place(sfx, pop(1100), t(ORDERS + 98), 0.6)
-    place(sfx, ding(), t(ORDERS + 112), 0.7)
-    for at in (14, 34, 54, 74):
+    place(sfx, pop(1200), t(STORE + 90), 0.6)
+    place(sfx, ding(), t(STORE + 114), 0.6)
+    place(sfx, click(), t(ORDERS + 78), 0.8)
+    place(sfx, pop(1100), t(ORDERS + 80), 0.6)
+    place(sfx, ding(), t(ORDERS + 128), 0.7)
+    for at in (18, 60, 80, 94):
         place(sfx, pop(880), t(PAY + at), 0.55)
-    place(sfx, impact(), t(PAY + 110), 0.7)
+    place(sfx, impact(), t(PAY + 104), 0.7)
     place(sfx, kaching(), t(DASH + 60), 0.6)
     place(sfx, whoosh(0.35), t(AFTER) - 0.1, 0.5)
     for i in range(4):
         place(sfx, pop(1000 + i * 80), t(AFTER + 22 + i * 16), 0.5)
-    place(sfx, kaching(), t(AFTER + 110), 0.6)
+    place(sfx, kaching(), t(AFTER + 90), 0.6)
     place(sfx, whoosh(0.35), t(FAQ) - 0.1, 0.5)
-    place(sfx, kaching(), t(FAQ + 70), 0.8)
-    place(sfx, pop(880), t(FAQ + 90), 0.5)
-    place(sfx, pop(880), t(FAQ + 120), 0.5)
-    place(sfx, whoosh(0.4), t(FAQ + 165), 0.6)
-    place(sfx, click(), t(FAQ + 250), 0.8)
-    place(sfx, whoosh(0.3), t(FAQ + 258), 0.5)
-    place(sfx, ding(), t(FAQ + 284), 0.7)
+    place(sfx, kaching(), t(FAQ + 58), 0.8)
+    place(sfx, pop(880), t(FAQ + 76), 0.5)
+    place(sfx, pop(880), t(FAQ + 112), 0.5)
+    place(sfx, whoosh(0.4), t(FAQ + 136), 0.6)
+    place(sfx, click(), t(FAQ + 212), 0.8)
+    place(sfx, whoosh(0.3), t(FAQ + 220), 0.5)
+    place(sfx, ding(), t(FAQ + 252), 0.7)
     place(sfx, impact(), t(CTA + 2), 0.7)
     for i in range(8):  # typing "Flownova"
-        place(sfx, click(), t(CTA + 107 + i * 3), 0.3)
-    place(sfx, pop(1300), t(CTA + 140), 0.6)
+        place(sfx, click(), t(CTA + 102 + i * 3), 0.3)
+    place(sfx, pop(1300), t(CTA + 150), 0.6)
     place(sfx, whoosh(0.5, up=False), t(LOOP), 0.5)
     return music[:n], sfx[:n]
 
@@ -126,4 +127,5 @@ if __name__ == "__main__":
         voice = np.zeros_like(music)
         voice[: min(len(v), len(voice))] = v[: len(voice)]
         write(os.path.join(out, "flownova_full.wav"), master(duck(music, voice) * 0.45 + sfx * 0.55 + voice * 1.1, 0.92))
+        write(os.path.join(out, "flownova_voice.wav"), master(sfx * 0.5 + voice * 1.1, 0.92))
     print("ok")
