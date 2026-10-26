@@ -1,0 +1,17 @@
+# Render Blueprint: public demo of the PHP shop, personalised for "Blue Whale Gems".
+# Render dashboard → New → Blueprint → this repository. Free plan: the service sleeps when idle
+# and the demo data is reset at each restart.
+services:
+  - type: web
+    name: bluewhalegems-demo
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./shop/demo/bluewhale/Dockerfile
+    dockerContext: ./shop
+    healthCheckPath: /
+    envVars:
+      - key: ADMIN_EMAIL
+        value: admin@bluewhalegems.tn
+      - key: ADMIN_PASSWORD
+        generateValue: true

@@ -174,3 +174,11 @@ Checklist de livraison au client :
 - [ ] Remise du [guide d'utilisation](docs/GUIDE-CLIENT.md) au client
 
 Pour un nouveau client, générez une archive propre (sans configuration, base ni photos locales) avec `bin/package.sh` → `dist/boutique-AAAAMMJJ.zip`, à décompresser dans `public_html/`. Chaque installation est indépendante (sa base, sa configuration, ses photos).
+
+## Démo publique « Blue Whale Gems » (Render)
+
+`shop/demo/bluewhale/` contient une démo personnalisée (marque bleue, catalogue bijoux en illustrations SVG,
+commandes d'exemple) et `render.yaml` (racine du dépôt) la déploie sur Render en service Docker gratuit :
+Render → New → Blueprint → ce dépôt. La base SQLite est recréée à chaque démarrage (la démo se réinitialise
+après chaque mise en veille). Admin : `admin@bluewhalegems.tn`, mot de passe = variable `ADMIN_PASSWORD`
+générée par Render (onglet Environment du service).
