@@ -5,7 +5,8 @@ declare(strict_types=1);
 if (PHP_SAPI === 'cli-server') {
     $file = __DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $servable = is_file($file) || (is_dir($file) && rtrim($file, '/') !== __DIR__ && is_file(rtrim($file, '/') . '/index.php'));
-    if ($file !== __FILE__ && $servable && !preg_match('#/(app|storage|bin)/#', $file)) {
+    // Only the path inside the shop is checked: the shop itself may live in a folder named "app".
+    if ($file !== __FILE__ && $servable && !preg_match('#^/(app|storage|bin)/#', substr($file, strlen(__DIR__)))) {
         return false;
     }
 }
