@@ -121,6 +121,14 @@ python3 audio/make_audio_episode1.py
 npx remotion render Episode1 out/episode1-boutique-appli.mp4 --codec=h264 --crf=16
 ```
 
+**Offre 48 h** : après « dès 690 dinars », 690 est barré et remplacé par **590 DT pendant 48h**, puis un minuteur
+48:00:00 défile jusqu'à la fin avec la date de fin écrite en clair. Prix et date : `OFFER` dans `src/episode1/timeline.ts`
+— **mettre à jour `endsLabel` (48 h après l'heure réelle de publication) avant chaque rendu**, et respecter cette échéance.
+
+```bash
+npx remotion render Episode1 out/episode1-offre-48h.mp4 --codec=h264 --crf=16
+```
+
 **Légende proposée** :
-> Épisode 1 : je crée des boutiques en ligne en Tunisie 🇹🇳 Site + appli, clé en main, sans abonnement, dès 690 DT. Paiement à la livraison, Konnect, Flouci inclus. Commente « BOUTIQUE » pour la démo 👇
+> Épisode 1 : je crée des boutiques en ligne en Tunisie 🇹🇳 Site + appli, clé en main, sans abonnement. 🔥 590 DT au lieu de 690 DT pendant 48h (jusqu'au mer. 28 oct. à 23h59). Paiement à la livraison, Konnect, Flouci inclus. Commente « BOUTIQUE » pour la démo 👇
 > #creationsiteweb #ecommercetunisie #boutiqueenligne #tunisie #entrepreneur

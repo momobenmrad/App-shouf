@@ -28,6 +28,7 @@ NOSUB, APP, PRICE, PAY, CTA, LOOP = 87, 119, 168, 220, 315, 392
 APP_TAP = APP + 18
 PRICE_DONE = PRICE + 34
 PAY_KONNECT, PAY_FLOUCI, PAY_INCLUDED = PAY + 32, PAY + 42, PAY + 67
+OFFER_STRIKE = PRICE + 38  # 690 struck, 590 / 48 h countdown appears
 
 
 def t(frame):
@@ -71,6 +72,10 @@ def build():
     place(sfx, ding(), t(APP + 27), 0.5)              # "clé en main"
     place(sfx, riser(t(PRICE_DONE - PRICE)), t(PRICE), 0.6)
     place(sfx, kaching(), t(PRICE_DONE), 0.8)         # 690 lands
+    place(sfx, impact(), t(OFFER_STRIKE), 0.8)
+    place(sfx, whoosh(0.25, up=False), t(OFFER_STRIKE), 0.5)
+    for f in range(OFFER_STRIKE + 30, LOOP, 30):  # soft clock tick each second of the countdown
+        place(sfx, click(), t(f), 0.25)
     for f in (PAY + 2, PAY_KONNECT, PAY_FLOUCI):
         place(sfx, pop(880), t(f), 0.6)
     place(sfx, ding(), t(PAY_INCLUDED), 0.7)

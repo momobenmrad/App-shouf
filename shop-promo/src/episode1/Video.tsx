@@ -25,6 +25,9 @@ import {
   PAY_KONNECT,
   PRICE_COUNT,
   PRICE_DT,
+  COUNTDOWN_FROM,
+  OFFER,
+  OFFER_STRIKE,
 } from "./timeline";
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
@@ -240,11 +243,43 @@ const Price: React.FC = () => {
       >
         {value}
         <span style={{ fontSize: 120, letterSpacing: 0, marginInlineStart: 20 }}>DT</span>
+        {frame >= OFFER_STRIKE ? (
+          <div
+            style={{
+              position: "absolute",
+              left: 170,
+              top: "48%",
+              height: 22,
+              borderRadius: 11,
+              background: "#ef4444",
+              rotate: "-8deg",
+              width: interpolate(frame, [OFFER_STRIKE, OFFER_STRIKE + 5], [0, 740], { ...clamp, easing: ease }),
+            }}
+          />
+        ) : null}
       </div>
-      <div style={{ position: "absolute", top: 1010, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 18 }}>
-        <Chip label="Paiement unique" at={PRICE_COUNT[1] - 6} size={44} />
-        <Chip label="0 abonnement" at={PRICE_COUNT[1]} size={44} />
-      </div>
+      {frame >= OFFER_STRIKE ? (
+        <div
+          style={{
+            position: "absolute",
+            top: 950,
+            left: 0,
+            right: 0,
+            display: "flex",
+            justifyContent: "center",
+            scale: interpolate(spring({ frame: frame - OFFER_STRIKE - 2, fps, config: { damping: 9, stiffness: 260 } }), [0, 1], [2, 1]),
+          }}
+        >
+          <div style={{ padding: "14px 34px", borderRadius: 28, background: "#ef4444", color: "#fff", fontSize: 72, fontWeight: 900, rotate: "-3deg", boxShadow: "0 20px 50px rgba(239,68,68,0.4)" }}>
+            🔥 {OFFER.price} DT pendant 48h
+          </div>
+        </div>
+      ) : (
+        <div style={{ position: "absolute", top: 1010, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 18 }}>
+          <Chip label="Paiement unique" at={PRICE_COUNT[1] - 6} size={44} />
+          <Chip label="0 abonnement" at={PRICE_COUNT[1]} size={44} />
+        </div>
+      )}
     </AbsoluteFill>
   );
 };
@@ -306,20 +341,68 @@ const Cta: React.FC = () => {
         </div>
         <div style={{ fontSize: 80, marginTop: 6, translate: `0px ${8 * Math.sin(frame / 4)}px` }}>👇</div>
       </div>
-      <div style={{ position: "absolute", top: 1030, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+      <div style={{ position: "absolute", top: 870, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
         <div style={{ display: "flex", gap: 16 }}>
           <Chip label="Site + appli" at={10} size={40} />
-          <Chip label="dès 690 DT" at={16} size={40} />
+          <Chip label={`${OFFER.price} DT · 48h`} at={16} size={40} />
         </div>
         <Chip label="Clé en main · 0 abonnement" at={22} size={40} />
       </div>
-      <div style={{ position: "absolute", top: 1330, left: 0, right: 0, textAlign: "center", fontSize: 40, fontWeight: 800, color: C.yellow, opacity: interpolate(frame, [40, 50], [0, 1], clamp) }}>
+      <div style={{ position: "absolute", top: 1350, left: 0, right: 0, textAlign: "center", fontSize: 40, fontWeight: 800, color: C.yellow, opacity: interpolate(frame, [40, 50], [0, 1], clamp) }}>
         Épisode 2 → je crée TA boutique ?
       </div>
-      <div style={{ position: "absolute", top: 1400, left: 0, right: 0, textAlign: "center", fontFamily: cairo, fontWeight: 700, fontSize: 36, color: C.muted, opacity: interpolate(frame, [44, 54], [0, 1], clamp) }}>
+      <div style={{ position: "absolute", top: 1415, left: 0, right: 0, textAlign: "center", fontFamily: cairo, fontWeight: 700, fontSize: 36, color: C.muted, opacity: interpolate(frame, [44, 54], [0, 1], clamp) }}>
         متجر إلكتروني + تطبيق · تونس
       </div>
     </AbsoluteFill>
+  );
+};
+
+/** 48 h countdown shown from the price drop to the end of the call to action. */
+const Countdown: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const left = 48 * 3600 - Math.floor(frame / fps);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const hms = `${pad(Math.floor(left / 3600))}:${pad(Math.floor((left % 3600) / 60))}:${pad(left % 60)}`;
+  const enter = useEnter(0);
+  const blink = frame % fps < fps / 2 ? 1 : 0.55;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: 1185,
+        left: 0,
+        right: 0,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 8,
+        fontFamily: inter,
+        opacity: interpolate(enter, [0, 0.3], [0, 1], clamp),
+        scale: interpolate(enter, [0, 1], [0.7, 1]),
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          padding: "14px 30px",
+          borderRadius: 24,
+          background: "rgba(10,10,10,0.88)",
+          border: "3px solid #ef4444",
+          color: "#fff",
+          boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
+        }}
+      >
+        <span style={{ fontSize: 40, fontWeight: 900, color: "#f87171", opacity: blink }}>⏱ OFFRE 48H</span>
+        <span style={{ fontSize: 64, fontWeight: 900, fontVariantNumeric: "tabular-nums", letterSpacing: 1 }}>{hms}</span>
+      </div>
+      <div style={{ fontSize: 30, fontWeight: 700, color: "#fff", padding: "6px 18px", borderRadius: 14, background: "rgba(10,10,10,0.85)" }}>
+        {OFFER.price} DT au lieu de {OFFER.regular} DT · {OFFER.endsLabel}
+      </div>
+    </div>
   );
 };
 
@@ -356,6 +439,9 @@ export const Episode1: React.FC = () => (
     </Sequence>
     <Sequence name="Appel à l'action" from={E.cta.from} durationInFrames={E.cta.duration}>
       <Cta />
+    </Sequence>
+    <Sequence name="Compte à rebours 48h" from={COUNTDOWN_FROM} durationInFrames={E.loop.from - COUNTDOWN_FROM}>
+      <Countdown />
     </Sequence>
     <Sequence name="Boucle" from={E.loop.from} durationInFrames={E.loop.duration}>
       <Loop />

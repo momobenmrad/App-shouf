@@ -21,3 +21,13 @@ export const PAY_FLOUCI = 42;
 export const PAY_INCLUDED = 67; // "tout est inclus"
 export const CTA_DEMO = 32; // "et je te montre la démo"
 export const PRICE_DT = 690;
+
+// 48 h launch offer. Must match a real, honest deadline: update OFFER.endsLabel to 48 h after the
+// actual posting time before rendering (a countdown that silently restarts is misleading).
+export const OFFER = {
+  regular: 690,
+  price: 590,
+  endsLabel: "Jusqu’au mer. 28 oct. à 23h59",
+};
+export const OFFER_STRIKE = 38; // local frame in the price scene: 690 struck, 590 appears
+export const COUNTDOWN_FROM = 168 + OFFER_STRIKE; // absolute frame the countdown starts (48:00:00)
