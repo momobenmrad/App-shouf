@@ -162,3 +162,13 @@ l'appel à l'action ; boucle. Réutilise la voix de l'épisode 2 découpée sur 
 python3 audio/make_audio_flownova_ep2_short.py
 npx remotion render FlownovaEp2Short out/flownova-episode2-15s.mp4 --codec=h264 --crf=18
 ```
+
+## FlownovaSigns (15 s, sans voix) — « 3 signes que ta page Instagram doit devenir une boutique »
+
+Format texte + son tendance (aucun crédit ElevenLabs) : accroche « le n°3 fait mal », 3 signes avec indicateur 1/3, solution
+boutique + appli, appel à l'action et boucle. `out/flownova-3-signes-sans-son.mp4` pour poser un son tendance dans TikTok.
+
+```
+python3 audio/make_audio_flownova_signs.py
+npx remotion render FlownovaSigns out/flownova-3-signes.mp4 --codec=h264 --crf=18
+```
