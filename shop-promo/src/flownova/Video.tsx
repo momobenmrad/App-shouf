@@ -42,18 +42,18 @@ const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
 const PHONE_H = 1417; // Phone outer height (css(844) + padding)
 
 /** Places the shared Phone centered on (540, cy) at the given scale. */
-const phoneAt = (cy: number, scale: number): React.CSSProperties => ({ top: cy - PHONE_H / 2, scale: String(scale) });
+export const phoneAt = (cy: number, scale: number): React.CSSProperties => ({ top: cy - PHONE_H / 2, scale: String(scale) });
 
-const usePop = (at: number, stiffness = 180) => {
+export const usePop = (at: number, stiffness = 180) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   return spring({ frame: frame - at, fps, config: { damping: 14, stiffness } });
 };
 
 /** "1 284,500 DT"-style amount (no ICU in headless Chrome, so grouping is manual). */
-const dt = (v: number) => `${Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} DT`;
+export const dt = (v: number) => `${Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} DT`;
 
-const card: React.CSSProperties = {
+export const card: React.CSSProperties = {
   position: "absolute",
   background: "#fff",
   borderRadius: 36,
@@ -64,7 +64,7 @@ const card: React.CSSProperties = {
 };
 
 /** Whole-scene entrance: quick zoom-settle so every cut has motion. */
-const SceneIn: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const SceneIn: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const frame = useCurrentFrame();
   return (
     <AbsoluteFill
@@ -104,7 +104,7 @@ const CornerNova: React.FC<{ from: number; mood?: "happy" | "worried"; wave?: bo
   );
 };
 
-const Pill: React.FC<{ text: string; bg: string; fg: string; style?: React.CSSProperties }> = ({ text, bg, fg, style }) => (
+export const Pill: React.FC<{ text: string; bg: string; fg: string; style?: React.CSSProperties }> = ({ text, bg, fg, style }) => (
   <span style={{ padding: "8px 20px", borderRadius: 999, background: bg, color: fg, fontWeight: 800, fontSize: 30, ...style }}>{text}</span>
 );
 
@@ -826,6 +826,38 @@ const AfterScene: React.FC = () => {
   );
 };
 
+/** Instagram-like profile screen (inside a Phone). */
+export const InstaScreen: React.FC<{ handle: string; bio: string; link: string; children?: React.ReactNode }> = ({ handle, bio, link, children }) => (
+  <div style={{ position: "absolute", inset: 0, background: "#fff", fontFamily: inter }}>
+    <div style={{ padding: "140px 40px 0", display: "flex", alignItems: "center", gap: 40 }}>
+      <div style={{ width: 170, height: 170, borderRadius: 99, padding: 6, background: "linear-gradient(45deg,#f59e0b,#ec4899,#8b5cf6)" }}>
+        <div style={{ width: "100%", height: "100%", borderRadius: 99, background: "#fecdd3", border: "6px solid #fff" }} />
+      </div>
+      <div style={{ display: "flex", gap: 30, fontSize: 28, textAlign: "center" }}>
+        {[["86", "posts"], ["12,4k", "followers"], ["310", "following"]].map(([v, l]) => (
+          <div key={l}>
+            <div style={{ fontWeight: 800, fontSize: 36 }}>{v}</div>
+            {l}
+          </div>
+        ))}
+      </div>
+    </div>
+    <div style={{ padding: "28px 40px", fontSize: 32, lineHeight: 1.4 }}>
+      <div style={{ fontWeight: 800 }}>{handle}</div>
+      <div lang="ar" dir="rtl" style={{ fontFamily: cairo, textAlign: "left" }}>{bio}</div>
+      <div style={{ marginTop: 10, display: "inline-block", padding: "6px 18px", borderRadius: 14, background: "#e0f2fe", color: "#0369a1", fontWeight: 800 }}>
+        🔗 {link}
+      </div>
+    </div>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 4, marginTop: 20 }}>
+      {Array.from({ length: 9 }).map((_, i) => (
+        <div key={i} style={{ aspectRatio: "1", background: ["#fde68a", "#fbcfe8", "#c7d2fe", "#bbf7d0", "#fecaca", "#ddd6fe"][i % 6] }} />
+      ))}
+    </div>
+    {children}
+  </div>
+);
+
 // ───────────────────────────── 9. FAQ: price, then Instagram → link in bio
 const Bubble: React.FC<{ text: string; p: number }> = ({ text, p }) => (
   <div
@@ -883,37 +915,12 @@ const FaqScene: React.FC = () => {
         <AbsoluteFill>
           <Bubble text="عندك صفحة إنستغرام؟" p={q2} />
           <Phone style={{ ...phoneAt(860, 0.56), translate: `0px ${interpolate(ph, [0, 1], [900, 0])}px` }}>
-            <div style={{ position: "absolute", inset: 0, background: "#fff", fontFamily: inter }}>
-              <div style={{ padding: "140px 40px 0", display: "flex", alignItems: "center", gap: 40 }}>
-                <div style={{ width: 170, height: 170, borderRadius: 99, padding: 6, background: "linear-gradient(45deg,#f59e0b,#ec4899,#8b5cf6)" }}>
-                  <div style={{ width: "100%", height: "100%", borderRadius: 99, background: "#fecdd3", border: "6px solid #fff" }} />
-                </div>
-                <div style={{ display: "flex", gap: 30, fontSize: 28, textAlign: "center" }}>
-                  {[["86", "posts"], ["12,4k", "followers"], ["310", "following"]].map(([v, l]) => (
-                    <div key={l}>
-                      <div style={{ fontWeight: 800, fontSize: 36 }}>{v}</div>
-                      {l}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div style={{ padding: "28px 40px", fontSize: 32, lineHeight: 1.4 }}>
-                <div style={{ fontWeight: 800 }}>maison.amira</div>
-                <div lang="ar" dir="rtl" style={{ fontFamily: cairo, textAlign: "left" }}>فساتين و حوايج · توصيل لكل الولايات</div>
-                <div style={{ marginTop: 10, display: "inline-block", padding: "6px 18px", borderRadius: 14, background: "#e0f2fe", color: "#0369a1", fontWeight: 800 }}>
-                  🔗 maison-amira.tn
-                </div>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 4, marginTop: 20 }}>
-                {Array.from({ length: 9 }).map((_, i) => (
-                  <div key={i} style={{ aspectRatio: "1", background: ["#fde68a", "#fbcfe8", "#c7d2fe", "#bbf7d0", "#fecaca", "#ddd6fe"][i % 6] }} />
-                ))}
-              </div>
+            <InstaScreen handle="maison.amira" bio="فساتين و حوايج · توصيل لكل الولايات" link="maison-amira.tn">
               <Tap x={150} y={330} at={FAQ_TAP} />
               <AbsoluteFill style={{ opacity: shop, translate: `${(1 - shop) * PHONE_W}px 0px` }}>
                 <Screen src="home-top.png" />
               </AbsoluteFill>
-            </div>
+            </InstaScreen>
           </Phone>
           <div
             style={{

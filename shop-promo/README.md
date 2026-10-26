@@ -142,3 +142,13 @@ Voix off darija ElevenLabs calée mot à mot (`public/audio/flownova/voice.mp3`)
 python3 audio/make_audio_flownova.py
 npx remotion render FlownovaExplainer out/flownova-explainer.mp4 --codec=h264 --crf=18
 ```
+
+## FlownovaEp2 (26 s, darija) — « من إنستغرام لمتجر حقيقي »
+
+Épisode 2 de la série Flownova (tient la promesse de l'Épisode 1, « je crée TA boutique ? ») : la page Instagram de Maison Nour (DMs sans réponse) devient une boutique + appli, puis une cliente commande en moins d'une minute (lien en bio → produit → taille → commande → confirmation) et la commande arrive. CTA « اكتب Flownova » et teaser de l'épisode 3, boucle.
+Voix ElevenLabs `public/audio/flownova/ep2-voice.mp3`, minutage mot à mot dans `src/flownova/ep2.ts`.
+
+```
+python3 audio/make_audio_flownova_ep2.py
+npx remotion render FlownovaEp2 out/flownova-episode2.mp4 --codec=h264 --crf=18
+```
