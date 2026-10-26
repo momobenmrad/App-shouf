@@ -7,6 +7,7 @@ import { FlownovaEp2Composition } from "./flownova/Episode2";
 import { FlownovaEp2ShortComposition } from "./flownova/Episode2Short";
 import { FlownovaSignsComposition } from "./flownova/Signs";
 import { FlownovaComposition } from "./flownova/Video";
+import { WednesdayCompositions } from "./flownova/Wednesday";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -19,6 +20,7 @@ export const RemotionRoot: React.FC = () => {
       <FlownovaEp2Composition />
       <FlownovaEp2ShortComposition />
       <FlownovaSignsComposition />
+      <WednesdayCompositions />
       <BrandkitCompositions />
     </>
   );

@@ -172,3 +172,15 @@ boutique + appli, appel à l'action et boucle. `out/flownova-3-signes-sans-son.m
 python3 audio/make_audio_flownova_signs.py
 npx remotion render FlownovaSigns out/flownova-3-signes.mp4 --codec=h264 --crf=18
 ```
+
+## FlownovaStyles & FlownovaVsShopify (15 s, sans voix)
+
+Vidéos texte + son tendance, dans la zone de sécurité TikTok (`src/flownova/safe.tsx`) :
+- `FlownovaStyles` : même boutique (démo fictive « Maison Saphir »), thème Classique vs Luxe en curseur avant/après, « 1 ou 2 ? ».
+- `FlownovaVsShopify` : comparatif honnête (Shopify garde l'avantage applis & thèmes, tarifs indicatifs en note) + dernier jour de l'offre 590 DT.
+
+```
+python3 audio/make_audio_flownova_wed.py
+npx remotion render FlownovaStyles out/flownova-1-ou-2.mp4 --codec=h264 --crf=18
+npx remotion render FlownovaVsShopify out/flownova-vs-shopify.mp4 --codec=h264 --crf=18
+```
