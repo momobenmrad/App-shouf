@@ -105,3 +105,22 @@ npx remotion render BoutiquePremium15 out/boutique-premium-15s.mp4 --codec=h264 
 Pour changer de prise ou de texte : régénérer la voix, remplacer `take1.mp3`, puis réajuster les numéros d'images dans
 `src/premium15/timeline.ts` et `audio/make_audio_premium15.py` (repérer les pauses avec
 `ffmpeg -i take1.mp3 -af silencedetect=noise=-30dB:d=0.07 -f null -`).
+
+---
+
+# Vidéo 3 — « Épisode 1 » : boutique + appli, sans abonnement, dès 690 DT
+
+Composition `Episode1` (`src/episode1/`), 14 s, voix off ElevenLabs (même voix « Raphael ») `public/audio/voice/episode1.mp3`.
+Corrections issues des statistiques TikTok : mouvement dès l'image 0 (le téléphone défile déjà), format **série** (badge
+« ÉPISODE 1 », teaser « Épisode 2 »), **mots-clés de recherche écrits à l'écran** (« Création site e-commerce · Tunisie »,
+ligne en arabe à la fin), boucle parfaite, offre concrète (prix réel « dès 690 DT » au lieu d'un superlatif invérifiable).
+L'appli montrée est la PWA réellement intégrée à la boutique (`shop/app/controllers/pwa.php`).
+
+```bash
+python3 audio/make_audio_episode1.py
+npx remotion render Episode1 out/episode1-boutique-appli.mp4 --codec=h264 --crf=16
+```
+
+**Légende proposée** :
+> Épisode 1 : je crée des boutiques en ligne en Tunisie 🇹🇳 Site + appli, clé en main, sans abonnement, dès 690 DT. Paiement à la livraison, Konnect, Flouci inclus. Commente « BOUTIQUE » pour la démo 👇
+> #creationsiteweb #ecommercetunisie #boutiqueenligne #tunisie #entrepreneur
