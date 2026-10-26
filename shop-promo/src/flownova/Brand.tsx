@@ -20,7 +20,7 @@ export const Nova: React.FC<{
   const waveAngle = wave ? -28 + Math.sin(frame * 0.35) * 14 : flap;
   const open = talk ? (Math.sin(frame * 0.9) * 0.5 + 0.5) * (Math.sin(frame * 0.23) > -0.6 ? 1 : 0.2) : 0;
   // Blink for 4 frames every ~3 s.
-  const blink = frame % 95 < 4 ? 0.12 : 1;
+  const blink = (frame + 40) % 95 < 4 ? 0.12 : 1;
   const bob = Math.sin(frame * 0.12) * 10;
   return (
     <svg
