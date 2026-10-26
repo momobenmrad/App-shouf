@@ -87,6 +87,7 @@ $image = function (string $key, string $label, string $hint) {
         <?php $input('footer_text', 'Texte du pied de page', ['type' => 'textarea', 'rows' => 2]) ?>
 
     <?php elseif ($tab === 'apparence'): ?>
+        <?php $input('theme', 'Thème de la boutique', ['type' => 'select', 'options' => SHOP_THEMES, 'hint' => 'Luxe : typographie à empattements, palette ivoire / nuit / or, bannière immersive. Idéal pour bijoux, beauté et mode haut de gamme.']) ?>
         <?php $input('brand_color', 'Couleur principale', ['type' => 'color', 'hint' => 'Boutons, liens et accents. La couleur du texte posé dessus est calculée automatiquement pour rester lisible.']) ?>
         <?php $input('announcement', 'Bandeau d’annonce (haut de page)', ['placeholder' => 'Vide = masqué']) ?>
         <?php $input('hero_title', 'Titre de la page d’accueil') ?>

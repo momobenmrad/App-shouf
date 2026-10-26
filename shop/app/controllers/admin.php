@@ -342,6 +342,9 @@ function admin_settings(): void
                 $values[$f] = (string) parse_money($values[$f]);
             }
         }
+        if (isset($values['theme']) && !isset(SHOP_THEMES[$values['theme']])) {
+            unset($values['theme']);
+        }
         if (isset($values['brand_color']) && !preg_match('/^#[0-9a-f]{6}$/i', $values['brand_color'])) {
             unset($values['brand_color']);
         }

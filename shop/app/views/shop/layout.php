@@ -8,6 +8,7 @@ $ogImage = !empty($og_image) ? abs_media($og_image) : (setting('logo') ? abs_med
 $cartCount = cart_count();
 $categories = active_categories();
 $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
+$theme = shop_theme();
 ?>
 <!doctype html>
 <html lang="<?= e(locale()) ?>" dir="<?= e(text_dir()) ?>">
@@ -33,6 +34,11 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="<?= e(mb_substr($shopName, 0, 12)) ?>">
     <link rel="stylesheet" href="<?= e(asset('assets/css/app.css')) ?>">
+    <?php if ($theme === 'luxe'): ?>
+        <link rel="preload" href="<?= e(asset('assets/fonts/luxe/cormorant-garamond-latin-500-normal.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="<?= e(asset('assets/fonts/luxe/jost-latin-wght-normal.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+        <link rel="stylesheet" href="<?= e(asset('assets/css/theme-luxe.css')) ?>">
+    <?php endif ?>
     <style>
         :root {
             --brand: <?= e($brand) ?>;
@@ -50,7 +56,7 @@ $whatsapp = preg_replace('/\D/', '', (string) setting('whatsapp'));
     <?php endif ?>
     <?= $head ?? '' ?>
 </head>
-<body>
+<body class="theme-<?= e($theme) ?>">
 <a class="skip-link" href="#main"><?= e(__('a11y.skip')) ?></a>
 
 <?php if ($announcement = shop_text('announcement')): ?>

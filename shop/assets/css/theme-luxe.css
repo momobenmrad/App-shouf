@@ -1,0 +1,275 @@
+/* ==========================================================================
+   Theme "Luxe" — premium look for jewellery, beauty, fashion…
+   Loaded after app.css when the "theme" setting is "luxe"; every rule is scoped to
+   body.theme-luxe. Serif display type, ivory / ink / gold palette, square corners,
+   generous spacing. The shop's brand color stays the accent (links, eyebrows, badges).
+   Fonts are self-hosted (SIL Open Font License): Cormorant Garamond + Jost for Latin,
+   El Messiri + Tajawal for Arabic.
+   ========================================================================== */
+
+@font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-style: normal; font-display: swap; src: url("../fonts/luxe/cormorant-garamond-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 500; font-style: italic; font-display: swap; src: url("../fonts/luxe/cormorant-garamond-latin-500-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 600; font-style: normal; font-display: swap; src: url("../fonts/luxe/cormorant-garamond-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Jost"; font-weight: 300 700; font-style: normal; font-display: swap; src: url("../fonts/luxe/jost-latin-wght-normal.woff2") format("woff2"); }
+@font-face { font-family: "El Messiri"; font-weight: 600; font-display: swap; src: url("../fonts/luxe/el-messiri-arabic-600-normal.woff2") format("woff2"); unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: "Tajawal"; font-weight: 400; font-display: swap; src: url("../fonts/luxe/tajawal-arabic-400-normal.woff2") format("woff2"); unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: "Tajawal"; font-weight: 500; font-display: swap; src: url("../fonts/luxe/tajawal-arabic-500-normal.woff2") format("woff2"); unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: "Tajawal"; font-weight: 700; font-display: swap; src: url("../fonts/luxe/tajawal-arabic-700-normal.woff2") format("woff2"); unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF; }
+
+.theme-luxe {
+    --bg: #f8f5ef;
+    --surface: #fffdf9;
+    --surface-2: #f0ebe2;
+    --text: #15171d;
+    --text-2: #4a4b52;
+    --muted: #7c7a76;
+    --line: #e4ddd1;
+    --line-strong: #cfc5b5;
+    --dark: #0d1222;
+    --ink: #0d1222;
+    --gold: #b8955a;
+    --gold-soft: #e9dcc4;
+    --sale: #8f2d2d;
+
+    --font: "Jost", "Tajawal", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --font-display: "Cormorant Garamond", "El Messiri", Georgia, "Times New Roman", serif;
+    --fs-2xl: clamp(1.9rem, 1.5rem + 1.6vw, 2.75rem);
+    --fs-3xl: clamp(2.6rem, 1.7rem + 4vw, 5rem);
+
+    --radius-sm: 2px;
+    --radius: 3px;
+    --radius-lg: 4px;
+    --shadow: 0 18px 40px -28px rgb(13 18 34 / .45);
+    --shadow-lg: 0 30px 60px -30px rgb(13 18 34 / .55);
+    --header-h: 76px;
+    --tracking: .16em;
+    font-weight: 400;
+    letter-spacing: .01em;
+}
+[dir="rtl"].theme-luxe, [dir="rtl"] .theme-luxe { --tracking: 0; letter-spacing: 0; }
+
+.theme-luxe h1, .theme-luxe h2, .theme-luxe h3 { font-family: var(--font-display); font-weight: 500; letter-spacing: 0; }
+[dir="rtl"] .theme-luxe h1, [dir="rtl"] .theme-luxe h2, [dir="rtl"] .theme-luxe h3 { font-weight: 600; line-height: 1.35; }
+.theme-luxe ::selection { background: var(--ink); color: var(--gold-soft); }
+
+/* Small caps label used for eyebrows, nav, buttons */
+.theme-luxe .eyebrow,
+.theme-luxe .main-nav a,
+.theme-luxe .btn,
+.theme-luxe .footer-title,
+.theme-luxe .link-arrow,
+.theme-luxe .badge { text-transform: uppercase; letter-spacing: var(--tracking); }
+[dir="rtl"] .theme-luxe .eyebrow, [dir="rtl"] .theme-luxe .btn, [dir="rtl"] .theme-luxe .main-nav a { text-transform: none; }
+
+.theme-luxe .eyebrow { display: inline-flex; align-items: center; gap: .9rem; font-size: .72rem; font-weight: 500; color: var(--gold); }
+.theme-luxe .eyebrow::before, .theme-luxe .eyebrow::after { content: ""; width: 28px; height: 1px; background: currentColor; opacity: .7; }
+
+/* ---------------------------------------------------------------- buttons */
+
+.theme-luxe .btn { border-radius: 0; font-weight: 500; font-size: .75rem; min-height: 48px; padding: .8rem 1.6rem; box-shadow: none; }
+.theme-luxe .btn-lg { min-height: 56px; padding: 1rem 2.2rem; font-size: .78rem; }
+.theme-luxe .btn-primary { --btn-bg: var(--ink); --btn-fg: #fff; --btn-bd: var(--ink); }
+.theme-luxe .btn-primary:hover { --btn-bg: var(--gold); --btn-fg: var(--ink); border-color: var(--gold); }
+.theme-luxe .btn-outline { --btn-bd: var(--ink); --btn-fg: var(--ink); }
+.theme-luxe .btn-outline:hover { --btn-bg: var(--ink); --btn-fg: #fff; }
+.theme-luxe .btn-ghost { --btn-bd: currentColor; }
+.theme-luxe .btn-light { --btn-bg: transparent; --btn-fg: var(--gold-soft); --btn-bd: var(--gold); }
+.theme-luxe .btn-light:hover { --btn-bg: var(--gold); --btn-fg: var(--ink); }
+.theme-luxe input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"]), .theme-luxe select, .theme-luxe textarea { border-radius: 0; background: var(--surface); }
+.theme-luxe input:focus, .theme-luxe select:focus, .theme-luxe textarea:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgb(184 149 90 / .25); }
+
+/* ---------------------------------------------------------------- header */
+
+.theme-luxe .announcement { background: var(--ink); color: var(--gold-soft); font-size: .72rem; letter-spacing: var(--tracking); text-transform: uppercase; padding-block: .6rem; font-weight: 400; }
+[dir="rtl"] .theme-luxe .announcement { text-transform: none; font-size: .85rem; }
+.theme-luxe .site-header { background: color-mix(in srgb, var(--bg) 92%, transparent); border-bottom: 1px solid var(--line); }
+.theme-luxe .site-header.is-scrolled { box-shadow: none; }
+.theme-luxe .logo { font-family: var(--font-display); font-weight: 600; font-size: 1.55rem; letter-spacing: .04em; }
+[dir="rtl"] .theme-luxe .logo { letter-spacing: 0; }
+.theme-luxe .logo-mark { width: 40px; height: 40px; border-radius: 50%; background: transparent; color: var(--ink); border: 1px solid var(--gold); font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; }
+.theme-luxe .main-nav { margin-inline-start: 1.5rem; gap: .5rem; }
+.theme-luxe .main-nav a { font-size: .7rem; font-weight: 500; color: var(--text); background: none; border-radius: 0; padding: .5rem .55rem; position: relative; }
+.theme-luxe .main-nav a::after { content: ""; position: absolute; inset-inline: .55rem; bottom: .2rem; height: 1px; background: var(--gold); transform: scaleX(0); transition: transform .3s var(--ease); }
+.theme-luxe .main-nav a:hover, .theme-luxe .main-nav a[aria-current="page"] { background: none; color: var(--ink); }
+.theme-luxe .main-nav a:hover::after, .theme-luxe .main-nav a[aria-current="page"]::after { transform: scaleX(1); }
+.theme-luxe .main-nav .nav-promo { color: var(--sale); }
+.theme-luxe .search-form { width: clamp(150px, 13vw, 210px); }
+.theme-luxe .search-form input { border-radius: 0; background: transparent; border-color: var(--line-strong); }
+.theme-luxe .cart-count { background: var(--gold); color: var(--ink); border-color: var(--bg); }
+.theme-luxe .icon-btn:hover, .theme-luxe .lang-switch summary:hover { background: var(--surface-2); }
+.theme-luxe .drawer-panel { background: var(--bg); }
+.theme-luxe .drawer-nav a { font-family: var(--font-display); font-size: 1.25rem; font-weight: 500; }
+
+/* ---------------------------------------------------------------- hero */
+
+.theme-luxe .hero {
+    color: #f4efe6;
+    background:
+        radial-gradient(ellipse 70% 90% at 78% 40%, color-mix(in srgb, var(--brand) 38%, transparent), transparent 70%),
+        radial-gradient(ellipse 50% 60% at 10% 100%, rgb(184 149 90 / .16), transparent 70%),
+        var(--ink);
+    border-bottom: 0;
+}
+.theme-luxe .hero::before { /* fine sparkle texture */
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35;
+    background-image: radial-gradient(rgb(233 220 196 / .55) 1px, transparent 1.4px);
+    background-size: 46px 46px;
+    mask-image: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+}
+.theme-luxe .hero-inner { position: relative; min-height: clamp(520px, 78vh, 760px); padding-block: 4rem; grid-template-columns: 1fr 1fr; gap: 3rem; }
+.theme-luxe .hero-copy h1 { font-size: var(--fs-3xl); line-height: 1.02; font-weight: 500; max-width: 12ch; color: #fff; margin-bottom: 1.5rem; }
+.theme-luxe .hero-copy h1::first-line { font-style: italic; color: var(--gold-soft); }
+[dir="rtl"] .theme-luxe .hero-copy h1 { line-height: 1.3; }
+[dir="rtl"] .theme-luxe .hero-copy h1::first-line { font-style: normal; }
+.theme-luxe .hero-sub { color: rgb(244 239 230 / .78); font-size: 1.05rem; font-weight: 300; line-height: 1.8; max-width: 44ch; margin-bottom: 2.5rem; }
+.theme-luxe .hero .btn-primary { --btn-bg: var(--gold); --btn-fg: var(--ink); --btn-bd: var(--gold); }
+.theme-luxe .hero .btn-primary:hover { --btn-bg: #fff; border-color: #fff; }
+.theme-luxe .hero .btn-ghost { --btn-fg: #f4efe6; --btn-bd: rgb(244 239 230 / .45); }
+.theme-luxe .hero .btn-ghost:hover { --btn-bg: rgb(255 255 255 / .08); --btn-fg: #fff; border-color: #fff; }
+
+/* Featured product in an arch frame with a gold hairline */
+.theme-luxe .hero-visual { min-height: 0; height: auto; display: grid; place-items: center; }
+.theme-luxe .hero-tile { position: relative; inset: auto; transform: none; box-shadow: none; }
+.theme-luxe .hero-tile-1 { width: min(78%, 420px); aspect-ratio: 3/4; border-radius: 999px 999px 0 0; outline: 1px solid var(--gold); outline-offset: 14px; box-shadow: 0 40px 80px -30px rgb(0 0 0 / .7); }
+.theme-luxe .hero-tile-2, .theme-luxe .hero-tile-3 { display: none; }
+.theme-luxe .hero.has-image .hero-inner { grid-template-columns: 1fr; }
+.theme-luxe .hero.has-image::after { background: linear-gradient(90deg, rgb(13 18 34 / .85), rgb(13 18 34 / .2) 75%); }
+
+/* ---------------------------------------------------------------- trust strip */
+
+.theme-luxe .trust { padding-block: 2.25rem; gap: 0; border-bottom: 1px solid var(--line); }
+.theme-luxe .trust li { flex-direction: column; text-align: center; gap: .6rem; padding-inline: 1rem; }
+.theme-luxe .trust li + li { border-inline-start: 1px solid var(--line); }
+.theme-luxe .trust-icon { background: none; color: var(--gold); width: auto; height: auto; }
+.theme-luxe .trust-icon svg { width: 28px; height: 28px; stroke-width: 1.2; }
+.theme-luxe .trust strong { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
+.theme-luxe .trust span { font-size: .8rem; }
+
+/* ---------------------------------------------------------------- sections */
+
+.theme-luxe .section { padding-block: clamp(3.5rem, 7vw, 6rem) 0; }
+.theme-luxe .section-head { flex-direction: column; align-items: center; text-align: center; gap: .75rem; margin-bottom: 2.5rem; }
+.theme-luxe .section-head h2 { font-size: var(--fs-2xl); }
+.theme-luxe .section-head h2::after { content: ""; display: block; width: 44px; height: 1px; margin: .9rem auto 0; background: var(--gold); }
+.theme-luxe .link-arrow { font-size: .7rem; font-weight: 500; color: var(--text-2); border-bottom: 1px solid var(--line-strong); padding-bottom: .2rem; }
+.theme-luxe .link-arrow:hover { color: var(--ink); border-color: var(--gold); }
+.theme-luxe .link-arrow::after { content: ""; }
+
+/* Categories: tall arches */
+.theme-luxe .category-grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.25rem; }
+.theme-luxe .category-card { aspect-ratio: 3/4; border-radius: 999px 999px 0 0; }
+.theme-luxe .category-card::after { background: linear-gradient(180deg, transparent 40%, rgb(13 18 34 / .78)); }
+.theme-luxe .category-card-body { inset-inline: 0; bottom: 1.4rem; text-align: center; }
+.theme-luxe .category-card-body strong { font-family: var(--font-display); font-size: 1.45rem; font-weight: 500; }
+.theme-luxe .category-card-body span { font-size: .7rem; text-transform: uppercase; letter-spacing: var(--tracking); color: var(--gold-soft); }
+
+/* ---------------------------------------------------------------- product cards */
+
+.theme-luxe .product-grid { gap: clamp(1rem, 2.4vw, 2rem) clamp(.75rem, 2vw, 1.75rem); }
+.theme-luxe .product-media { border-radius: 0; aspect-ratio: 4/5; }
+.theme-luxe .product-media::after { content: ""; position: absolute; inset: 10px; border: 1px solid rgb(255 255 255 / 0); transition: border-color .4s var(--ease); pointer-events: none; }
+.theme-luxe .product-card:hover .product-media::after { border-color: rgb(255 255 255 / .8); }
+.theme-luxe .product-body { padding-top: 1rem; text-align: center; }
+.theme-luxe .product-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; line-height: 1.25; margin-bottom: .35rem; }
+.theme-luxe .price { justify-content: center; }
+.theme-luxe .price-now { font-weight: 500; letter-spacing: .04em; }
+.theme-luxe .price-old { text-decoration-color: var(--gold); }
+.theme-luxe .badge { border-radius: 0; font-size: .62rem; font-weight: 500; padding: .3rem .6rem; }
+.theme-luxe .badge-sale { background: var(--sale); }
+.theme-luxe .badge-new { background: var(--ink); color: var(--gold-soft); }
+.theme-luxe .product-cta.btn, .theme-luxe .product-cta .btn { width: 100%; min-height: 42px; font-size: .68rem; }
+@media (hover: hover) and (min-width: 861px) {
+    .theme-luxe .product-cta { opacity: 0; transform: translateY(6px); transition: opacity .3s var(--ease), transform .3s var(--ease); }
+    .theme-luxe .product-card:hover .product-cta, .theme-luxe .product-card:focus-within .product-cta { opacity: 1; transform: none; }
+}
+
+/* ---------------------------------------------------------------- promo banner */
+
+.theme-luxe .promo-banner { position: relative; justify-content: center; text-align: center; flex-direction: column; border-radius: 0; background: var(--ink); color: #f4efe6; padding: clamp(2.5rem, 6vw, 4.5rem); }
+.theme-luxe .promo-banner::before { content: ""; position: absolute; inset: 14px; border: 1px solid rgb(184 149 90 / .55); pointer-events: none; }
+.theme-luxe .promo-banner h2 { font-size: var(--fs-2xl); color: #fff; }
+.theme-luxe .promo-banner p { color: rgb(244 239 230 / .75); }
+
+/* ---------------------------------------------------------------- catalog & product page */
+
+.theme-luxe .page-head h1, .theme-luxe .product-name { font-size: clamp(2rem, 1.6rem + 1.6vw, 3rem); line-height: 1.1; }
+.theme-luxe .breadcrumbs { font-size: .72rem; text-transform: uppercase; letter-spacing: var(--tracking); }
+[dir="rtl"] .theme-luxe .breadcrumbs { text-transform: none; }
+.theme-luxe .filters-box, .theme-luxe .card, .theme-luxe .shipping-meter { border-radius: 0; background: var(--surface); }
+.theme-luxe .filter-links a { border-radius: 0; }
+.theme-luxe .filter-links a[aria-current] { background: var(--surface-2); color: var(--ink); }
+.theme-luxe .pagination a, .theme-luxe .chip { border-radius: 0; }
+.theme-luxe .pagination a[aria-current], .theme-luxe .chip.is-active { background: var(--ink); border-color: var(--ink); }
+.theme-luxe .gallery-main, .theme-luxe .gallery-thumbs button { border-radius: 0; }
+.theme-luxe .gallery-thumbs button[aria-current] { border-color: var(--gold); }
+.theme-luxe .product-info .price { justify-content: flex-start; }
+.theme-luxe .product-info .price-now { font-size: 1.5rem; font-weight: 400; }
+.theme-luxe .product-lead { font-family: var(--font-display); font-style: italic; font-size: 1.35rem; color: var(--text-2); }
+[dir="rtl"] .theme-luxe .product-lead { font-style: normal; font-size: 1.1rem; }
+.theme-luxe .chip-option span { border-radius: 0; font-weight: 500; }
+.theme-luxe .chip-option input:checked + span { background: var(--ink); border-color: var(--ink); }
+.theme-luxe .qty { border-radius: 0; }
+.theme-luxe .product-perks svg { color: var(--gold); }
+.theme-luxe .accordion summary { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; }
+.theme-luxe .sticky-buy { background: var(--bg); }
+
+/* ---------------------------------------------------------------- cart, checkout, order */
+
+.theme-luxe .cart-thumb, .theme-luxe .summary-thumb img, .theme-luxe .summary-thumb { border-radius: 0; }
+.theme-luxe .step-num { background: var(--ink); color: var(--gold-soft); font-family: var(--font-display); }
+.theme-luxe .checkout-section h2, .theme-luxe .summary-title, .theme-luxe .card h2 { font-size: 1.5rem; }
+.theme-luxe .pay-option { border-radius: 0; }
+.theme-luxe .pay-option:has(input:checked) { border-color: var(--ink); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--ink); }
+.theme-luxe .totals-grand dd { font-weight: 600; }
+.theme-luxe .success-icon { background: none; border: 1px solid var(--gold); color: var(--gold); }
+.theme-luxe .order-success h1 { font-size: clamp(2rem, 1.6rem + 2vw, 3rem); }
+.theme-luxe .timeline .is-done::before, .theme-luxe .timeline .is-done::after { background: var(--gold); border-color: var(--gold); }
+
+/* ---------------------------------------------------------------- footer */
+
+.theme-luxe .site-footer { background: var(--ink); color: rgb(244 239 230 / .8); border-top: 0; }
+.theme-luxe .site-footer .logo, .theme-luxe .site-footer .logo-mark { color: #fff; }
+.theme-luxe .footer-title { color: var(--gold); font-family: var(--font); font-size: .72rem; font-weight: 500; }
+.theme-luxe .footer-grid a, .theme-luxe .footer-about p { color: rgb(244 239 230 / .72); }
+.theme-luxe .footer-grid a:hover { color: var(--gold-soft); }
+.theme-luxe .socials a { background: transparent; border: 1px solid rgb(184 149 90 / .5); color: var(--gold-soft); }
+.theme-luxe .socials a:hover { background: var(--gold); color: var(--ink); }
+.theme-luxe .newsletter-form input { background: transparent; border-color: rgb(244 239 230 / .3); color: #fff; }
+.theme-luxe .newsletter-form .btn-primary { --btn-bg: var(--gold); --btn-fg: var(--ink); --btn-bd: var(--gold); }
+.theme-luxe .site-footer .install-btn { --btn-fg: var(--gold-soft); --btn-bd: rgb(184 149 90 / .6); }
+.theme-luxe .footer-bottom { border-top-color: rgb(244 239 230 / .12); color: rgb(244 239 230 / .55); }
+.theme-luxe .pay-badges li { background: transparent; border-color: rgb(244 239 230 / .2); color: rgb(244 239 230 / .75); border-radius: 0; }
+
+/* ---------------------------------------------------------------- floating */
+
+.theme-luxe .toast, .theme-luxe .install-banner, .theme-luxe .lang-menu { border-radius: 0; }
+
+/* ---------------------------------------------------------------- responsive */
+
+@media (max-width: 1240px) and (min-width: 1081px) {
+    .theme-luxe .main-nav { margin-inline-start: .75rem; gap: 0; }
+    .theme-luxe .main-nav a { letter-spacing: .1em; }
+}
+@media (max-width: 1080px) {
+    .theme-luxe .trust li:nth-child(3) { border-inline-start: 0; }
+    .theme-luxe .trust li:nth-child(n+3) { padding-top: 1.25rem; }
+}
+@media (max-width: 860px) {
+    .theme-luxe .hero-inner { grid-template-columns: 1fr; text-align: center; padding-block: 3rem 3.5rem; gap: 2.5rem; }
+    .theme-luxe .hero-copy h1, .theme-luxe .hero-sub { margin-inline: auto; }
+    .theme-luxe .hero-actions { justify-content: center; }
+    .theme-luxe .hero-visual { display: grid; order: -1; }
+    .theme-luxe .hero-tile-1 { width: min(62%, 280px); outline-offset: 10px; }
+}
+@media (max-width: 640px) {
+    .theme-luxe { --header-h: 64px; }
+    .theme-luxe .logo { font-size: 1.25rem; }
+    .theme-luxe .logo-mark { width: 34px; height: 34px; font-size: 1.1rem; }
+    .theme-luxe .trust li { align-items: center; }
+    .theme-luxe .trust li:nth-child(odd) { border-inline-start: 0; }
+    .theme-luxe .product-title { font-size: 1.05rem; }
+    .theme-luxe .product-cta.btn, .theme-luxe .product-cta .btn { letter-spacing: .06em; font-size: .62rem; padding-inline: .5rem; }
+    .theme-luxe .category-grid { grid-template-columns: repeat(2, 1fr); gap: .9rem; }
+    .theme-luxe .category-card { aspect-ratio: 3/4; }
+    .theme-luxe .hero-actions .btn { width: 100%; }
+}

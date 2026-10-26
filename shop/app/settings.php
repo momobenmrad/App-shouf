@@ -4,6 +4,9 @@ declare(strict_types=1);
 /** Storefront texts the merchant writes; each can be overridden per language (hero_title_ar, …). */
 const TRANSLATABLE_SETTINGS = ['shop_tagline', 'announcement', 'hero_title', 'hero_subtitle', 'hero_cta'];
 
+/** Storefront themes: key => label shown in the admin. */
+const SHOP_THEMES = ['classic' => 'Classique', 'luxe' => 'Luxe (premium)'];
+
 function setting_defaults(): array
 {
     $perLanguage = [];
@@ -30,6 +33,7 @@ function setting_defaults(): array
         'tax_id' => '',
 
         // Apparence
+        'theme' => 'classic',
         'brand_color' => '#0f766e',
         'announcement' => 'Livraison offerte dès 150 DT d’achat',
         'hero_title' => 'La qualité, sans compromis.',
@@ -147,4 +151,11 @@ function shop_text(string $key): string
         return $value;
     }
     return __('default.' . $key, ['amount' => format_money((int) setting('free_shipping_threshold', 0), true)]);
+}
+
+/** Active storefront theme (falls back to "classic" for unknown values). */
+function shop_theme(): string
+{
+    $t = (string) setting('theme', 'classic');
+    return isset(SHOP_THEMES[$t]) ? $t : 'classic';
 }

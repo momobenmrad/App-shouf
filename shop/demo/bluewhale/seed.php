@@ -13,7 +13,8 @@ require APP_DIR . '/db.php';
 require APP_DIR . '/settings.php';
 
 $set = [
-    'brand_color' => '#1d4ed8',
+    'theme' => 'luxe',
+    'brand_color' => '#1e40af',
     'shop_tagline' => 'Bijoux et pierres précieuses certifiés, livrés partout en Tunisie.',
     'announcement' => 'Livraison offerte dès 300 DT · Paiement à la livraison',
     'hero_title' => 'L’éclat des pierres, sans compromis.',
