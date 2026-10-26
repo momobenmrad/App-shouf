@@ -152,3 +152,13 @@ Voix ElevenLabs `public/audio/flownova/ep2-voice.mp3`, minutage mot à mot dans 
 python3 audio/make_audio_flownova_ep2.py
 npx remotion render FlownovaEp2 out/flownova-episode2.mp4 --codec=h264 --crf=18
 ```
+
+## FlownovaEp2Short (15 s) — version TikTok de l'épisode 2
+
+La douleur du vendeur dès la 1re seconde (DM sans réponse), puis la boutique, une commande en moins d'une minute et
+l'appel à l'action ; boucle. Réutilise la voix de l'épisode 2 découpée sur ses timestamps (aucune nouvelle génération).
+
+```
+python3 audio/make_audio_flownova_ep2_short.py
+npx remotion render FlownovaEp2Short out/flownova-episode2-15s.mp4 --codec=h264 --crf=18
+```
