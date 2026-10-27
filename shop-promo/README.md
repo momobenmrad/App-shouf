@@ -184,3 +184,14 @@ python3 audio/make_audio_flownova_wed.py
 npx remotion render FlownovaStyles out/flownova-1-ou-2.mp4 --codec=h264 --crf=18
 npx remotion render FlownovaVsShopify out/flownova-vs-shopify.mp4 --codec=h264 --crf=18
 ```
+
+## Episode3 (15 s, voix FR) — « 2h du matin, tu dors… ta cliente commande »
+
+Même format que l'Épisode 1 (meilleurs résultats) : voix off française ElevenLabs « Raphael » (`public/audio/voice/episode3.mp3`),
+écran verrouillé qui reçoit les commandes la nuit, réveil avec les ventes de la nuit, puis offre du dernier jour (590 DT) et
+appel à l'action ; zone de sécurité TikTok.
+
+```
+python3 audio/make_audio_episode3.py
+npx remotion render Episode3 out/episode3-flownova.mp4 --codec=h264 --crf=18
+```
