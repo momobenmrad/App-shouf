@@ -106,7 +106,7 @@ export function ready(): Promise<void> {
         );
       }
       await c.query(`INSERT INTO settings VALUES ('brand', $1) ON CONFLICT (key) DO NOTHING`, [
-        JSON.stringify({ name: "Tawa", nameAr: "توّا", slogan: "تاكسيك توّا", primary: "#E70013", accent: "#FFC21A" }),
+        JSON.stringify({ name: "Tawa", nameAr: "توّا", slogan: "تاكسيك توّا", primary: "#F2B544", accent: "#5FB4E0" }),
       ]);
       if (process.env.DEMO_MODE !== "false") await seedDemoDrivers(c);
       await c.query("SELECT pg_advisory_unlock(424242)");

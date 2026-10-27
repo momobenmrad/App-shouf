@@ -150,7 +150,7 @@ export default function Driver({ brand, initialRideId }: { brand: Brand; initial
                   {profile.online ? t("goOffline") : t("goOnline")}
                 </button>
               )}
-              {!gps && <p className="muted" style={{ fontSize: 13, margin: 0 }}>📍 {t("gpsHint")}</p>}
+              {!gps && <p className="muted" style={{ fontSize: 13, margin: 0 }}>{t("gpsHint")}</p>}
             </div>
           )}
 
@@ -160,12 +160,12 @@ export default function Driver({ brand, initialRideId }: { brand: Brand; initial
               {offers.length === 0 && <p className="muted">{t("noOffers")}</p>}
               {offers.map((o) => (
                 <div key={o.id} className="offer stack">
-                  <div style={{ fontSize: 14 }}>📍 {o.pickup.label}<br />🏁 {o.dropoff.label}</div>
+                  <div className="route-line"><div><i style={{ background: "var(--ink)" }} /><span>{o.pickup.label}</span></div><div><i style={{ background: "var(--primary)" }} /><span>{o.dropoff.label}</span></div></div>
                   <div className="row">
                     <span className="badge">{km(o.toPickupM)} {t("km")} {t("toPickup")}</span>
                     <span className="badge">{km(o.distanceM)} {t("km")}</span>
                     <span className="grow" />
-                    <b>{t("youEarn")} {o.earnings.toFixed(3)} DT</b>
+                    <b>{t("youEarn")} <span className="num">{o.earnings.toFixed(3)} DT</span></b>
                   </div>
                   <button className="btn block" onClick={() => act(o.id, "accept")}>{t("accept")}</button>
                 </div>
@@ -176,8 +176,8 @@ export default function Driver({ brand, initialRideId }: { brand: Brand; initial
           {ride && (
             <div className="card stack">
               <div className="status-line">{t(`status_${ride.status}`)}</div>
-              <p className="muted" style={{ margin: 0, fontSize: 14 }}>📍 {ride.pickup.label}<br />🏁 {ride.dropoff.label}</p>
-              <div className="stats">
+              <div className="route-line"><div><i style={{ background: "var(--ink)" }} /><span>{ride.pickup.label}</span></div><div><i style={{ background: "var(--primary)" }} /><span>{ride.dropoff.label}</span></div></div>
+              <div className="stats two">
                 <div className="stat"><b>{km(ride.distanceM)}</b><small>{t("km")}</small></div>
                 <div className="stat"><b>{ride.fare.toFixed(3)}</b><small>DT · {t(`pay_${ride.paymentMethod}`)}</small></div>
               </div>
@@ -188,7 +188,7 @@ export default function Driver({ brand, initialRideId }: { brand: Brand; initial
               {["accepted", "arrived"].includes(ride.status) && <button className="btn ghost" onClick={() => act(ride.id, "cancel")}>{t("cancel")}</button>}
               {ride.status === "completed" && (
                 <>
-                  <div className="price"><span>{ride.paymentMethod === "cash" ? t("collect") : t("total")}</span><b>{ride.fare.toFixed(3)} DT</b></div>
+                  <div className="price"><span>{ride.paymentMethod === "cash" ? t("collect") : t("total")}</span><b>{ride.fare.toFixed(3)}<small>DT</small></b></div>
                   <button className="btn block secondary" onClick={finish}>{t("continue")}</button>
                 </>
               )}

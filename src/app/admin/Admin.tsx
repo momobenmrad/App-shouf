@@ -90,15 +90,15 @@ export default function Admin({ brand: initialBrand }: { brand: Brand }) {
   const max = Math.max(1, ...(data?.byHour ?? [0]));
 
   return (
-    <div dir="ltr" style={{ fontFamily: "system-ui, sans-serif" }}>
+    <div dir="ltr" className="admin">
       <TopBar brand={initialBrand} showLogout />
       <main className="page admin-grid">
-        {msg && <div className="card" style={{ background: "#ecfdf5" }}>{msg}</div>}
+        {msg && <div className="card flash">{msg}</div>}
 
         <section className="kpis">
           <div className="card kpi"><small>Courses aujourd'hui</small><b>{data?.rides ?? "–"}</b></div>
           <div className="card kpi"><small>Terminées</small><b>{data?.completed ?? "–"}</b></div>
-          <div className="card kpi"><small>Volume (DT)</small><b>{data ? data.volume.toFixed(3) : "–"}</b></div>
+          <div className="card kpi hero-kpi"><small>Volume (DT)</small><b>{data ? data.volume.toFixed(3) : "–"}</b></div>
           <div className="card kpi"><small>Commission (DT)</small><b>{data ? data.commission.toFixed(3) : "–"}</b></div>
           <div className="card kpi"><small>Chauffeurs en ligne</small><b>{data ? `${data.driversOnline} / ${data.driversTotal}` : "–"}</b></div>
           <div className="card kpi"><small>Écarts d'itinéraire</small><b>{data?.detours ?? "–"}</b></div>
@@ -180,9 +180,9 @@ export default function Admin({ brand: initialBrand }: { brand: Brand }) {
             <button className="btn" onClick={saveBrand}>Appliquer</button>
           </div>
           <div className="row" style={{ marginTop: 12 }}>
-            <span className="logo" style={{ width: 40, height: 40, borderRadius: 12, background: brand.accent, display: "grid", placeItems: "center" }}>🚕</span>
+            <span className="mark" style={{ background: brand.primary }}>{brand.nameAr.charAt(0)}</span>
             <b style={{ fontSize: 22 }}>{brand.name} · {brand.nameAr}</b>
-            <span className="btn small" style={{ background: brand.primary }}>Aperçu bouton</span>
+            <span className="btn small" style={{ background: brand.primary }}>Aperçu bouton</span><span className="badge" style={{ background: brand.accent, color: "#06131c" }}>Accent</span>
           </div>
         </section>
 
