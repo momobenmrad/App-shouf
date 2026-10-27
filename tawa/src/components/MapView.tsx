@@ -18,12 +18,15 @@ type Props = {
   fitKey?: string;
 };
 
+// OpenStreetMap tiles, darkened in CSS (.map-dark) to match the night theme; no API key needed.
+// Point NEXT_PUBLIC_TILE_URL at a dedicated tile provider for production volumes.
 const TILE_URL = process.env.NEXT_PUBLIC_TILE_URL || "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+const TILE_ATTRIBUTION = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
 const ICONS: Record<Marker["kind"], string> = {
   pickup: `<div class="pin pin-pickup"></div>`,
   dropoff: `<div class="pin pin-dropoff"></div>`,
-  car: `<div class="pin-car">🚕</div>`,
+  car: `<div class="pin-car"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16V11l2-5h10l2 5v5"/><path d="M3 16h18v3H3z"/></svg></div>`,
   me: `<div class="pin pin-me"></div>`,
 };
 
@@ -42,7 +45,7 @@ export default function MapView({ center, markers = [], route = [], alert = fals
       if (cancelled || !el.current || map.current) return;
       L.current = mod;
       const m = mod.map(el.current, { zoomControl: false, attributionControl: true }).setView([center.lat, center.lng], 13);
-      mod.tileLayer(TILE_URL, { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(m);
+      mod.tileLayer(TILE_URL, { maxZoom: 19, attribution: TILE_ATTRIBUTION, className: "map-dark" }).addTo(m);
       mod.control.zoom({ position: "bottomleft" }).addTo(m);
       m.on("click", (e: Leaflet.LeafletMouseEvent) => pickRef.current?.({ lat: e.latlng.lat, lng: e.latlng.lng }));
       layer.current = mod.layerGroup().addTo(m);
@@ -64,14 +67,19 @@ export default function MapView({ center, markers = [], route = [], alert = fals
     layer.current.clearLayers();
     if (route.length > 1) {
       mod.polyline(route.map((p) => [p.lat, p.lng] as [number, number]), {
-        color: alert ? "#ff8a00" : getComputedStyle(document.documentElement).getPropertyValue("--primary").trim() || "#e70013",
-        weight: 6,
-        opacity: 0.9,
+        color: alert ? "#ff9f43" : getComputedStyle(document.documentElement).getPropertyValue("--primary").trim() || "#f2b544",
+        weight: 14,
+        opacity: 0.18,
+      }).addTo(layer.current);
+      mod.polyline(route.map((p) => [p.lat, p.lng] as [number, number]), {
+        color: alert ? "#ff9f43" : getComputedStyle(document.documentElement).getPropertyValue("--primary").trim() || "#f2b544",
+        weight: 4,
+        opacity: 1,
       }).addTo(layer.current);
     }
     for (const mk of markers) {
       mod.marker([mk.pos.lat, mk.pos.lng], {
-        icon: mod.divIcon({ html: ICONS[mk.kind], className: "", iconSize: [28, 28], iconAnchor: mk.kind === "dropoff" ? [14, 28] : [14, 14] }),
+        icon: mod.divIcon({ html: ICONS[mk.kind], className: "", iconSize: mk.kind === "car" ? [30, 30] : [28, 28], iconAnchor: mk.kind === "dropoff" ? [14, 28] : mk.kind === "car" ? [15, 15] : [14, 14] }),
         zIndexOffset: mk.kind === "car" ? 1000 : 0,
       }).addTo(layer.current);
     }

@@ -179,7 +179,7 @@ export default function Rider({ brand, name, initialRideId }: { brand: Brand; na
       <TopBar brand={brand} showLogout />
       <div className="app">
         <aside className="panel stack">
-          <p className="muted" style={{ margin: 0 }}>👋 {name}</p>
+          <p className="eyebrow" style={{ margin: "4px 4px 0" }}>{name}</p>
 
           {!ride && (
             <div className="card stack">
@@ -201,9 +201,9 @@ export default function Rider({ brand, name, initialRideId }: { brand: Brand; na
                   <button key={s} className="chip" onClick={() => { setDropoffText(s); setFocus("dropoff"); search("dropoff", s); }}>{s}</button>
                 ))}
               </div>
-              <p className="muted" style={{ fontSize: 13, margin: 0 }}>🗺️ {t("tapMapHint")}</p>
+              <p className="muted" style={{ fontSize: 13, margin: 0 }}>{t("tapMapHint")}</p>
               {understood && dropoff && (
-                <p style={{ margin: 0, fontSize: 14 }}>✨ <b>{t("understood")}:</b> {understood}<br /><span className="muted">{dropoff.label}</span></p>
+                <div className="understood"><span className="eyebrow">{t("understood")} · IA</span><div style={{ marginTop: 4 }}>{understood}</div><div className="muted" style={{ fontSize: 13 }}>{dropoff.label}</div></div>
               )}
               {err && <p className="error">{err}</p>}
             </div>
@@ -217,8 +217,8 @@ export default function Rider({ brand, name, initialRideId }: { brand: Brand; na
                 <div className="stat"><b>{t(`trafficLevel_${quote.traffic}`)}</b><small>{t("traffic")}</small></div>
               </div>
               <div className="price">
-                <span className="muted">{t("priceBefore")} {quote.fare.night && <span className="badge warn">🌙 {t("night")}</span>}</span>
-                <b>{quote.fare.total.toFixed(3)} DT</b>
+                <span className="muted">{t("priceBefore")} {quote.fare.night && <span className="badge warn">{t("night")}</span>}</span>
+                <b>{quote.fare.total.toFixed(3)}<small>DT</small></b>
               </div>
               {quote.routeSource === "estimate" && <p className="muted" style={{ fontSize: 12, margin: 0 }}>{t("estimated")}</p>}
               <div>
@@ -230,7 +230,7 @@ export default function Rider({ brand, name, initialRideId }: { brand: Brand; na
                 </div>
                 {payment !== "cash" && <p className="muted" style={{ fontSize: 12 }}>{t("payOnlineSoon")}</p>}
               </div>
-              <button className="btn block" onClick={order} disabled={busy}>{t("order")} · {quote.fare.total.toFixed(3)} DT</button>
+              <button className="btn block" onClick={order} disabled={busy}>{t("order")} · <span className="num">{quote.fare.total.toFixed(3)} DT</span></button>
             </div>
           )}
 
@@ -240,7 +240,7 @@ export default function Rider({ brand, name, initialRideId }: { brand: Brand; na
                 {["requested", "accepted", "in_progress"].includes(ride.status) && <span className="spinner" />}
                 {t(`status_${ride.status}`)}
               </div>
-              <p className="muted" style={{ margin: 0, fontSize: 14 }}>📍 {ride.pickup.label}<br />🏁 {ride.dropoff.label}</p>
+              <div className="route-line"><div><i style={{ background: "var(--ink)" }} /><span>{ride.pickup.label}</span></div><div><i style={{ background: "var(--primary)" }} /><span>{ride.dropoff.label}</span></div></div>
               <div className="stats">
                 <div className="stat"><b>{km(ride.distanceM)}</b><small>{t("km")}</small></div>
                 <div className="stat"><b>{mins(ride.durationS)}</b><small>{t("min")}</small></div>
@@ -270,7 +270,7 @@ export default function Rider({ brand, name, initialRideId }: { brand: Brand; na
 
               {ride.status === "completed" && (
                 <div className="stack" style={{ textAlign: "center" }}>
-                  <div className="price"><span>{t("total")}</span><b>{ride.fare.toFixed(3)} DT</b></div>
+                  <div className="price"><span>{t("total")}</span><b>{ride.fare.toFixed(3)}<small>DT</small></b></div>
                   {ride.detourM > 0 && <span className="badge warn">{t("detourRecorded")} ({ride.detourM} m)</span>}
                   {ride.rating ? (
                     <p>{t("thanks")} {"★".repeat(ride.rating)}</p>

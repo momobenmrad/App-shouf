@@ -2,7 +2,7 @@ import { query } from "./db";
 
 export type Brand = { name: string; nameAr: string; slogan: string; primary: string; accent: string };
 
-export const DEFAULT_BRAND: Brand = { name: "Tawa", nameAr: "توّا", slogan: "تاكسيك توّا", primary: "#E70013", accent: "#FFC21A" };
+export const DEFAULT_BRAND: Brand = { name: "Tawa", nameAr: "توّا", slogan: "تاكسيك توّا", primary: "#F2B544", accent: "#5FB4E0" };
 
 export async function getBrand(): Promise<Brand> {
   try {
@@ -12,6 +12,16 @@ export async function getBrand(): Promise<Brand> {
     // The page shell must still render if the database is down.
     return DEFAULT_BRAND;
   }
+}
+
+/** Dark or light text on top of the brand colour, whichever reads better. */
+export function onColor(hex: string): string {
+  const n = parseInt(hex.slice(1), 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) => {
+    const s = c / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.35 ? "#1a1206" : "#ffffff";
 }
 
 export async function saveBrand(b: Brand) {
