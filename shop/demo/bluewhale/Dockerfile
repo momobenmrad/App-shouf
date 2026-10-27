@@ -1,4 +1,6 @@
-# Public demo of the shop personalised for "Blue Whale Gems" (build context: shop/).
+# Same as demo/Dockerfile; kept at this path for the existing Render service "bluewhalegems-demo".
+# Public prospect demo of the shop (build context: shop/). The DEMO environment variable picks the
+# demo (a folder of demo/ with seed.php, shop-name.txt and assets/), e.g. DEMO=foufaa.
 FROM php:8.3-cli-alpine
 RUN apk add --no-cache libpng libjpeg-turbo libwebp freetype \
  && apk add --no-cache --virtual .build libpng-dev libjpeg-turbo-dev libwebp-dev freetype-dev \
@@ -7,10 +9,10 @@ RUN apk add --no-cache libpng libjpeg-turbo libwebp freetype \
  && apk del .build
 WORKDIR /app
 COPY . /app
-RUN mkdir -p assets/bwg && cp demo/bluewhale/assets/*.svg assets/bwg/ \
+RUN sh demo/build.sh \
  && rm -f storage/config.php storage/shop.sqlite \
  && chown -R www-data:www-data storage uploads
 USER www-data
 ENV PORT=10000
 EXPOSE 10000
-CMD ["sh", "demo/bluewhale/start.sh"]
+CMD ["sh", "demo/start.sh"]

@@ -175,10 +175,12 @@ Checklist de livraison au client :
 
 Pour un nouveau client, générez une archive propre (sans configuration, base ni photos locales) avec `bin/package.sh` → `dist/boutique-AAAAMMJJ.zip`, à décompresser dans `public_html/`. Chaque installation est indépendante (sa base, sa configuration, ses photos).
 
-## Démo publique « Blue Whale Gems » (Render)
+## Démos prospects (Render)
 
-`shop/demo/bluewhale/` contient une démo personnalisée (marque bleue, catalogue bijoux en illustrations SVG,
-commandes d'exemple) et `render.yaml` (racine du dépôt) la déploie sur Render en service Docker gratuit :
-Render → New → Blueprint → ce dépôt. La base SQLite est recréée à chaque démarrage (la démo se réinitialise
-après chaque mise en veille). Admin : `admin@bluewhalegems.tn`, mot de passe = variable `ADMIN_PASSWORD`
-générée par Render (onglet Environment du service).
+`shop/demo/` génère une démo personnalisée par prospect : `demo/<nom>/seed.php` (réglages, catalogue, commandes d'exemple, via
+`demo/lib.php`), `demo/<nom>/shop-name.txt` et `demo/<nom>/assets/` (illustrations, servies sous `assets/demo-<nom>/`).
+`demo/Dockerfile` construit n'importe laquelle ; la variable `DEMO` choisit le dossier (par défaut `bluewhale`). Sur Render :
+service Docker gratuit, `dockerContext: ./shop`, `dockerfilePath: ./shop/demo/Dockerfile`, variables `DEMO`, `ADMIN_EMAIL`,
+`ADMIN_PASSWORD`. La base SQLite est recréée à chaque démarrage. Démos : `bluewhale` (bijoux, pierres), `foufaa` (coffrets cadeaux).
+
+Test local d'une démo : copier la boutique dans un dossier vide, puis `sh demo/build.sh && DEMO=foufaa PORT=8051 sh demo/start.sh`.

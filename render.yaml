@@ -7,7 +7,7 @@ services:
     runtime: docker
     plan: free
     region: frankfurt
-    dockerfilePath: ./shop/demo/bluewhale/Dockerfile
+    dockerfilePath: ./shop/demo/Dockerfile
     dockerContext: ./shop
     healthCheckPath: /
     envVars:
