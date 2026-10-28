@@ -195,3 +195,13 @@ appel à l'action ; zone de sécurité TikTok.
 python3 audio/make_audio_episode3.py
 npx remotion render Episode3 out/episode3-flownova.mp4 --codec=h264 --crf=18
 ```
+
+### Épisode 4 — « Combien coûte une boutique en ligne en Tunisie ? » (15 s, FR)
+
+Même format que les Épisodes 1 et 3 : voix « Raphael » (`public/audio/voice/episode4.mp3`), boutique démo Luxe qui défile
+(`public/shots/luxe-home-full.png`), prix 690 DT « une seule fois », 0 abonnement, tout inclus, CTA « Commente Flownova ».
+
+```bash
+python3 audio/make_audio_episode4.py
+npx remotion render Episode4 out/episode4-flownova.mp4 --codec=h264 --crf=18
+```
