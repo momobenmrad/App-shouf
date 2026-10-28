@@ -216,3 +216,14 @@ Captures `public/shots/e5-*.png` (390 px CSS, ×3).
 python3 audio/make_audio_episode5.py
 npx remotion render Episode5 out/episode5-flownova.mp4 --codec=h264 --crf=18
 ```
+
+### Épisode 6 — « 6 boutiques, laquelle est la tienne ? » (16 s, FR, premium)
+
+Vidéo de la page Démos Flownova (`vitrine/`) : voix « Raphael » (`public/audio/voice/episode6.mp3`, minutage Scribe),
+titres serif dorés (Cormorant Garamond, `public/fonts/Cormorant-*.woff2`), téléphones en 3D, balayages de lumière, grain.
+Écrans : `public/shots/demo-*.webp` (copiés de `vitrine/img/`) et `public/shots/demos-page.png`.
+
+```bash
+python3 audio/make_audio_episode6.py
+npx remotion render Episode6 out/episode6-flownova-demos.mp4 --codec=h264 --crf=16
+```
