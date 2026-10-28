@@ -205,3 +205,14 @@ Même format que les Épisodes 1 et 3 : voix « Raphael » (`public/audio/voice/
 python3 audio/make_audio_episode4.py
 npx remotion render Episode4 out/episode4-flownova.mp4 --codec=h264 --crf=18
 ```
+
+### Épisode 5 — « Prix en inbox ? » (15 s, FR)
+
+Voix « Raphael » (`public/audio/voice/episode5.mp3`) : la boîte de DM qui déborde de « Prix ? », puis la boutique démo Luxe
+(fiche produit avec prix affiché → commande en 3 clics, paiement à la livraison → notification « Nouvelle commande »).
+Captures `public/shots/e5-*.png` (390 px CSS, ×3).
+
+```bash
+python3 audio/make_audio_episode5.py
+npx remotion render Episode5 out/episode5-flownova.mp4 --codec=h264 --crf=18
+```
