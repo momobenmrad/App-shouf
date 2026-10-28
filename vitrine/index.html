@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Démos Flownova · Boutiques en ligne pour la Tunisie</title>
+<meta name="description" content="Teste nos boutiques en ligne de démo comme une vraie cliente : commande, paiement à la livraison, Konnect et Flouci. 690 DT une seule fois, zéro abonnement.">
+<meta property="og:title" content="Démos Flownova : teste ta future boutique en ligne">
+<meta property="og:description" content="6 boutiques de démo à tester : bijoux, mode, beauté, déco, terroir, cadeaux. 690 DT une seule fois.">
+<meta property="og:image" content="https://flownova-demos.onrender.com/img/og.jpg">
+<meta name="theme-color" content="#07110f">
+<link rel="icon" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07110f; --bg2: #0c1a17; --card: #10211d; --line: rgba(255,255,255,.1);
+  --text: #f3f7f6; --muted: #9fb3ae; --teal: #2dd4bf; --teal-d: #0f766e; --gold: #fde047; --wa: #25d366;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+[dir=rtl] body, [dir=rtl] button { font-family: Tajawal, Inter, sans-serif; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; height: auto; }
+.wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+
+/* Header */
+.top { position: sticky; top: 0; z-index: 20; background: rgba(7,17,15,.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 12px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 22px; letter-spacing: -.5px; }
+.brand img { width: 36px; height: 36px; border-radius: 10px; }
+.brand b { font-weight: 900; }
+.brand span { color: var(--teal); }
+.top .sp { flex: 1; }
+.lang { border: 1px solid var(--line); background: none; color: var(--text); border-radius: 999px; padding: 6px 12px; font-weight: 700; cursor: pointer; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; padding: 12px 20px; font-weight: 800; border: 0; cursor: pointer; font-size: 15px; transition: transform .15s, background .15s; }
+.btn:active { transform: scale(.97); }
+.btn-wa { background: var(--wa); color: #052e16; }
+.btn-gold { background: var(--gold); color: #1c1917; }
+.btn-ghost { border: 1.5px solid rgba(255,255,255,.25); color: var(--text); background: none; }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.top .btn { padding: 9px 14px; font-size: 14px; }
+
+/* Hero */
+.hero { position: relative; overflow: hidden; padding: 56px 0 40px; text-align: center;
+  background: radial-gradient(900px 500px at 50% -10%, rgba(45,212,191,.25), transparent 70%); }
+.eyebrow { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(45,212,191,.12); color: var(--teal); font-weight: 800; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; }
+[dir=rtl] .eyebrow { letter-spacing: 0; }
+h1 { font-size: clamp(34px, 7vw, 64px); line-height: 1.05; letter-spacing: -2px; margin: 18px auto 14px; max-width: 900px; font-weight: 900; }
+[dir=rtl] h1 { letter-spacing: 0; line-height: 1.25; }
+h1 em { font-style: normal; background: var(--gold); color: #1c1917; padding: 0 12px; border-radius: 14px; display: inline-block; transform: rotate(-1.5deg); }
+.lead { color: var(--muted); font-size: clamp(16px, 2.4vw, 19px); max-width: 640px; margin: 0 auto 22px; }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 26px; }
+.chip { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.04); font-weight: 700; font-size: 14px; }
+.chip b { color: var(--gold); }
+.cta-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+/* Filters + grid */
+section { padding: 44px 0; scroll-margin-top: 64px; }
+h2 { font-size: clamp(26px, 4.5vw, 40px); letter-spacing: -1px; line-height: 1.1; margin: 0 0 8px; font-weight: 900; }
+[dir=rtl] h2 { letter-spacing: 0; }
+.sub { color: var(--muted); margin: 0 0 22px; }
+.filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 22px; scrollbar-width: none; }
+.filters button { flex: none; border: 1px solid var(--line); background: none; color: var(--text); border-radius: 999px; padding: 9px 16px; font-weight: 700; cursor: pointer; font-size: 14px; }
+.filters button[aria-pressed=true] { background: var(--teal); color: #042f2e; border-color: var(--teal); }
+.grid { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 680px) { .grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1020px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+.demo { background: linear-gradient(180deg, var(--card), var(--bg2)); border: 1px solid var(--line); border-radius: 26px; padding: 22px 20px 20px; display: flex; flex-direction: column; }
+.demo[hidden] { display: none; }
+.phone { position: relative; width: 230px; height: 470px; margin: 0 auto 18px; border-radius: 38px; padding: 9px; background: linear-gradient(145deg, #2b2f33, #0b0c0d); box-shadow: 0 30px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.08) inset; }
+.phone::before { content: ""; position: absolute; top: 16px; left: 50%; translate: -50% 0; width: 70px; height: 20px; border-radius: 12px; background: #000; z-index: 2; }
+.screen { height: 100%; overflow: hidden; border-radius: 30px; background: #f7f3ec; }
+.screen img { width: 100%; animation: scroll 26s ease-in-out infinite alternate; }
+.demo:hover .screen img, .demo:focus-within .screen img { animation-play-state: paused; }
+@keyframes scroll { 0%, 8% { transform: translateY(0); } 100% { transform: translateY(calc(-100% + 452px)); } }
+@media (prefers-reduced-motion: reduce) { .screen img { animation: none; } }
+.sector { color: var(--teal); font-weight: 800; font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase; }
+[dir=rtl] .sector { letter-spacing: 0; }
+.demo h3 { margin: 4px 0 6px; font-size: 22px; letter-spacing: -.5px; }
+.demo p { margin: 0 0 12px; color: var(--muted); font-size: 15px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.tags span { font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.06); }
+.demo .actions { margin-top: auto; display: grid; gap: 8px; }
+.note { color: var(--muted); font-size: 13px; text-align: center; margin-top: 18px; }
+
+/* Features */
+.feat { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 680px) { .feat { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1020px) { .feat { grid-template-columns: repeat(3, 1fr); } }
+.feat div { border: 1px solid var(--line); border-radius: 20px; padding: 18px; background: rgba(255,255,255,.02); }
+.feat b { display: block; font-size: 17px; margin-bottom: 4px; }
+.feat i { font-style: normal; font-size: 26px; display: block; margin-bottom: 8px; }
+.feat span { color: var(--muted); font-size: 15px; }
+.split { display: grid; gap: 28px; align-items: center; }
+@media (min-width: 860px) { .split { grid-template-columns: 1.2fr 1fr; } }
+.admin-shot { width: 280px; margin: 0 auto; border-radius: 26px; overflow: hidden; border: 8px solid #1b1e21; box-shadow: 0 30px 60px rgba(0,0,0,.5); }
+
+/* Price */
+.price { text-align: center; border: 1px solid rgba(253,224,71,.35); border-radius: 30px; padding: 34px 20px; background: radial-gradient(600px 300px at 50% 0%, rgba(253,224,71,.12), transparent 70%), var(--bg2); }
+.price .amount { font-size: clamp(64px, 14vw, 110px); font-weight: 900; letter-spacing: -4px; line-height: 1; color: var(--gold); margin: 10px 0; }
+.price .amount small { font-size: .4em; letter-spacing: 0; }
+.price ul { list-style: none; padding: 0; margin: 18px auto 24px; display: grid; gap: 8px; max-width: 420px; text-align: start; }
+.price li::before { content: "✓"; color: var(--teal); font-weight: 900; margin-inline-end: 10px; }
+
+/* Steps + FAQ */
+.steps { display: grid; gap: 14px; counter-reset: s; }
+@media (min-width: 860px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+.steps div { counter-increment: s; border: 1px solid var(--line); border-radius: 20px; padding: 20px; }
+.steps div::before { content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 99px; background: var(--teal); color: #042f2e; font-weight: 900; margin-bottom: 10px; }
+.steps b { display: block; font-size: 17px; }
+.steps span { color: var(--muted); }
+details { border-bottom: 1px solid var(--line); padding: 16px 0; }
+summary { cursor: pointer; font-weight: 800; font-size: 17px; }
+details p { color: var(--muted); margin: 10px 0 0; }
+
+footer { padding: 30px 0 110px; color: var(--muted); font-size: 14px; text-align: center; border-top: 1px solid var(--line); }
+.sticky { position: fixed; inset-inline: 12px; bottom: 12px; z-index: 30; display: flex; gap: 8px; padding: 8px; border-radius: 999px; background: rgba(16,33,29,.92); backdrop-filter: blur(10px); border: 1px solid var(--line); box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+.sticky .btn { flex: 1; padding: 12px 10px; font-size: 14px; }
+@media (min-width: 860px) { .sticky { inset-inline: auto; right: 20px; width: 380px; } [dir=rtl] .sticky { right: auto; left: 20px; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="img/logo.png" alt="" width="36" height="36"><b>Flow<span>nova</span></b></a>
+    <div class="sp"></div>
+    <button class="lang" type="button" id="lang" aria-label="Changer de langue">عربي</button>
+    <a class="btn btn-wa" data-wa="general" href="#"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg><span data-i18n="wa_short">WhatsApp</span></a>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap">
+      <span class="eyebrow" data-i18n="eyebrow">Démos en ligne</span>
+      <h1 data-i18n-html="h1">Teste ta future boutique <em>comme une cliente</em></h1>
+      <p class="lead" data-i18n="lead">Ce ne sont pas des images : ce sont de vraies boutiques. Ajoute au panier, commande, choisis le paiement à la livraison, Konnect ou Flouci.</p>
+      <div class="chips">
+        <span class="chip" data-i18n-html="c1"><b>690 DT</b> une seule fois</span>
+        <span class="chip" data-i18n="c2">Zéro abonnement</span>
+        <span class="chip" data-i18n="c3">Site + appli installable</span>
+        <span class="chip" data-i18n="c4">Français · عربي</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-gold" href="#demos" data-i18n="cta_demos">Voir les 6 démos ↓</a>
+        <a class="btn btn-ghost" data-wa="custom" href="#" data-i18n="cta_custom">Ma démo gratuite avec mes produits</a>
+      </div>
+    </div>
+  </div>
+
+  <section id="demos">
+    <div class="wrap">
+      <h2 data-i18n="demos_title">Choisis ton secteur</h2>
+      <p class="sub" data-i18n="demos_sub">Chaque démo est une boutique complète. Les commandes de test ne sont pas réelles.</p>
+      <div class="filters" role="toolbar" id="filters"></div>
+      <div class="grid" id="grid"></div>
+      <p class="note" data-i18n="wake">Une démo qui ne s'est pas ouverte depuis un moment met environ 30 secondes à se réveiller : c'est normal.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap split">
+      <div>
+        <h2 data-i18n="feat_title">Tout est inclus</h2>
+        <p class="sub" data-i18n="feat_sub">Ce que tu vois dans les démos, tu l'as dans ta boutique.</p>
+        <div class="feat">
+          <div><i>📱</i><b data-i18n="f1">Site + appli</b><span data-i18n="f1s">Tes clientes installent ta boutique sur leur téléphone, comme une appli.</span></div>
+          <div><i>💵</i><b data-i18n="f2">Paiement à la livraison</b><span data-i18n="f2s">Plus Konnect et Flouci pour la carte bancaire et e-DINAR.</span></div>
+          <div><i>📊</i><b data-i18n="f3">Tableau de bord</b><span data-i18n="f3s">Commandes, stock, chiffre d'affaires, factures et export.</span></div>
+          <div><i>🔔</i><b data-i18n="f4">Commandes en direct</b><span data-i18n="f4s">Tu reçois chaque commande, même la nuit. Fini les « prix en inbox ».</span></div>
+          <div><i>🌍</i><b data-i18n="f5">Français et arabe</b><span data-i18n="f5s">Ta boutique parle la langue de tes clientes.</span></div>
+          <div><i>🎁</i><b data-i18n="f6">Codes promo & suivi</b><span data-i18n="f6s">Coupons, variantes (taille, couleur) et suivi de commande.</span></div>
+        </div>
+      </div>
+      <figure class="admin-shot"><img src="img/admin.webp" alt="Tableau de bord d'une boutique Flownova" width="600" height="1100" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <section id="prix">
+    <div class="wrap">
+      <div class="price">
+        <span class="eyebrow" data-i18n="price_eyebrow">Prix clair</span>
+        <div class="amount">690 <small>DT</small></div>
+        <p class="lead" data-i18n="price_lead">Une seule fois. Pas d'abonnement mensuel.</p>
+        <ul>
+          <li data-i18n="p1">Boutique en ligne + appli installable</li>
+          <li data-i18n="p2">Tes produits ajoutés par nos soins</li>
+          <li data-i18n="p3">Paiement à la livraison, Konnect, Flouci</li>
+          <li data-i18n="p4">Formation pour gérer tes commandes</li>
+        </ul>
+        <a class="btn btn-wa" data-wa="price" href="#" data-i18n="price_cta">Je réserve ma boutique sur WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i18n="steps_title">Ta démo personnalisée, gratuite</h2>
+      <p class="sub" data-i18n="steps_sub">Tu vois ta boutique avec tes produits avant de payer quoi que ce soit.</p>
+      <div class="steps">
+        <div><b data-i18n="s1">Envoie ta page Instagram</b><span data-i18n="s1s">Sur WhatsApp, en un message.</span></div>
+        <div><b data-i18n="s2">On prépare ta démo en 24 h</b><span data-i18n="s2s">Avec ton nom, tes couleurs et tes produits.</span></div>
+        <div><b data-i18n="s3">Tu valides, on met en ligne</b><span data-i18n="s3s">Et tes clientes commandent toutes seules.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i18n="faq_title">Questions fréquentes</h2>
+      <details><summary data-i18n="q1">Il y a un abonnement ?</summary><p data-i18n="a1">Non. Tu paies la création de ta boutique une seule fois.</p></details>
+      <details><summary data-i18n="q2">Je dois savoir coder ?</summary><p data-i18n="a2">Non. On s'occupe de tout, et tu gères tes produits et tes commandes depuis ton téléphone.</p></details>
+      <details><summary data-i18n="q3">Mes clientes peuvent payer à la livraison ?</summary><p data-i18n="a3">Oui, c'est activé par défaut. Konnect et Flouci sont disponibles en plus pour le paiement en ligne.</p></details>
+      <details><summary data-i18n="q4">Les démos, ce sont de vraies commandes ?</summary><p data-i18n="a4">Non, ce sont des boutiques de démonstration : passe une commande pour voir le parcours, rien ne sera livré ni débité.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© 2026 Flownova · <span data-i18n="footer">Boutiques en ligne pour les vendeuses et vendeurs tunisiens</span></div>
+</footer>
+
+<div class="sticky">
+  <a class="btn btn-ghost" href="#demos" data-i18n="sticky_demos">Voir les démos</a>
+  <a class="btn btn-wa" data-wa="general" href="#" data-i18n="sticky_wa">WhatsApp</a>
+</div>
+
+<script>
+// ── Settings ──────────────────────────────────────────────────────────────────────────────────
+// WhatsApp number in international format, digits only (e.g. "21622123456").
+const WHATSAPP = "";
+
+const DEMOS = [
+  { id: "bijoux", img: "saphir", url: "https://flownova-bijoux.onrender.com", name: "Maison Saphir",
+    fr: ["Bijoux & joaillerie", "Pierres précieuses, or et argent. Thème luxe bleu royal.", ["Tailles de bague", "Écrin cadeau", "Livraison offerte dès 300 DT"]],
+    ar: ["مجوهرات", "أحجار كريمة، ذهب و فضة. تصميم فاخر بالأزرق الملكي.", ["مقاسات الخواتم", "علبة هدية", "توصيل مجاني من 300 د"]] },
+  { id: "mode", img: "mode", url: "https://flownova-mode.onrender.com", name: "Yasmine Couture",
+    fr: ["Mode femme", "Robes, abayas, ensembles. Tailles S à XL, échange sous 7 jours.", ["Tailles S–XL", "Stock par taille", "Code promo"]],
+    ar: ["ملابس نسائية", "فساتين، عبايات، أطقم. مقاسات من S حتى XL، تبديل خلال 7 أيام.", ["مقاسات S–XL", "مخزون حسب المقاس", "كود تخفيض"]] },
+  { id: "beaute", img: "beaute", url: "https://flownova-beaute.onrender.com", name: "Nour Cosmetics",
+    fr: ["Beauté & cosmétique", "Sérums, crèmes, hammam : soins naturels tunisiens.", ["Contenances", "Coffrets", "Promos barrées"]],
+    ar: ["تجميل و عناية", "سيروم، كريمات، حمّام : منتوجات طبيعية تونسية.", ["أحجام مختلفة", "علب هدايا", "تخفيضات"]] },
+  { id: "deco", img: "deco", url: "https://flownova-deco.onrender.com", name: "Dar Zina",
+    fr: ["Déco & art de table", "Poterie de Nabeul, Sejnane, cuivre : pièces artisanales.", ["Couleurs & parfums", "Emballage anti-casse", "Pièces uniques"]],
+    ar: ["ديكور و أواني", "فخار نابل، سجنان، نحاس : قطع تقليدية.", ["ألوان و روائح", "تغليف ضد الكسر", "قطع فريدة"]] },
+  { id: "terroir", img: "terroir", url: "https://flownova-terroir.onrender.com", name: "Zitouna Terroir",
+    fr: ["Épicerie fine & terroir", "Huile d'olive, dattes, miel, harissa : direct producteur.", ["Formats 75 cl / 5 L", "Coffrets", "Partout en Tunisie"]],
+    ar: ["منتوجات الأرض", "زيت زيتون، تمر، عسل، هريسة : من المنتج مباشرة.", ["75 صل / 5 ل", "علب هدايا", "توصيل لكل تونس"]] },
+  { id: "cadeaux", img: "coffrets", url: "https://flownova-coffrets.onrender.com", name: "Lina Gifts",
+    fr: ["Cadeaux & accessoires", "Coffrets, bijoux de couple et montres prêts à offrir.", ["Box surprise", "Bijoux de couple", "Carte message"]],
+    ar: ["هدايا و إكسسوارات", "علب هدايا، مجوهرات للكوبل و ساعات جاهزة للإهداء.", ["بوكس مفاجأة", "إكسسوارات كوبل", "بطاقة إهداء"]] },
+];
+
+const T = {
+  fr: { wa_short: "WhatsApp", all: "Tout", try: "Tester la boutique ↗", same: "Je veux la même",
+    msg_general: "Bonjour Flownova ! Je voudrais des informations sur la création de ma boutique en ligne.",
+    msg_custom: "Bonjour Flownova ! Je voudrais une démo gratuite avec mes produits. Ma page Instagram : ",
+    msg_price: "Bonjour Flownova ! Je veux réserver ma boutique en ligne à 690 DT.",
+    msg_demo: "Bonjour Flownova ! J'ai vu la démo « {s} » et je veux une boutique comme celle-ci pour mes produits." },
+  ar: { wa_short: "واتساب", all: "الكل", try: "جرّب الموقع ↗", same: "نحب كيفها",
+    eyebrow: "مواقع تجريبية", h1: "جرّب موقعك الجاي <em>كيف الحريفة</em>",
+    lead: "موش صور : هاذوما مواقع حقيقية. زيد للسلة، أطلب، و اختار الخلاص عند الاستلام، Konnect ولا Flouci.",
+    c1: "<b>690 د</b> مرة وحدة", c2: "بلا اشتراك", c3: "موقع + تطبيق", c4: "Français · عربي",
+    cta_demos: "شوف الـ 6 مواقع ↓", cta_custom: "ديمو مجاني بمنتوجاتي",
+    demos_title: "اختار المجال متاعك", demos_sub: "كل ديمو هو موقع كامل. الطلبات التجريبية موش حقيقية.",
+    wake: "الديمو اللي ما تحلّش مدة ياخو قريب 30 ثانية باش يفيق : هذا عادي.",
+    feat_title: "كل شي موجود", feat_sub: "اللي تشوفو في الديمو، تلقاه في موقعك.",
+    f1: "موقع + تطبيق", f1s: "الحريفة تنجم تركّب موقعك في تليفونها كيف التطبيق.",
+    f2: "الخلاص عند الاستلام", f2s: "و زادة Konnect و Flouci للكارطة البنكية و e-DINAR.",
+    f3: "لوحة التحكم", f3s: "الطلبات، المخزون، رقم المعاملات، الفواتير.",
+    f4: "الطلبات توصلك ديراكت", f4s: "كل طلب يوصلك حتى في الليل. يزّي من « السوم في الإنبوكس ».",
+    f5: "عربي و فرنساوي", f5s: "موقعك يحكي بلغة حرفاءك.",
+    f6: "كودات تخفيض و تتبّع", f6s: "كوبونات، مقاسات و ألوان، و تتبّع الطلبية.",
+    price_eyebrow: "سوم واضح", price_lead: "مرة وحدة. بلا اشتراك شهري.",
+    p1: "موقع + تطبيق", p2: "نزيدولك المنتوجات متاعك", p3: "الخلاص عند الاستلام، Konnect، Flouci", p4: "تكوين باش تتصرّف في الطلبات",
+    price_cta: "نحجز موقعي على واتساب",
+    steps_title: "ديمو بمنتوجاتك، بلاش", steps_sub: "تشوف موقعك بمنتوجاتك قبل ما تخلّص حتى مليم.",
+    s1: "ابعثلنا صفحة الإنستغرام", s1s: "على واتساب، في ميساج واحد.", s2: "نحضّرولك الديمو في 24 ساعة", s2s: "بإسمك، ألوانك و منتوجاتك.", s3: "توافق، و نحطّوه أونلاين", s3s: "و الحريفة يطلبو وحدهم.",
+    faq_title: "أسئلة متكررة", q1: "فما اشتراك ؟", a1: "لا. تخلّص صنع الموقع مرة وحدة.",
+    q2: "لازمني نعرف البرمجة ؟", a2: "لا. احنا نتكفلو بكل شي، و انت تتصرف في المنتوجات و الطلبات من تليفونك.",
+    q3: "الحريفة تنجم تخلّص عند الاستلام ؟", a3: "إيه، مفعّل من الأول. و Konnect و Flouci موجودين للخلاص أونلاين.",
+    q4: "الطلبات في الديمو حقيقية ؟", a4: "لا، هاذي مواقع تجريبية : أطلب باش تشوف المراحل، ما فما لا توصيل لا خلاص.",
+    footer: "مواقع للبيع أونلاين للتجّار التونسيين", sticky_demos: "شوف الديمو", sticky_wa: "واتساب",
+    msg_general: "عسلامة Flownova ! نحب معلومات على صنع موقع البيع متاعي.",
+    msg_custom: "عسلامة Flownova ! نحب ديمو بلاش بمنتوجاتي. صفحة الإنستغرام متاعي : ",
+    msg_price: "عسلامة Flownova ! نحب نحجز موقعي بـ 690 د.",
+    msg_demo: "عسلامة Flownova ! شفت الديمو « {s} » و نحب موقع كيفو لمنتوجاتي." },
+};
+
+let lang = "fr";
+let filter = "all";
+const frDefaults = {};
+document.querySelectorAll("[data-i18n]").forEach((el) => (frDefaults[el.dataset.i18n] = el.textContent));
+document.querySelectorAll("[data-i18n-html]").forEach((el) => (frDefaults[el.dataset.i18nHtml] = el.innerHTML));
+
+const t = (k) => (T[lang][k] ?? (lang === "fr" ? frDefaults[k] : undefined) ?? T.fr[k] ?? frDefaults[k]);
+const waLink = (text) => WHATSAPP ? `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}` : "#contact";
+
+function render() {
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  document.getElementById("lang").textContent = lang === "ar" ? "Français" : "عربي";
+  document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll("[data-i18n-html]").forEach((el) => (el.innerHTML = t(el.dataset.i18nHtml)));
+  document.querySelectorAll("[data-wa]").forEach((el) => (el.href = waLink(t("msg_" + el.dataset.wa))));
+
+  const filters = document.getElementById("filters");
+  filters.innerHTML = "";
+  [["all", t("all")], ...DEMOS.map((d) => [d.id, d[lang][0]])].forEach(([id, label]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", String(filter === id));
+    b.onclick = () => { filter = id; render(); };
+    filters.appendChild(b);
+  });
+
+  document.getElementById("grid").innerHTML = DEMOS.map((d) => {
+    const [sector, desc, tags] = d[lang];
+    return `<article class="demo" ${filter !== "all" && filter !== d.id ? "hidden" : ""}>
+      <a class="phone" href="${d.url}" target="_blank" rel="noopener" aria-label="${d.name}"><div class="screen"><img src="img/${d.img}.webp" alt="${d.name} : ${sector}" width="600" height="6400" loading="lazy"></div></a>
+      <span class="sector">${sector}</span>
+      <h3>${d.name}</h3>
+      <p>${desc}</p>
+      <div class="tags">${tags.map((x) => `<span>${x}</span>`).join("")}</div>
+      <div class="actions">
+        <a class="btn btn-gold" href="${d.url}" target="_blank" rel="noopener">${t("try")}</a>
+        <a class="btn btn-ghost" href="${waLink(t("msg_demo").replace("{s}", d.name + " · " + sector))}" target="_blank" rel="noopener">💬 ${t("same")}</a>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+document.getElementById("lang").onclick = () => {
+  lang = lang === "fr" ? "ar" : "fr";
+  try { localStorage.setItem("fn-lang", lang); } catch (e) {}
+  render();
+};
+try { if (localStorage.getItem("fn-lang") === "ar" || new URLSearchParams(location.search).get("lang") === "ar") lang = "ar"; } catch (e) {}
+render();
+
+// Wake the demo shops up (free hosting sleeps when idle), so they open fast when tapped.
+DEMOS.forEach((d) => fetch(d.url, { mode: "no-cors", cache: "no-store" }).catch(() => {}));
+</script>
+</body>
+</html>
