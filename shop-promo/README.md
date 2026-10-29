@@ -227,3 +227,13 @@ titres serif dorés (Cormorant Garamond, `public/fonts/Cormorant-*.woff2`), tél
 python3 audio/make_audio_episode6.py
 npx remotion render Episode6 out/episode6-flownova-demos.mp4 --codec=h264 --crf=16
 ```
+
+### Épisode 7 — « Ta page Insta piratée demain ? » (15,5 s, FR)
+
+Voix « Raphael » (`public/audio/voice/episode7.mp3`) qui commence directement par l'accroche (pas d'« Épisode 7 » parlé) :
+compte Insta piraté qui se vide → ta boutique t'appartient (site, clientes, commandes) → Insta en panne, la boutique vend.
+
+```bash
+python3 audio/make_audio_episode7.py
+npx remotion render Episode7 out/episode7-flownova.mp4 --codec=h264 --crf=18
+```
