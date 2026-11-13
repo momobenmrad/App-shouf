@@ -237,3 +237,14 @@ compte Insta piraté qui se vide → ta boutique t'appartient (site, clientes, c
 python3 audio/make_audio_episode7.py
 npx remotion render Episode7 out/episode7-flownova.mp4 --codec=h264 --crf=18
 ```
+
+### Épisode 8 — « Si tu vends sur Insta, il te faut cette page » (13,5 s, FR, premium clair)
+
+Vidéo de la mini-page catalogue (`vitrine/mini/`) : voix « Raphael » (`public/audio/voice/episode8.mp3`) qui commence par
+l'accroche, fond ivoire et or, titres serif. Écrans `public/shots/mini-*.png` et illustrations `public/shots/mini/`.
+Le prix affiché est la constante `PRICE` de `src/episode8/Video.tsx`.
+
+```bash
+python3 audio/make_audio_episode8.py
+npx remotion render Episode8 out/episode8-mini-page.mp4 --codec=h264 --crf=16
+```
