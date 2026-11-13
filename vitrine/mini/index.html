@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amira Boutique · Mini-page catalogue (démo Flownova)</title>
+<meta name="description" content="Démo de mini-page catalogue Flownova : tous les produits avec les prix, commande en un clic sur WhatsApp.">
+<meta property="og:title" content="Amira Boutique · Catalogue">
+<meta property="og:description" content="Robes, abayas et ensembles. Commande en un clic sur WhatsApp.">
+<meta name="theme-color" content="#f7f1e8">
+<link rel="icon" href="../img/favicon.png">
+<style>
+@font-face { font-family: Cormorant; src: url(fonts/cormorant-garamond-latin-600-normal.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: Cormorant; src: url(fonts/cormorant-garamond-latin-500-italic.woff2) format("woff2"); font-weight: 500; font-style: italic; font-display: swap; }
+@font-face { font-family: Jost; src: url(fonts/jost-latin-wght-normal.woff2) format("woff2"); font-weight: 300 800; font-display: swap; }
+@font-face { font-family: Tajawal; src: url(fonts/tajawal-arabic-500-normal.woff2) format("woff2"); font-weight: 500; font-display: swap; unicode-range: U+0600-06FF, U+FB50-FDFF, U+FE70-FEFF; }
+@font-face { font-family: Tajawal; src: url(fonts/tajawal-arabic-700-normal.woff2) format("woff2"); font-weight: 700; font-display: swap; unicode-range: U+0600-06FF, U+FB50-FDFF, U+FE70-FEFF; }
+:root { --bg: #f7f1e8; --card: #fffdf9; --ink: #1d1a16; --muted: #7a7166; --line: #e6dccd; --gold: #b8924a; --wine: #9f1239; --wa: #25d366; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 Jost, Tajawal, system-ui, sans-serif; }
+button { font: inherit; color: inherit; cursor: pointer; }
+img { display: block; max-width: 100%; height: auto; }
+.wrap { width: min(560px, 100% - 28px); margin-inline: auto; }
+
+.ribbon { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 12px; background: #07110f; color: #f3f7f6; font-size: 13.5px; text-align: center; text-decoration: none; }
+.ribbon b { color: #fde047; }
+
+.head { text-align: center; padding: 26px 0 8px; }
+.avatar { width: 96px; height: 96px; margin: 0 auto 12px; border-radius: 50%; padding: 4px; background: linear-gradient(135deg, #e7c98a, var(--gold), #7d5f25); }
+.avatar span { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: var(--wine); color: #fff; font: 600 46px/1 Cormorant, serif; border: 3px solid var(--bg); }
+h1 { margin: 0; font: 600 34px/1.1 Cormorant, Tajawal, serif; }
+.bio { margin: 6px auto 14px; color: var(--muted); max-width: 380px; }
+.facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.facts span { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); font-size: 13.5px; font-weight: 500; }
+.lang { position: absolute; top: 50px; inset-inline-end: 14px; border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 5px 12px; font-size: 13.5px; font-weight: 600; }
+
+.filters { position: sticky; top: 0; z-index: 5; display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 12px; margin-top: 10px; background: linear-gradient(var(--bg) 82%, transparent); scrollbar-width: none; }
+.filters::-webkit-scrollbar { display: none; }
+.filters button { flex: none; padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); font-weight: 500; font-size: 14.5px; }
+.filters button[aria-pressed=true] { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 110px; }
+.item { position: relative; display: block; padding: 0; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--card); text-align: start; }
+.item[hidden] { display: none; }
+.item img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.item .txt { display: block; padding: 10px 12px 12px; }
+.item .name { display: block; font: 600 19px/1.15 Cormorant, Tajawal, serif; }
+.price { display: block; margin-top: 4px; font-weight: 700; font-size: 16px; padding-inline-end: 40px; }
+.price s { color: var(--muted); font-weight: 400; font-size: 13.5px; margin-inline-start: 6px; }
+.tag { position: absolute; top: 10px; inset-inline-start: 10px; padding: 3px 9px; border-radius: 999px; background: var(--wine); color: #fff; font-size: 12px; font-weight: 700; }
+.tag.new { background: var(--ink); }
+.plus { position: absolute; inset-inline-end: 10px; bottom: 12px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--wa); color: #052e16; font-size: 22px; font-weight: 700; box-shadow: 0 6px 14px rgba(37,211,102,.35); }
+
+.bar { position: fixed; inset-inline: 0; bottom: 0; z-index: 10; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 30%); }
+.wa { display: flex; align-items: center; justify-content: center; gap: 10px; width: min(532px, 100%); margin: 0 auto; padding: 15px 18px; border: 0; border-radius: 999px; background: var(--wa); color: #052e16; font-weight: 700; font-size: 16.5px; text-decoration: none; box-shadow: 0 10px 26px rgba(37,211,102,.35); }
+.wa svg { width: 22px; height: 22px; flex: none; }
+
+.veil { position: fixed; inset: 0; z-index: 20; background: rgba(20,16,10,.5); opacity: 0; pointer-events: none; transition: opacity .25s; }
+.sheet { position: fixed; inset-inline: 0; bottom: 0; z-index: 21; max-height: 92vh; overflow: auto; background: var(--card); border-radius: 26px 26px 0 0; padding: 10px 18px calc(18px + env(safe-area-inset-bottom)); transform: translateY(105%); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.open .veil { opacity: 1; pointer-events: auto; }
+.open .sheet { transform: none; }
+.sheet .in { width: min(532px, 100%); margin: 0 auto; }
+.grip { width: 44px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 12px; }
+.sheet .top { display: flex; gap: 14px; align-items: center; }
+.sheet .top img { width: 104px; border-radius: 14px; aspect-ratio: 4 / 5; object-fit: cover; flex: none; }
+.sheet h2 { margin: 0; font: 600 25px/1.1 Cormorant, Tajawal, serif; }
+.sheet .desc { color: var(--muted); font-size: 14.5px; margin: 4px 0 0; }
+.label { margin: 16px 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+[dir=rtl] .label { letter-spacing: 0; }
+.opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.opts button { min-width: 52px; padding: 9px 14px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; font-weight: 600; }
+.opts button[aria-pressed=true] { border-color: var(--ink); background: var(--ink); color: #fff; }
+.qty { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; }
+.qty button { width: 44px; height: 42px; border: 0; background: none; font-size: 20px; }
+.qty output { min-width: 34px; text-align: center; font-weight: 700; }
+.total { display: flex; justify-content: space-between; align-items: baseline; margin: 18px 0 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.total b { font-size: 22px; }
+.total small { color: var(--muted); }
+.close { position: absolute; top: 14px; inset-inline-end: 16px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: #f1eadf; font-size: 18px; }
+</style>
+</head>
+<body>
+<a class="ribbon" id="ribbon" target="_blank" rel="noopener" href="#"></a>
+<button class="lang" id="lang" type="button">عربي</button>
+
+<header class="head wrap">
+  <div class="avatar"><span>A</span></div>
+  <h1>Amira Boutique</h1>
+  <p class="bio" data-i18n="bio">Robes, abayas et ensembles choisis avec soin. Nouvelle collection chaque semaine.</p>
+  <div class="facts">
+    <span data-i18n="f1">🚚 Livraison 7 DT · 24 à 72 h</span>
+    <span data-i18n="f2">💵 Paiement à la livraison</span>
+    <span data-i18n="f3">🔁 Échange sous 7 jours</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="filters" id="filters" aria-label="Catégories"></nav>
+  <div class="grid" id="grid"></div>
+</main>
+
+<div class="bar"><a class="wa" id="ask" target="_blank" rel="noopener" href="#"></a></div>
+
+<div class="veil" id="veil"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="s-name">
+  <div class="in">
+    <div class="grip"></div>
+    <button class="close" id="close" type="button" aria-label="Fermer">✕</button>
+    <div class="top">
+      <img id="s-img" alt="" width="600" height="750">
+      <div>
+        <h2 id="s-name"></h2>
+        <div class="price" id="s-price"></div>
+        <p class="desc" id="s-desc"></p>
+      </div>
+    </div>
+    <div id="s-size-block">
+      <div class="label" data-i18n="size">Taille</div>
+      <div class="opts" id="s-sizes"></div>
+    </div>
+    <div class="label" data-i18n="qty">Quantité</div>
+    <div class="qty"><button type="button" id="minus" aria-label="Moins">−</button><output id="q">1</output><button type="button" id="more" aria-label="Plus">+</button></div>
+    <div class="total"><span><span data-i18n="total">Total</span> <small data-i18n="ship">+ livraison 7 DT</small></span><b id="s-total"></b></div>
+    <a class="wa" id="order" target="_blank" rel="noopener" href="#"></a>
+  </div>
+</div>
+
+<script>
+// ── Settings: what changes for each seller ───────────────────────────────────────────────────────
+const SHOP = "Amira Boutique";
+const WHATSAPP = "21658111393"; // orders arrive on this number (international format, digits only)
+const SHIPPING = 7;
+const CATS = { all: ["Tout", "الكل"], robes: ["Robes", "فساتين"], abayas: ["Abayas", "عبايات"], ensembles: ["Ensembles", "أطقم"], accessoires: ["Accessoires", "إكسسوارات"] };
+// [image, category, name FR, name AR, price, old price, tag, description FR, sizes]
+const PRODUCTS = [
+  ["robe-satin-emeraude", "robes", "Robe satin émeraude", "فستان ساتان أخضر", 149, 179, "-17%", "Satin fluide, ceinture dorée.", ["S", "M", "L", "XL"]],
+  ["abaya-noire-brodee", "abayas", "Abaya noire brodée", "عباية سوداء مطرزة", 189, 0, "new", "Broderies faites main.", ["S", "M", "L", "XL"]],
+  ["robe-longue-fleurie", "robes", "Robe longue fleurie", "فستان طويل بالورود", 119, 0, "", "Viscose douce, taille cintrée.", ["S", "M", "L", "XL"]],
+  ["tailleur-rose-poudre", "ensembles", "Tailleur rose poudré", "طقم وردي", 169, 199, "-15%", "Veste doublée et pantalon droit.", ["S", "M", "L"]],
+  ["kimono-lin-sable", "abayas", "Kimono en lin sable", "كيمونو كتان", 129, 0, "", "100 % lin, se porte sur tout.", ["S", "M", "L", "XL"]],
+  ["ensemble-lin-blanc", "ensembles", "Ensemble lin blanc", "طقم كتان أبيض", 139, 0, "new", "Chemise et pantalon large.", ["S", "M", "L", "XL"]],
+  ["sac-cuir-camel", "accessoires", "Sac cuir camel", "حقيبة جلد", 159, 0, "", "Cuir véritable, fait main à Tunis.", []],
+  ["foulard-soie-imprime", "accessoires", "Foulard en soie", "فولارة حرير", 59, 0, "", "Carré de soie 90 × 90 cm.", []],
+];
+const T = {
+  fr: { ribbon: "Démo <b>Flownova</b> · Je veux la même page pour ma boutique →", order: "Commander sur WhatsApp", ask: "Écris-moi sur WhatsApp", new: "Nouveau",
+    hello: "Bonjour", want: "Je veux commander :", sizeW: "Taille", totalW: "Total", shipW: "livraison", demo: "(Commande de démonstration Flownova)", q: "j'ai une question sur vos articles.",
+    same: "Bonjour Flownova ! Je veux une mini-page catalogue comme la démo « Amira Boutique » pour ma boutique." },
+  ar: { ribbon: "ديمو <b>Flownova</b> · نحب صفحة كيفها لبوتيكي ←", order: "أطلب على واتساب", ask: "ابعثلي على واتساب", new: "جديد",
+    bio: "فساتين، عبايات و أطقم مختارة بعناية. كوليكسيون جديدة كل أسبوع.", f1: "🚚 توصيل ب 7 د · 24 حتى 72 ساعة", f2: "💵 الخلاص عند الاستلام", f3: "🔁 تبديل خلال 7 أيام",
+    size: "المقاس", qty: "الكمية", total: "المجموع", ship: "+ توصيل 7 د",
+    hello: "عسلامة", want: "نحب نطلب :", sizeW: "المقاس", totalW: "المجموع", shipW: "توصيل", demo: "(طلبية تجريبية Flownova)", q: "عندي سؤال على المنتوجات.",
+    same: "عسلامة Flownova ! نحب صفحة كاتالوغ كيف الديمو « Amira Boutique » لبوتيكي." },
+};
+const WA_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>';
+
+let lang = "fr", cat = "all", current = null, size = "", qty = 1;
+const $ = (id) => document.getElementById(id);
+const frText = {};
+document.querySelectorAll("[data-i18n]").forEach((el) => (frText[el.dataset.i18n] = el.textContent));
+const t = (k) => T[lang][k] ?? frText[k] ?? T.fr[k];
+const wa = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
+const nameOf = (p) => (lang === "ar" ? p[3] : p[2]);
+const priceOf = (p) => `<bdi dir="ltr">${p[4]} DT</bdi>${p[5] ? ` <s dir="ltr">${p[5]} DT</s>` : ""}`;
+
+function renderSheet() {
+  const p = current;
+  $("s-img").src = `img/${p[0]}-a.svg`;
+  $("s-name").textContent = nameOf(p);
+  $("s-price").innerHTML = priceOf(p);
+  $("s-desc").textContent = p[7];
+  $("s-size-block").hidden = !p[8].length;
+  $("s-sizes").innerHTML = p[8].map((s) => `<button type="button" aria-pressed="${s === size}" data-size="${s}">${s}</button>`).join("");
+  $("q").textContent = qty;
+  $("s-total").textContent = `${p[4] * qty} DT`;
+  $("order").innerHTML = WA_ICON + t("order");
+  $("order").href = wa(`${t("hello")} ${SHOP} 👋\n${t("want")}\n• ${nameOf(p)}${size ? ` — ${t("sizeW")} ${size}` : ""} × ${qty}\n${t("totalW")} : ${p[4] * qty} DT + ${t("shipW")} ${SHIPPING} DT\n${t("demo")}`);
+}
+
+function render() {
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  $("lang").textContent = lang === "ar" ? "Français" : "عربي";
+  document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
+  $("ribbon").innerHTML = t("ribbon");
+  $("ribbon").href = wa(t("same"));
+  $("ask").innerHTML = WA_ICON + t("ask");
+  $("ask").href = wa(`${t("hello")} ${SHOP} 👋 ${t("q")}\n${t("demo")}`);
+  $("filters").innerHTML = Object.entries(CATS).map(([id, names]) => `<button type="button" aria-pressed="${id === cat}" data-cat="${id}">${names[lang === "ar" ? 1 : 0]}</button>`).join("");
+  $("grid").innerHTML = PRODUCTS.map((p, i) => `<button class="item" type="button" data-i="${i}" ${cat !== "all" && cat !== p[1] ? "hidden" : ""}>
+      ${p[6] ? `<span class="tag ${p[6] === "new" ? "new" : ""}">${p[6] === "new" ? t("new") : p[6]}</span>` : ""}
+      <img src="img/${p[0]}-a.svg" alt="${nameOf(p)}" width="600" height="750" loading="lazy">
+      <span class="txt"><span class="name">${nameOf(p)}</span><span class="price">${priceOf(p)}</span></span>
+      <span class="plus" aria-hidden="true">+</span>
+    </button>`).join("");
+  if (current) renderSheet();
+}
+
+function openSheet(i) {
+  current = PRODUCTS[i];
+  size = current[8].includes("M") ? "M" : current[8][0] || "";
+  qty = 1;
+  renderSheet();
+  document.body.classList.add("open");
+}
+const closeSheet = () => document.body.classList.remove("open");
+
+$("filters").onclick = (e) => { const b = e.target.closest("[data-cat]"); if (b) { cat = b.dataset.cat; render(); } };
+$("grid").onclick = (e) => { const b = e.target.closest("[data-i]"); if (b) openSheet(+b.dataset.i); };
+$("s-sizes").onclick = (e) => { const b = e.target.closest("[data-size]"); if (b) { size = b.dataset.size; renderSheet(); } };
+$("minus").onclick = () => { qty = Math.max(1, qty - 1); renderSheet(); };
+$("more").onclick = () => { qty = Math.min(9, qty + 1); renderSheet(); };
+$("close").onclick = closeSheet;
+$("veil").onclick = closeSheet;
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+$("lang").onclick = () => { lang = lang === "fr" ? "ar" : "fr"; render(); };
+if (new URLSearchParams(location.search).get("lang") === "ar") lang = "ar";
+render();
+</script>
+</body>
+</html>
