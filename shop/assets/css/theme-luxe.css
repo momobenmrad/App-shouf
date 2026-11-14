@@ -229,6 +229,8 @@
 
 .theme-luxe .site-footer { background: var(--ink); color: rgb(244 239 230 / .8); border-top: 0; }
 .theme-luxe .site-footer .logo, .theme-luxe .site-footer .logo-mark { color: #fff; }
+/* The footer is dark: an image logo is shown as a white silhouette. */
+.theme-luxe .site-footer .logo img { filter: brightness(0) invert(1); }
 .theme-luxe .footer-title { color: var(--gold); font-family: var(--font); font-size: .72rem; font-weight: 500; }
 .theme-luxe .footer-grid a, .theme-luxe .footer-about p { color: rgb(244 239 230 / .72); }
 .theme-luxe .footer-grid a:hover { color: var(--gold-soft); }

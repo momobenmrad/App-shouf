@@ -26,7 +26,7 @@ function demo_settings(array $values): void
  * Categories ['slug' => [name, description]] and products, each
  * [slug, name, category slug, price DT, compare price DT|null, stock|null, featured, short, description,
  *  option label|null, variants [[name, price minor|null, stock]], sales count].
- * Every product uses assets/demo-<demo>/<slug>-a.svg and -b.svg.
+ * Every product uses assets/demo-<demo>/<slug>-a and -b (.jpg photo if present, else .svg illustration).
  */
 function demo_catalog(string $demo, array $categories, array $products): void
 {
@@ -37,7 +37,8 @@ function demo_catalog(string $demo, array $categories, array $products): void
     }
     $prefix = strtoupper(substr($demo, 0, 3));
     foreach ($products as $i => [$slug, $name, $cat, $price, $compare, $stock, $featured, $short, $desc, $opt, $variants, $sold]) {
-        $ts = date('Y-m-d H:i:s', strtotime('-' . (30 - $i * 3) . ' days'));
+        // Later products are newer; past the tenth they all date from today, a few seconds apart.
+        $ts = date('Y-m-d H:i:s', strtotime('-' . max(0, 30 - $i * 3) . ' days') + $i);
         $pid = insert('products', [
             'category_id' => $catIds[$cat], 'name' => $name, 'slug' => $slug,
             'sku' => $prefix . '-' . str_pad((string) ($i + 1), 3, '0', STR_PAD_LEFT),
@@ -47,7 +48,9 @@ function demo_catalog(string $demo, array $categories, array $products): void
             'created_at' => $ts, 'updated_at' => $ts,
         ]);
         foreach (['a', 'b'] as $j => $suf) {
-            insert('product_images', ['product_id' => $pid, 'path' => "assets/demo-$demo/$slug-$suf.svg", 'alt' => $name, 'position' => $j]);
+            // A real photo (.jpg) of the product wins over its illustration (.svg).
+            $ext = is_file(ROOT_DIR . "/assets/demo-$demo/$slug-$suf.jpg") ? 'jpg' : 'svg';
+            insert('product_images', ['product_id' => $pid, 'path' => "assets/demo-$demo/$slug-$suf.$ext", 'alt' => $name, 'position' => $j]);
         }
         foreach ($variants as $vi => [$vname, $vprice, $vstock]) {
             insert('product_variants', ['product_id' => $pid, 'name' => $vname, 'price' => $vprice, 'stock' => $vstock, 'position' => $vi]);

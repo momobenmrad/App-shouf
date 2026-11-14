@@ -1,4 +1,4 @@
-"""Product illustrations for the sector demos (mode, beaute, deco, terroir): flat SVGs in the style of
+"""Product illustrations for the demos (mode, beaute, deco, terroir, charme): flat SVGs in the style of
 the hand-drawn ones of demo/foufaa, 600x750, two per product (-a: studio shot, -b: styled backdrop).
 Writes demo/<demo>/assets/<slug>-a.svg and -b.svg.
 
@@ -194,6 +194,89 @@ SHAPES = dict(dropper=dropper, pump=pump, jar=jar, tube=tube, soap=soap, box=box
               scarf=scarf, plate=plate, vase=vase, candle=candle, tray=tray, cushion=cushion, bowls=bowls, oil=oil, dates=dates)
 
 
+# ── Accessories (demo "charme"): bags, jewellery sets, necklaces, bracelets, key rings. ────────
+def handbag(c, a, bow="#c9a26b"):
+    return (f'<path d="M225 400 Q225 270 300 270 Q375 270 375 400" stroke="{shade(c, -.3)}" stroke-width="16" fill="none"/>'
+            f'<rect x="150" y="390" width="300" height="240" rx="22" fill="{c}"/>'
+            f'<rect x="150" y="390" width="300" height="70" rx="22" fill="{shade(c, -.14)}"/>'
+            f'<rect x="270" y="430" width="60" height="44" rx="8" fill="{a}"/><rect x="286" y="444" width="28" height="16" rx="4" fill="{shade(a, -.3)}"/>'
+            f'<path d="M232 392 Q190 330 150 356 Q178 392 232 398 Z" fill="{bow}"/><path d="M232 392 Q262 320 300 350 Q276 396 232 398 Z" fill="{shade(bow, -.15)}"/>'
+            f'<path d="M226 398 Q200 470 214 540 L236 536 Q228 470 240 400 Z" fill="{bow}"/><path d="M236 398 Q262 450 252 510 L272 506 Q276 446 246 396 Z" fill="{shade(bow, .25)}"/>'
+            f'<circle cx="234" cy="396" r="13" fill="{shade(bow, -.3)}"/>'
+            f'<path d="M172 610 L172 480" stroke="#fff" stroke-opacity=".18" stroke-width="10"/>')
+
+
+def minibag(c, a):
+    petals = "".join(f'<ellipse cx="398" cy="{520 - 20}" rx="11" ry="20" fill="#fff8ee" transform="rotate({k * 72} 398 520)"/>' for k in range(5))
+    return (f'<path d="M240 420 Q240 310 300 310 Q360 310 360 420" stroke="{shade(c, -.25)}" stroke-width="14" fill="none"/>'
+            f'<path d="M180 410 L420 410 Q440 520 410 630 L190 630 Q160 520 180 410 Z" fill="{c}"/>'
+            f'<path d="M180 410 L420 410 Q426 440 426 470 L174 470 Q174 440 180 410 Z" fill="{shade(c, -.1)}"/>'
+            f'<circle cx="300" cy="470" r="14" fill="{a}"/>'
+            f'<path d="M398 430 L398 500" stroke="{a}" stroke-width="4"/>' + petals + f'<circle cx="398" cy="520" r="9" fill="{a}"/>'
+            f'<path d="M200 600 Q190 520 200 440" stroke="#fff" stroke-opacity=".2" stroke-width="10" fill="none"/>')
+
+
+def tote(c, a):
+    return (f'<path d="M215 400 L215 300 Q215 270 245 270 Q275 270 275 300 L275 400" stroke="{a}" stroke-width="14" fill="none"/>'
+            f'<path d="M325 400 L325 300 Q325 270 355 270 Q385 270 385 300 L385 400" stroke="{a}" stroke-width="14" fill="none"/>'
+            f'<path d="M150 400 L450 400 L430 640 L170 640 Z" fill="{c}"/>'
+            f'<path d="M300 470 L330 510 L300 560 L270 510 Z" fill="none" stroke="{a}" stroke-width="8"/>'
+            f'<rect x="230" y="580" width="140" height="8" rx="4" fill="{a}"/>'
+            f'<path d="M150 400 L450 400 L447 430 L153 430 Z" fill="{shade(c, -.08)}"/>')
+
+
+def _pendant(kind, x, y, m, r=30):
+    if kind == "heart":
+        return f'<path d="M{x} {y + r} C{x - r * 1.5} {y - r * .1} {x - r * .6} {y - r} {x} {y - r * .25} C{x + r * .6} {y - r} {x + r * 1.5} {y - r * .1} {x} {y + r} Z" fill="{m}"/>'
+    if kind == "butterfly":
+        return (f'<ellipse cx="{x - r * .55}" cy="{y - r * .2}" rx="{r * .6}" ry="{r * .8}" fill="{m}" transform="rotate(-25 {x - r * .55} {y - r * .2})"/>'
+                f'<ellipse cx="{x + r * .55}" cy="{y - r * .2}" rx="{r * .6}" ry="{r * .8}" fill="{m}" transform="rotate(25 {x + r * .55} {y - r * .2})"/>'
+                f'<ellipse cx="{x - r * .4}" cy="{y + r * .55}" rx="{r * .4}" ry="{r * .5}" fill="{shade(m, -.15)}"/><ellipse cx="{x + r * .4}" cy="{y + r * .55}" rx="{r * .4}" ry="{r * .5}" fill="{shade(m, -.15)}"/>'
+                f'<rect x="{x - 3}" y="{y - r * .7}" width="6" height="{r * 1.6}" rx="3" fill="{shade(m, -.4)}"/>')
+    if kind == "clover":
+        return "".join(f'<circle cx="{x + dx * r * .5}" cy="{y + dy * r * .5}" r="{r * .5}" fill="{m}"/>' for dx, dy in ((-1, -1), (1, -1), (-1, 1), (1, 1))) + f'<circle cx="{x}" cy="{y}" r="{r * .22}" fill="{shade(m, .5)}"/>'
+    return (f'<circle cx="{x}" cy="{y}" r="{r}" fill="{m}"/><circle cx="{x}" cy="{y}" r="{r - 6}" fill="none" stroke="{shade(m, -.3)}" stroke-width="3"/>'
+            f'<text x="{x}" y="{y + r * .38}" text-anchor="middle" font-family="Georgia, serif" font-size="{r * 1.1}" font-weight="700" fill="{shade(m, -.45)}">{kind}</text>')
+
+
+def necklace(c, a, pendant="heart"):
+    return (f'<path d="M170 260 Q170 520 300 560 Q430 520 430 260" stroke="{c}" stroke-width="7" fill="none" stroke-dasharray="3 7" stroke-linecap="round"/>'
+            f'<path d="M170 260 Q170 520 300 560 Q430 520 430 260" stroke="{shade(c, .45)}" stroke-width="2" fill="none"/>'
+            f'<circle cx="300" cy="566" r="9" fill="none" stroke="{c}" stroke-width="5"/>' + _pendant(pendant, 300, 612, a if pendant == "heart" else c, 38))
+
+
+def bracelet(c, a, charm="bead"):
+    if charm == "bead":
+        beads = "".join(f'<circle cx="{300 + 150 * __import__("math").cos(k * 0.3927):.0f}" cy="{470 + 110 * __import__("math").sin(k * 0.3927):.0f}" r="21" fill="{c if k % 4 else a}"/>'
+                        f'<circle cx="{294 + 150 * __import__("math").cos(k * 0.3927):.0f}" cy="{463 + 110 * __import__("math").sin(k * 0.3927):.0f}" r="6" fill="#fff" opacity=".5"/>' for k in range(16))
+        return beads
+    return (f'<ellipse cx="300" cy="470" rx="160" ry="112" fill="none" stroke="{c}" stroke-width="8" stroke-dasharray="3 8" stroke-linecap="round"/>'
+            f'<ellipse cx="300" cy="470" rx="160" ry="112" fill="none" stroke="{shade(c, .5)}" stroke-width="2"/>'
+            + "".join(_pendant("clover", x, y, a, 30) for x, y in ((300, 582), (176, 540), (424, 540))))
+
+
+def keyring(c, a, kind="flower"):
+    ring = (f'<circle cx="300" cy="300" r="52" fill="none" stroke="#b9bec7" stroke-width="12"/><circle cx="300" cy="300" r="52" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>'
+            f'<path d="M300 352 L300 420" stroke="#b9bec7" stroke-width="8" stroke-dasharray="10 6"/>')
+    if kind == "flower":
+        petals = "".join(f'<ellipse cx="300" cy="{520 - 62}" rx="36" ry="62" fill="{c}" transform="rotate({k * 60} 300 520)"/>' for k in range(6))
+        return ring + petals + f'<circle cx="300" cy="520" r="34" fill="{a}"/><circle cx="290" cy="510" r="9" fill="#fff" opacity=".45"/>'
+    letters = "".join(f'<rect x="{188 + i * 58}" y="440" width="50" height="62" rx="12" fill="{c if i % 2 else shade(c, .35)}"/>'
+                      f'<text x="{213 + i * 58}" y="485" text-anchor="middle" font-family="Georgia, serif" font-size="40" font-weight="700" fill="{a}">{ch}</text>' for i, ch in enumerate(kind))
+    return ring + f'<path d="M300 420 L300 440" stroke="#b9bec7" stroke-width="6"/>' + letters + f'<path d="M300 502 L300 540" stroke="{a}" stroke-width="5"/><path d="M300 540 L280 630 L320 630 Z" fill="{a}"/>'
+
+
+def parure(c, a, pendant="butterfly"):
+    return (f'<rect x="150" y="250" width="300" height="390" rx="18" fill="#fffdf8" stroke="#e7dccb" stroke-width="3"/>'
+            f'<text x="300" y="292" text-anchor="middle" font-family="Georgia, serif" font-size="20" letter-spacing="3" fill="#8a7a63">STAINLESS STEEL</text>'
+            f'<path d="M205 320 Q215 450 300 470 Q385 450 395 320" stroke="{c}" stroke-width="5" fill="none" stroke-dasharray="3 6" stroke-linecap="round"/>'
+            + _pendant(pendant, 300, 500, a, 34) + _pendant(pendant, 215, 585, a, 22) + _pendant(pendant, 385, 585, a, 22)
+            + f'<circle cx="300" cy="592" r="22" fill="none" stroke="{c}" stroke-width="8"/><circle cx="300" cy="566" r="9" fill="{a}"/>')
+
+
+SHAPES.update(handbag=handbag, minibag=minibag, tote=tote, necklace=necklace, bracelet=bracelet, keyring=keyring, parure=parure)
+
+
 def svg(body, bg, variant):
     top, bottom = (shade(bg, .55), bg) if variant == "a" else (shade(bg, .15), shade(bg, -.12))
     extra = ""
@@ -240,6 +323,19 @@ PRODUCTS = {
         ("plateau-the-cuivre", "tray", "#b87333", "#7c2d12", "#f2e8de", {}),
         ("coussin-kilim", "cushion", "#b91c1c", "#fbbf24", "#f6ebe6", {}),
         ("bols-poterie", "bowls", "#e7d7c1", "#1d4e89", "#eef1f4", {}),
+    ],
+    "charme": [
+        ("sac-noeud-foulard", "handbag", "#5b2333", "#d4af37", "#f1e9e4", {}),
+        ("mini-sac-fleur", "minibag", "#c9b3d6", "#c9a14a", "#f3eef6", {}),
+        ("cabas-toile", "tote", "#efe6d6", "#1a1a1a", "#ece6dc", {}),
+        ("parure-papillon", "parure", "#c9a14a", "#b89ad6", "#f4eef2", {}),
+        ("parure-coeur", "parure", "#b9bec7", "#e0a3ad", "#f1f1f3", {"pendant": "heart"}),
+        ("collier-coeur", "necklace", "#c9a14a", "#c9a14a", "#f5efe6", {}),
+        ("collier-initiale", "necklace", "#c9a14a", "#c9a14a", "#efeae4", {"pendant": "D"}),
+        ("bracelet-perles", "bracelet", "#dcc9a6", "#b8924a", "#f1ebe2", {}),
+        ("bracelet-trefle", "bracelet", "#c9a14a", "#1a1a1a", "#f3efe9", {"charm": "clover"}),
+        ("porte-cle-fleur", "keyring", "#f3c6cf", "#c9a14a", "#f6eef0", {}),
+        ("porte-cle-prenom", "keyring", "#1a1a1a", "#f3d27a", "#efebe5", {"kind": "DOHA"}),
     ],
     "terroir": [
         ("huile-olive-chemlali", "oil", "#4d7c0f", "#c9a14a", "#eef2e4", {}),
