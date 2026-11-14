@@ -1,0 +1,24 @@
+# Exemple de configuration Nginx (VPS). Adaptez server_name, root et la version de PHP-FPM.
+server {
+    listen 80;
+    server_name ma-boutique.com www.ma-boutique.com;
+    root /var/www/boutique;
+    index index.php;
+    client_max_body_size 20M;
+
+    location ~ ^/(app|storage|bin|docs)/ { deny all; return 404; }
+    location ~ /\. { deny all; }
+    location ~* \.(md|sqlite|log|lock)$ { deny all; }
+    location ^~ /uploads/ { location ~ \.php$ { deny all; } }
+
+    location ~* \.(css|js|svg|png|jpe?g|webp|gif|ico)$ { expires 30d; access_log off; try_files $uri =404; }
+
+    location /install/ { try_files $uri $uri/ /install/index.php; }
+    location / { try_files $uri $uri/ /index.php?$query_string; }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+}

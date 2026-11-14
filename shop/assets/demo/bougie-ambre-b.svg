@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750" width="600" height="750">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#efe4f2"/><stop offset="1" stop-color="#dccbe3"/></linearGradient>
+<radialGradient id="sh" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+<rect width="600" height="750" fill="url(#bg)"/><circle cx="300" cy="360" r="210" fill="#ffffff" opacity=".55"/>
+<ellipse cx="300" cy="610" rx="190" ry="26" fill="url(#sh)"/>
+
+<rect x="200" y="300" width="200" height="300" rx="28" fill="#c98b4f"/>
+<rect x="200" y="300" width="200" height="300" rx="28" fill="#fff" opacity=".18"/>
+<ellipse cx="300" cy="312" rx="96" ry="18" fill="#f3e3c8"/>
+<rect x="232" y="400" width="136" height="110" rx="10" fill="#fbf6ee"/>
+<text x="300" y="448" font-family="Georgia,serif" font-size="26" text-anchor="middle" fill="#7a4b22">AMBRE</text>
+<text x="300" y="480" font-family="Arial,sans-serif" font-size="13" letter-spacing="3" text-anchor="middle" fill="#7a4b22">VANILLE</text>
+<rect x="297" y="262" width="6" height="40" rx="3" fill="#3b2a1a"/>
+<path d="M300 190c22 26 26 48 0 72-26-24-22-46 0-72z" fill="#f59e0b"/><path d="M300 222c10 14 10 24 0 36-10-12-10-22 0-36z" fill="#fde68a"/>
+<rect x="224" y="320" width="14" height="250" rx="7" fill="#fff" opacity=".25"/>
+</svg>

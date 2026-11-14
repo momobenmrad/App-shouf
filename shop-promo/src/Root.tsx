@@ -1,0 +1,39 @@
+import { MyComposition } from "./Composition";
+import { PremiumComposition } from "./premium/Premium";
+import { Premium15Composition } from "./premium15/Video";
+import { Episode1Composition } from "./episode1/Video";
+import { Episode3Composition } from "./episode3/Video";
+import { Episode4Composition } from "./episode4/Video";
+import { Episode5Composition } from "./episode5/Video";
+import { Episode6Composition } from "./episode6/Video";
+import { Episode7Composition } from "./episode7/Video";
+import { Episode8Composition } from "./episode8/Video";
+import { BrandkitCompositions } from "./flownova/Brandkit";
+import { FlownovaEp2Composition } from "./flownova/Episode2";
+import { FlownovaEp2ShortComposition } from "./flownova/Episode2Short";
+import { FlownovaSignsComposition } from "./flownova/Signs";
+import { FlownovaComposition } from "./flownova/Video";
+import { WednesdayCompositions } from "./flownova/Wednesday";
+
+export const RemotionRoot: React.FC = () => {
+  return (
+    <>
+      <MyComposition />
+      <PremiumComposition />
+      <Premium15Composition />
+      <Episode1Composition />
+      <Episode3Composition />
+      <Episode4Composition />
+      <Episode5Composition />
+      <Episode6Composition />
+      <Episode7Composition />
+      <Episode8Composition />
+      <FlownovaComposition />
+      <FlownovaEp2Composition />
+      <FlownovaEp2ShortComposition />
+      <FlownovaSignsComposition />
+      <WednesdayCompositions />
+      <BrandkitCompositions />
+    </>
+  );
+};

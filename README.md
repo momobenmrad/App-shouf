@@ -8,6 +8,10 @@ Plateforme de streaming VOD et live pour le Maghreb : films, séries et chaînes
 - **Phase 3 (profils, EPG, recommandations, protection), tâches et état** : [`docs/phase-3-tasks.md`](docs/phase-3-tasks.md)
 - **Exploitation** (R2, Cloudflare, Konnect, mise en production) : [`docs/operations.md`](docs/operations.md)
 
+## Boutique e-commerce (projet séparé)
+
+Le dossier [`shop/`](shop/README.md) contient un site e-commerce PHP/MySQL autonome, installable sur un hébergement mutualisé : voir [shop/README.md](shop/README.md).
+
 ## Essayer la démo
 
 Une démo complète tourne en local avec Docker, sans aucune configuration :

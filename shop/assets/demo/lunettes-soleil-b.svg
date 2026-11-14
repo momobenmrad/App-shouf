@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750" width="600" height="750">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f0ef"/><stop offset="1" stop-color="#c6e0dd"/></linearGradient>
+<radialGradient id="sh" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+<rect width="600" height="750" fill="url(#bg)"/><circle cx="300" cy="360" r="210" fill="#ffffff" opacity=".55"/>
+<ellipse cx="300" cy="610" rx="190" ry="26" fill="url(#sh)"/>
+
+<path d="M120 330h360" stroke="#292524" stroke-width="10" stroke-linecap="round"/>
+<path d="M118 330c-10 40-24 70-40 90M482 330c10 40 24 70 40 90" stroke="#292524" stroke-width="9" stroke-linecap="round" fill="none"/>
+<path d="M130 330h140c0 80-20 140-75 140S130 410 130 330z" fill="#3f2d2a"/>
+<path d="M330 330h140c0 80-20 140-75 140S330 410 330 330z" fill="#3f2d2a"/>
+<path d="M150 345h100c-2 55-18 100-55 100s-45-45-45-100z" fill="#7c5a3c" opacity=".7"/>
+<path d="M350 345h100c-2 55-18 100-55 100s-45-45-45-100z" fill="#7c5a3c" opacity=".7"/>
+<path d="M165 360c10 30 20 46 32 56M365 360c10 30 20 46 32 56" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".35"/>
+<path d="M270 340c10-14 50-14 60 0" stroke="#292524" stroke-width="10" fill="none"/>
+</svg>
